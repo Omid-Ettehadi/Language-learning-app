@@ -19,15 +19,15 @@ public class LoginActivity extends AppCompatActivity {
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
         final Button bLogin = (Button) findViewById(R.id.bLogin);
-        final TextView tvRegisterNow = (TextView) findViewById(R.id.tvRegisterHere);
+        final TextView tvRegister = (TextView) findViewById(R.id.tvRegister);
 
-        // Performs when someone presses Register Now Button
-        tvRegisterNow.setOnClickListener(new View.OnClickListener(){
+        // Performs when someone presses Register Textview
+        tvRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                // Creates an intent to ogo to Register Activity
-                Intent tvRegisterNowIntent = new Intent(LoginActivity.this,RegisterActivity.class);
-                LoginActivity.this.startActivity(tvRegisterNowIntent);
+                // Creates an intent to go to Register Activity
+                Intent tvRegisterIntent = new Intent(LoginActivity.this,RegisterActivity.class);
+                LoginActivity.this.startActivity(tvRegisterIntent);
             }
         });
 
@@ -35,7 +35,9 @@ public class LoginActivity extends AppCompatActivity {
         bLogin.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-
+                // Creates an intent to go to Navigation Activity
+                Intent bLoginIntent = new Intent(LoginActivity.this,NavigationActivity.class);
+                LoginActivity.this.startActivity(bLoginIntent);
             }
         });
     }
