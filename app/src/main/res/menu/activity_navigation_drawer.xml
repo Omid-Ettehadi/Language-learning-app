@@ -6,11 +6,11 @@
             <menu>
                 <item
                     android:id="@+id/dictionary"
-                    android:icon="@drawable/ic_menu_camera"
+                    android:icon="@drawable/ic_menu_dictionary"
                     android:title="Dictionary" />
                 <item
                     android:id="@+id/learn"
-                    android:icon="@drawable/ic_menu_gallery"
+                    android:icon="@drawable/ic_menu_learn"
                     android:title="Learn" />
             </menu>
         </item>
