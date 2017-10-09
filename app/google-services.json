@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "398774378895",
+    "firebase_url": "https://language-learning-app-capstone.firebaseio.com",
+    "project_id": "language-learning-app-capstone",
+    "storage_bucket": "language-learning-app-capstone.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398774378895:android:5de559ad071cc7bf",
+        "android_client_info": {
+          "package_name": "com.omidettehadi.language_learning_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "398774378895-qgefckp7h72psi8e3e97uv962pqgkke9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.omidettehadi.language_learning_app",
+            "certificate_hash": "9f4a6fe86d40f6c64b3358f647f14aeaef1a82d8"
+          }
+        },
+        {
+          "client_id": "398774378895-n1mnlmpkpu1o4ammipevolo706ao6u43.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4NjTOhjrIKAP1ahS6QW08cFSUaXCgNmw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "398774378895-n1mnlmpkpu1o4ammipevolo706ao6u43.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
