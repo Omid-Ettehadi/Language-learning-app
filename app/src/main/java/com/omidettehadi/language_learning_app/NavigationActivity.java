@@ -103,9 +103,8 @@ public class NavigationActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_signout) {
-            //startActivity(new Intent(NavigationActivity.this, MainActivity.class));
             auth.signOut();
-            startActivity(new Intent(NavigationActivity.this, SigninActivity.class));
+            finish();
             return true;
         }
 
