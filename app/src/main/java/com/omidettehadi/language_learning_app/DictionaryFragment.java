@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -24,6 +25,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class DictionaryFragment extends Fragment {
 
     private TextView tvResult;
+    private EditText etInput;
 
     public DictionaryFragment() {
         // Required empty public constructor
@@ -37,13 +39,14 @@ public class DictionaryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dictionary, container, false);
         // Inflate the layout for this fragment
         tvResult = (TextView)view.findViewById(R.id.tvResult);
+        etInput = (EditText)view.findViewById(R.id.etInput);
         new CallbackTask().execute(dictionaryEntries());
         return view;
     }
 
     private String dictionaryEntries() {
         final String language = "en";
-        final String word = "Ace";
+        final String word = "Ace"; // etInput.toString();
         final String word_id = word.toLowerCase(); //word id is case sensitive and lowercase is required
         return "https://od-api.oxforddictionaries.com:443/api/v1/entries/" + language + "/" + word_id;
     }
@@ -57,7 +60,7 @@ public class DictionaryFragment extends Fragment {
         protected String doInBackground(String... params) {
 
             //TODO: replace with your own app id and app key
-            final String app_id = " \t091e7ddf";
+            final String app_id = "091e7ddf";
             final String app_key = "af40991963d253e055aaa9cd04a3731d";
             try {
                 URL url = new URL(params[0]);
