@@ -5,24 +5,32 @@
     tools:context="com.omidettehadi.language_learning_app.LearnFragment">
 
     <Button
+        android:id="@+id/btnStopPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnPlay"
+        android:layout_alignBottom="@+id/btnPlay"
+        android:layout_centerHorizontal="true"
+        android:text="Stop Playing" />
+
+    <Button
         android:id="@+id/btnPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnStop"
-        android:layout_alignStart="@+id/btnStop"
-        android:layout_below="@+id/btnStop"
-        android:layout_marginTop="43dp"
+        android:layout_alignLeft="@+id/btnRecord"
+        android:layout_alignStart="@+id/btnRecord"
+        android:layout_below="@+id/btnRecord"
+        android:layout_marginTop="42dp"
         android:text="Play" />
 
     <Button
         android:id="@+id/btnStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnRecord"
-        android:layout_alignStart="@+id/btnRecord"
-        android:layout_below="@+id/btnRecord"
-        android:layout_marginTop="40dp"
-        android:text="Stop" />
+        android:layout_alignBaseline="@+id/btnRecord"
+        android:layout_alignBottom="@+id/btnRecord"
+        android:layout_centerHorizontal="true"
+        android:text="Stop Recording" />
 
     <TextView
         android:layout_width="match_parent"
