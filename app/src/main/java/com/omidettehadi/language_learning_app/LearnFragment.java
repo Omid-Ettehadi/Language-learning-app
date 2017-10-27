@@ -13,10 +13,6 @@ import android.widget.Button;
 import java.io.File;
 import java.io.IOException;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class LearnFragment extends Fragment {
 
     MediaRecorder audioCapture;
@@ -27,7 +23,6 @@ public class LearnFragment extends Fragment {
 
     private boolean permissionToRecordAccepted = false;
     private boolean permissionToWriteAccepted = false;
-    private String [] permissions = {"android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     public LearnFragment() {
         // Required empty public constructor
@@ -39,12 +34,11 @@ public class LearnFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_learn, container, false);
         // Inflate the layout for this fragment
 
-        requestPermissions(permissions, 200);
-
-
         audioCapture = new MediaRecorder();
         path = getContext().getCacheDir().getAbsolutePath() + File.separator + "tempAudio.3gp";
-        tempFile = new File(path);
+        //tempFile = new File(path);
+        final String tempFile;
+        tempFile = path;
 
         audioCapture.setAudioSource(MediaRecorder.AudioSource.MIC);
         audioCapture.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
