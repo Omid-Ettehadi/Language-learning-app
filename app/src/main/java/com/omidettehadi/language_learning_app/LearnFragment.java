@@ -33,22 +33,20 @@ public class LearnFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_learn, container, false);
         // Inflate the layout for this fragment
-
-        audioCapture = new MediaRecorder();
-        path = getContext().getCacheDir().getAbsolutePath() + File.separator + "tempAudio.3gp";
-        //tempFile = new File(path);
         final String tempFile;
-        tempFile = path;
-
-        audioCapture.setAudioSource(MediaRecorder.AudioSource.MIC);
-        audioCapture.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        audioCapture.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        audioCapture.setOutputFile(tempFile);
 
         btnRecord = (Button)view.findViewById(R.id.btnRecord);
         btnStop = (Button)view.findViewById(R.id.btnStop);
         btnPlay = (Button)view.findViewById(R.id.btnPlay);
         btnStopPlay = (Button)view.findViewById(R.id.btnStopPlay);
+
+        tempFile = getContext().getCacheDir().getAbsolutePath() + File.separator + "tempAudio.3gp";
+
+        audioCapture = new MediaRecorder();
+        audioCapture.setAudioSource(MediaRecorder.AudioSource.MIC);
+        audioCapture.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        audioCapture.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        audioCapture.setOutputFile(tempFile);
 
         btnStop.setEnabled(false);
         btnPlay.setEnabled(false);
@@ -57,7 +55,6 @@ public class LearnFragment extends Fragment {
         btnRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 try {
-
                     audioCapture.prepare();
                     audioCapture.start();
                 } catch (IllegalStateException e) {
@@ -69,8 +66,6 @@ public class LearnFragment extends Fragment {
                 btnStop.setEnabled(true);
                 btnPlay.setEnabled(false);
                 btnStopPlay.setEnabled(false);
-
-
             }
         });
 
@@ -95,10 +90,9 @@ public class LearnFragment extends Fragment {
                 btnStop.setEnabled(false);
                 btnPlay.setEnabled(false);
                 btnStopPlay.setEnabled(true);
-
                 playback = new MediaPlayer();
                 try {
-                    playback.setDataSource(path);
+                    playback.setDataSource(tempFile);
                     playback.prepare();
                 }
                 catch (IOException e) {
@@ -107,6 +101,7 @@ public class LearnFragment extends Fragment {
                 playback.start();
             }
         });
+
         btnStopPlay.setOnClickListener(new View.OnClickListener() {
            public void onClick(View view) {
                playback.stop();
@@ -116,8 +111,6 @@ public class LearnFragment extends Fragment {
                btnStopPlay.setEnabled(false);
            }
         });
-
         return view;
     }
-
 }
