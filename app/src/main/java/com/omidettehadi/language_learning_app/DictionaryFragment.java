@@ -132,19 +132,23 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                     JSONArray two = lexicalEntries.getJSONArray("lexicalEntries");
 
                     for(int j = 0 ; j < two.length() ; j++){
+                        JSONObject pronunciations = two.getJSONObject(j);
                         JSONObject entries = two.getJSONObject(j);
                         JSONArray three = entries.getJSONArray("entries");
+                        JSONArray IPA = pronunciations.getJSONArray("pronunciations");
+
+                        number += 1 ;
+                        definition += System.lineSeparator();
+                        definition += number + ") " + IPA.toString().substring(IPA.toString().lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
 
                         for(int k = 0 ; k < three.length() ; k++){
                             JSONObject senses = three.getJSONObject(k);
                             JSONArray four = senses.getJSONArray("senses");
-
                             for(int l = 0 ; l < four.length() ; l++) {
                                 JSONObject definitions = four.getJSONObject(l);
                                 JSONArray five = definitions.getJSONArray("definitions");
-                                number += 1 ;
-                                definition += System.lineSeparator();
-                                definition += number + ") " + five.getString(0);
+                                definition += System.lineSeparator() + " - ";
+                                definition += five.getString(0);
                             }
                         }
                     }
