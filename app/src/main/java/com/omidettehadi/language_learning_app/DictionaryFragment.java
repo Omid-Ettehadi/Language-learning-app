@@ -1,9 +1,13 @@
 package com.omidettehadi.language_learning_app;
 
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -14,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,17 +27,26 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static android.content.ContentValues.TAG;
+
 
 public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitListener {
 
-    private TextView tvResult;
+    private TextView tvResult, tvSpeakNow;
     private EditText etInput;
-    private Button btnSearch, btnVoice;
+    private Button btnSearch, btnVoice, btnSpeakNow;
     private TextToSpeech tts;
+    private SpeechRecognizer speechrecognizer;
+    private Intent speechrecognizerIntent;
+    private boolean IsListening, packageName;
+    private String GoogleScore;
+
 
     public DictionaryFragment() {
         // Required empty public constructor
@@ -43,11 +57,23 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dictionary, container, false);
         // Inflate the layout for this fragment
-        tvResult = (TextView)view.findViewById(R.id.tvResult);
-        etInput = (EditText)view.findViewById(R.id.etInput);
-        btnSearch = (Button)view.findViewById(R.id.btnSearch);
-        btnVoice = (Button)view.findViewById(R.id.btnVoice);
-        tts = new TextToSpeech(getActivity(),DictionaryFragment.this);
+        tvResult = (TextView) view.findViewById(R.id.tvResult);
+        tvSpeakNow = (TextView) view.findViewById(R.id.tvSpeakNow);
+        etInput = (EditText) view.findViewById(R.id.etInput);
+        btnSearch = (Button) view.findViewById(R.id.btnSearch);
+        btnVoice = (Button) view.findViewById(R.id.btnVoice);
+        btnSpeakNow = (Button) view.findViewById(R.id.btnSpeakNow);
+        tts = new TextToSpeech(getActivity(), DictionaryFragment.this);
+
+
+        speechrecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
+        speechrecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
+        SpeechRecognitionListener listener = new SpeechRecognitionListener();
+        speechrecognizer.setRecognitionListener(listener);
+
 
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
@@ -69,7 +95,96 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             }
         });
 
+        // See if Listen Button is pressed
+        // Run Speech Recognition
+        btnSpeakNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Pronounce the word
+                if (!IsListening)
+                {
+                    speechrecognizer.startListening(speechrecognizerIntent);
+                }
+            }
+        });
+
         return view;
+    }
+
+    public boolean getPackageName() {
+        return packageName;
+    }
+
+    protected class SpeechRecognitionListener implements RecognitionListener
+    {
+
+        @Override
+        public void onBeginningOfSpeech()
+        {
+            Toast.makeText(getActivity(), "Recording", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer)
+        {
+
+        }
+
+        @Override
+        public void onEndOfSpeech()
+        {
+            Toast.makeText(getActivity(), "Done!", Toast.LENGTH_SHORT).show();
+            IsListening = false;
+
+        }
+
+        @Override
+        public void onError(int error)
+        {
+            speechrecognizer.startListening(speechrecognizerIntent);
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params)
+        {
+
+        }
+
+        @Override
+        public void onPartialResults(Bundle partialResults)
+        {
+
+        }
+
+        @Override
+        public void onReadyForSpeech(Bundle params)
+        {
+
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        public void onResults(Bundle results)
+        {
+            ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            float[] score = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
+
+            for (int i = 0 ; i < matches.size() ; i++){
+                if(matches.get(i).toString().equals(etInput.getText().toString())){
+                    GoogleScore = String.valueOf(score[i]*100);
+                    tvSpeakNow.setText( System.lineSeparator() + "Your pronunciation is at " + GoogleScore + " % ");
+                    break;
+                }
+                else{
+                    tvSpeakNow.setText( System.lineSeparator() + "Sorry, What was that?");
+                }
+            }
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB)
+        {
+        }
     }
 
     private String dictionaryEntries() {
@@ -185,6 +300,10 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         if (tts != null) {
             tts.stop();
             tts.shutdown();
+        }
+        if (speechrecognizer != null)
+        {
+            speechrecognizer.destroy();
         }
         super.onDestroy();
     }
