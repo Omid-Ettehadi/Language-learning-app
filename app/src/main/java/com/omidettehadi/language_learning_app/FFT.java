@@ -3,6 +3,11 @@ package com.omidettehadi.language_learning_app;
 /**
  * Created by daniel_charpentier on 11/6/2017.
  * Got from; https://stackoverflow.com/questions/9272232/fft-library-in-android-sdk
+ * To use: call  fft(), where x[] is an array of amplitude values (the sound file) and y[] is an array of 0s.
+ * (x[] is the real part of your inputs while y[] is the imaginary part, which for audio will be 0)
+ * The output will be in the arrays x and y.
+ * The power spectrum of audio can be obtained through a[0] = x[0]^2 + y[0]^2
+ * at x[length/2], the corresponding freq is 0, while at x[0] == x[length - 1] , the corresponding freq is half the sampling rate.
  */
 
 public class FFT {
