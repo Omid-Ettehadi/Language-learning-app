@@ -6,6 +6,10 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.AutomaticGainControl;
+import android.media.audiofx.Equalizer;
+import android.media.audiofx.NoiseSuppressor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -112,12 +116,16 @@ public class LearnFragment extends Fragment {
                     AudioFormat.ENCODING_PCM_16BIT);
 
             short[] audioData = new short[minBufferSize];
-
             AudioRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     sampleFreq,
                     AudioFormat.CHANNEL_CONFIGURATION_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
                     minBufferSize);
+
+            // Filters for audio
+            AcousticEchoCanceler.create(AudioRecorded.getAudioSessionId());
+            NoiseSuppressor.create(AudioRecorded.getAudioSessionId());
+            AutomaticGainControl.create(AudioRecorded.getAudioSessionId());
 
             AudioRecorded.startRecording();
 
