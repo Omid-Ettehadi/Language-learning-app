@@ -5,15 +5,6 @@
     tools:context="com.omidettehadi.language_learning_app.LearnFragment">
 
     <Button
-        android:id="@+id/btnStopPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnPlay"
-        android:layout_alignBottom="@+id/btnPlay"
-        android:layout_centerHorizontal="true"
-        android:text="Stop Playing" />
-
-    <Button
         android:id="@+id/btnPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,11 +23,6 @@
         android:layout_centerHorizontal="true"
         android:text="Stop Recording" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="This is where the learning stuff are going." />
-
     <Button
         android:id="@+id/btnRecord"
         android:layout_width="wrap_content"
@@ -48,5 +34,14 @@
         android:layout_marginStart="27dp"
         android:layout_marginTop="92dp"
         android:text="Record" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnPlay"
+        android:layout_alignEnd="@+id/btnStop"
+        android:layout_alignRight="@+id/btnStop"
+        android:text="TextView" />
 
 </RelativeLayout>
