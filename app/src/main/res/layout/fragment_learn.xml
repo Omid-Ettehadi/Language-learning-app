@@ -41,7 +41,6 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/btnPlay"
         android:layout_alignEnd="@+id/btnStop"
-        android:layout_alignRight="@+id/btnStop"
-        android:text="TextView" />
+        android:layout_alignRight="@+id/btnStop" />
 
 </RelativeLayout>

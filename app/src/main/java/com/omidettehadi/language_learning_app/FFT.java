@@ -24,7 +24,7 @@ public class FFT {
 
         // Make sure n is a power of 2
         if (n != (1 << m))
-            throw new RuntimeException("FFT length must be power of 2");
+            throw new RuntimeException("FFT length must be power of 2 " + Integer.toString(n));
 
         // precompute tables
         cos = new double[n / 2];
@@ -71,12 +71,12 @@ public class FFT {
             n2 = n2 + n2;
             a = 0;
 
-            for (j = 0; j < n1; j++) {
+            for (j = 0; j < n1 ; j++) {
                 c = cos[a];
                 s = sin[a];
                 a += 1 << (m - i - 1);
 
-                for (k = j; k < n; k = k + n2) {
+                for (k = j ; k < n ; k = k + n2) {
                     t1 = c * x[k + n1] - s * y[k + n1];
                     t2 = s * x[k + n1] + c * y[k + n1];
                     x[k + n1] = x[k] - t1;

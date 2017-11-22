@@ -96,7 +96,6 @@ public class LearnFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 
@@ -112,17 +111,14 @@ public class LearnFragment extends Fragment {
             DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
 
             int minBufferSize = AudioRecord.getMinBufferSize(sampleFreq,
-                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                    AudioFormat.CHANNEL_IN_DEFAULT,
                     AudioFormat.ENCODING_PCM_16BIT);
 
             short[] audioDataRec = new short[minBufferSize];
-            double[] audioDataFFT = new double[minBufferSize];
-            double[] zeros = new double[minBufferSize];
-            double [] magnitudeFFT = new double[minBufferSize];
 
             AudioRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     sampleFreq,
-                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                    AudioFormat.CHANNEL_IN_DEFAULT,
                     AudioFormat.ENCODING_PCM_16BIT,
                     minBufferSize);
 
@@ -137,27 +133,11 @@ public class LearnFragment extends Fragment {
                 int numberOfShort = AudioRecorded.read(audioDataRec, 0, minBufferSize);
                 for (int i = 0; i < numberOfShort; i++) {
                     dataOutputStream.writeShort(audioDataRec[i]);
-                    audioDataFFT[i] = audioDataRec[i];
-                    zeros[i] = 0;
-                    magnitudeFFT[i] = Math.sqrt(audioDataFFT[i] * audioDataFFT[i] + zeros[i] * zeros[i]);
                 }
-                AudioRecordedFFT.fft(audioDataFFT, zeros);
             }
 
             AudioRecorded.stop();
             dataOutputStream.close();
-
-            // find largest peak in power spectrum
-            double max_magnitude = magnitudeFFT[0];
-            int max_index = 0;
-            for (int i = 0; i < magnitudeFFT.length; ++i) {
-                if (magnitudeFFT[i] > max_magnitude) {
-                    max_magnitude = (int) magnitudeFFT[i];
-                    max_index = i;
-                }
-            }
-            double FreqMax = 44100 * max_index / minBufferSize;
-            textView.setText(String.valueOf(FreqMax));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -169,7 +149,10 @@ public class LearnFragment extends Fragment {
 
         int shortSizeInBytes = Short.SIZE / Byte.SIZE;
         int bufferSizeInBytes = (int) (file.length() / shortSizeInBytes);
-        short[] audioData = new short[bufferSizeInBytes];
+        short[] audioDataRec = new short[bufferSizeInBytes];
+        double[] audioDataFFT = new double[bufferSizeInBytes];
+        double[] zeros = new double[bufferSizeInBytes];
+        double[] magnitudeFFT = new double[bufferSizeInBytes];
 
         try {
             InputStream inputStream = new FileInputStream(file);
@@ -178,7 +161,7 @@ public class LearnFragment extends Fragment {
 
             int i = 0;
             while (dataInputStream.available() > 0) {
-                audioData[i] = dataInputStream.readShort();
+                audioDataRec[i] = dataInputStream.readShort();
                 i++;
             }
 
@@ -187,13 +170,38 @@ public class LearnFragment extends Fragment {
             AudioRecordedTrack = new AudioTrack(
                     AudioManager.STREAM_MUSIC,
                     sampleFreq,
-                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                    AudioFormat.CHANNEL_IN_DEFAULT,
                     AudioFormat.ENCODING_PCM_16BIT,
                     bufferSizeInBytes,
                     AudioTrack.MODE_STREAM);
 
             AudioRecordedTrack.play();
-            AudioRecordedTrack.write(audioData, 0, bufferSizeInBytes);
+            AudioRecordedTrack.write(audioDataRec, 0, bufferSizeInBytes);
+
+
+            for (int j = 0; j < bufferSizeInBytes - 1; j++) {
+                audioDataFFT[j] = 100.0;
+                zeros[j] = 100.0;
+            }
+            AudioRecordedFFT = new FFT(bufferSizeInBytes);
+            AudioRecordedFFT.fft(audioDataFFT, zeros);
+
+            // find magnitudes
+            for(int j =0; j < audioDataRec.length ; j++){
+                magnitudeFFT[j] = Math.sqrt(audioDataFFT[j] * audioDataFFT[j] + zeros[j] * zeros[j]);
+            }
+
+            // find largest peak in power spectrum
+            double max_magnitude = magnitudeFFT[0];
+            int max_index = 0;
+            for (int j = 0; j < magnitudeFFT.length; ++j) {
+                if (magnitudeFFT[j] > max_magnitude) {
+                    max_magnitude = (int) magnitudeFFT[j];
+                    max_index = j;
+                }
+            }
+            double freq = max_index * 44100 / bufferSizeInBytes;
+            textView.setText(Double.toString(freq));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
