@@ -12,7 +12,7 @@
         android:layout_alignStart="@+id/btnRecord"
         android:layout_below="@+id/btnRecord"
         android:layout_marginTop="42dp"
-        android:text="Play" />
+        android:text="@string/play" />
 
     <Button
         android:id="@+id/btnStop"
@@ -21,7 +21,11 @@
         android:layout_alignBaseline="@+id/btnRecord"
         android:layout_alignBottom="@+id/btnRecord"
         android:layout_centerHorizontal="true"
+<<<<<<< HEAD
         android:text="Stop Recording" />
+=======
+        android:text="@string/stop_recording" />
+>>>>>>> OmidBranch
 
     <Button
         android:id="@+id/btnRecord"
@@ -33,6 +37,14 @@
         android:layout_marginLeft="27dp"
         android:layout_marginStart="27dp"
         android:layout_marginTop="92dp"
-        android:text="Record" />
+        android:text="@string/record" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnPlay"
+        android:layout_alignEnd="@+id/btnStop"
+        android:layout_alignRight="@+id/btnStop" />
 
 </RelativeLayout>
