@@ -21,11 +21,8 @@
         android:layout_alignBaseline="@+id/btnRecord"
         android:layout_alignBottom="@+id/btnRecord"
         android:layout_centerHorizontal="true"
-<<<<<<< HEAD
         android:text="Stop Recording" />
-=======
         android:text="@string/stop_recording" />
->>>>>>> OmidBranch
 
     <Button
         android:id="@+id/btnRecord"

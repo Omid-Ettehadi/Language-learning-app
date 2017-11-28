@@ -4,31 +4,17 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
-<<<<<<< HEAD
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.AutomaticGainControl;
-import android.media.audiofx.Equalizer;
-=======
-import android.media.MediaRecorder;
-import android.media.audiofx.AcousticEchoCanceler;
-import android.media.audiofx.AutomaticGainControl;
->>>>>>> OmidBranch
 import android.media.audiofx.NoiseSuppressor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-<<<<<<< HEAD
-import android.widget.Toast;
-=======
 import android.widget.TextView;
->>>>>>> OmidBranch
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -41,23 +27,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-<<<<<<< HEAD
-import java.nio.ShortBuffer;
-=======
 
 import com.omidettehadi.language_learning_app.FFT;
->>>>>>> OmidBranch
 
-import static android.media.AudioFormat.CHANNEL_IN_MONO;
-
-<<<<<<< HEAD
 public class LearnFragment extends Fragment {
 
-    Button btnRecord, btnStop, btnPlay;
-    boolean recording;
-    AudioRecord AudioRecorded;
-    AudioTrack AudioRecordedTrack;
-=======
     Button btnRecord, btnStop, btnPlay;
     TextView textView;
     File file;
@@ -67,7 +41,6 @@ public class LearnFragment extends Fragment {
 
     boolean recording;
     int sampleFreq = 44100;
->>>>>>> OmidBranch
 
     public LearnFragment() {
         // Required empty public constructor
@@ -80,13 +53,6 @@ public class LearnFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_learn, container, false);
 
-<<<<<<< HEAD
-        btnRecord = (Button)view.findViewById(R.id.btnRecord);
-        btnStop = (Button)view.findViewById(R.id.btnStop);
-        btnStop.setEnabled(false);
-        btnPlay = (Button)view.findViewById(R.id.btnPlay);
-        btnPlay.setEnabled(false);
-=======
         btnRecord = (Button) view.findViewById(R.id.btnRecord);
         btnStop = (Button) view.findViewById(R.id.btnStop);
         btnStop.setEnabled(false);
@@ -94,7 +60,6 @@ public class LearnFragment extends Fragment {
         btnPlay.setEnabled(false);
         textView = (TextView) view.findViewById(R.id.textView);
 
->>>>>>> OmidBranch
 
         btnRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -114,21 +79,12 @@ public class LearnFragment extends Fragment {
         });
 
         btnStop.setOnClickListener(new View.OnClickListener() {
-<<<<<<< HEAD
-           public void onClick(View view) {
-               btnRecord.setEnabled(true);
-               btnStop.setEnabled(false);
-               btnPlay.setEnabled(true);
-               recording = false;
-           }
-=======
             public void onClick(View view) {
                 btnRecord.setEnabled(true);
                 btnStop.setEnabled(false);
                 btnPlay.setEnabled(true);
                 recording = false;
             }
->>>>>>> OmidBranch
         });
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -140,24 +96,12 @@ public class LearnFragment extends Fragment {
             }
         });
 
-<<<<<<< HEAD
-
-        return view;
-    }
-
-    private void StartRecording(){
-
-        File file = new File(getContext().getCacheDir().getAbsolutePath() + File.separator , "Recording.pcm");
-
-        int sampleFreq = 44100;
-=======
         return view;
     }
 
     private void StartRecording() {
 
         file = new File(getContext().getCacheDir().getAbsolutePath() + File.separator, "Recording.pcm");
->>>>>>> OmidBranch
 
         try {
             file.createNewFile();
@@ -167,15 +111,6 @@ public class LearnFragment extends Fragment {
             DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
 
             int minBufferSize = AudioRecord.getMinBufferSize(sampleFreq,
-<<<<<<< HEAD
-                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT);
-
-            short[] audioData = new short[minBufferSize];
-            AudioRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                    sampleFreq,
-                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
-=======
                     AudioFormat.CHANNEL_IN_DEFAULT,
                     AudioFormat.ENCODING_PCM_16BIT);
 
@@ -184,7 +119,6 @@ public class LearnFragment extends Fragment {
             AudioRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     sampleFreq,
                     AudioFormat.CHANNEL_IN_DEFAULT,
->>>>>>> OmidBranch
                     AudioFormat.ENCODING_PCM_16BIT,
                     minBufferSize);
 
@@ -195,17 +129,10 @@ public class LearnFragment extends Fragment {
 
             AudioRecorded.startRecording();
 
-<<<<<<< HEAD
-            while(recording){
-                int numberOfShort = AudioRecorded.read(audioData, 0, minBufferSize);
-                for(int i = 0; i < numberOfShort; i++){
-                    dataOutputStream.writeShort(audioData[i]);
-=======
             while (recording) {
                 int numberOfShort = AudioRecorded.read(audioDataRec, 0, minBufferSize);
                 for (int i = 0; i < numberOfShort; i++) {
                     dataOutputStream.writeShort(audioDataRec[i]);
->>>>>>> OmidBranch
                 }
             }
 
@@ -215,18 +142,6 @@ public class LearnFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
-
-    }
-
-    private void Play() {
-        File file = new File(getContext().getCacheDir().getAbsolutePath() + File.separator , "Recording.pcm");
-
-        int shortSizeInBytes = Short.SIZE/Byte.SIZE;
-
-        int bufferSizeInBytes = (int)(file.length()/shortSizeInBytes);
-        short[] audioData = new short[bufferSizeInBytes];
-=======
     }
 
     private void Play() {
@@ -238,7 +153,6 @@ public class LearnFragment extends Fragment {
         double[] audioDataFFT = new double[bufferSizeInBytes];
         double[] zeros = new double[bufferSizeInBytes];
         double[] magnitudeFFT = new double[bufferSizeInBytes];
->>>>>>> OmidBranch
 
         try {
             InputStream inputStream = new FileInputStream(file);
@@ -246,39 +160,22 @@ public class LearnFragment extends Fragment {
             DataInputStream dataInputStream = new DataInputStream(bufferedInputStream);
 
             int i = 0;
-<<<<<<< HEAD
-            while(dataInputStream.available() > 0){
-                audioData[i] = dataInputStream.readShort();
-=======
             while (dataInputStream.available() > 0) {
                 audioDataRec[i] = dataInputStream.readShort();
->>>>>>> OmidBranch
                 i++;
             }
 
             dataInputStream.close();
 
-<<<<<<< HEAD
-            int sampleFreq = 44100;
-
-            AudioRecordedTrack = new AudioTrack(
-                    AudioManager.STREAM_MUSIC,
-                    sampleFreq,
-                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
-=======
             AudioRecordedTrack = new AudioTrack(
                     AudioManager.STREAM_MUSIC,
                     sampleFreq,
                     AudioFormat.CHANNEL_IN_DEFAULT,
->>>>>>> OmidBranch
                     AudioFormat.ENCODING_PCM_16BIT,
                     bufferSizeInBytes,
                     AudioTrack.MODE_STREAM);
 
             AudioRecordedTrack.play();
-<<<<<<< HEAD
-            AudioRecordedTrack.write(audioData, 0, bufferSizeInBytes);
-=======
             AudioRecordedTrack.write(audioDataRec, 0, bufferSizeInBytes);
 
 
@@ -307,7 +204,6 @@ public class LearnFragment extends Fragment {
             double freq = max_index * 44100 / bufferSizeInBytes;
             textView.setText(Double.toString(freq));
             */
->>>>>>> OmidBranch
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
