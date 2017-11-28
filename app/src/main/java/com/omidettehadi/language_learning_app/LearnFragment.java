@@ -179,6 +179,7 @@ public class LearnFragment extends Fragment {
             AudioRecordedTrack.write(audioDataRec, 0, bufferSizeInBytes);
 
 
+            /*
             for (int j = 0; j < bufferSizeInBytes - 1; j++) {
                 audioDataFFT[j] = 100.0;
                 zeros[j] = 100.0;
@@ -202,6 +203,7 @@ public class LearnFragment extends Fragment {
             }
             double freq = max_index * 44100 / bufferSizeInBytes;
             textView.setText(Double.toString(freq));
+            */
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

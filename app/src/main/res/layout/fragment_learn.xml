@@ -12,7 +12,7 @@
         android:layout_alignStart="@+id/btnRecord"
         android:layout_below="@+id/btnRecord"
         android:layout_marginTop="42dp"
-        android:text="Play" />
+        android:text="@string/play" />
 
     <Button
         android:id="@+id/btnStop"
@@ -21,7 +21,7 @@
         android:layout_alignBaseline="@+id/btnRecord"
         android:layout_alignBottom="@+id/btnRecord"
         android:layout_centerHorizontal="true"
-        android:text="Stop Recording" />
+        android:text="@string/stop_recording" />
 
     <Button
         android:id="@+id/btnRecord"
@@ -33,7 +33,7 @@
         android:layout_marginLeft="27dp"
         android:layout_marginStart="27dp"
         android:layout_marginTop="92dp"
-        android:text="Record" />
+        android:text="@string/record" />
 
     <TextView
         android:id="@+id/textView"

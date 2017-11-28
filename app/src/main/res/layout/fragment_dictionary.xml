@@ -5,26 +5,10 @@
     tools:context="com.omidettehadi.language_learning_app.DictionaryFragment"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text="This is where the dictionary is going to be." />
-
     <EditText
         android:id="@+id/etInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tvResult"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
         android:layout_marginBottom="19dp"
         android:ems="10"
         android:inputType="textPersonName"
@@ -34,28 +18,26 @@
         android:id="@+id/btnSearch"
         android:layout_width="277dp"
         android:layout_height="34dp"
-        android:layout_above="@+id/etInput"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="70dp"
         android:layout_marginRight="70dp"
         android:elevation="0dp"
-        android:text="Search" />
+        android:text="@string/search" tools:targetApi="lollipop" />
 
     <Button
         android:id="@+id/btnVoice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:drawable/ic_lock_silent_mode_off"
-        android:backgroundTint="@color/black" />
+        android:backgroundTint="@color/black"
+        tools:targetApi="lollipop" />
 
     <Button
         android:id="@+id/btnSpeakNow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:drawable/ic_btn_speak_now"
-        android:backgroundTint="@color/black" />
+        android:backgroundTint="@color/black" tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/tvSpeakNow"
@@ -66,9 +48,6 @@
         android:id="@+id/tvResult"
         android:layout_width="match_parent"
         android:layout_height="287dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginBottom="125dp" />
 
 </LinearLayout>

@@ -32,5 +32,12 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We require your Email to sent you password reset instructions.</string>
+    <string name="search">Search</string>
+    <string name="play">Play</string>
+    <string name="stop_recording">Stop Recording</string>
+    <string name="record">Record</string>
+    <string name="android_studio">Android Studio</string>
+    <string name="android_studio_android_com">android.studio@android.com</string>
+    <string name="todo">TODO</string>
 
 </resources>
