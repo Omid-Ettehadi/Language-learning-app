@@ -50,25 +50,6 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case RequestCameraPermissionID: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    try {
-                        cameraSource.start(cameraView.getHolder());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            break;
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -83,18 +64,32 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         cameraView = (SurfaceView) view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
 
-        btnCapture.setOnClickListener(new View.OnClickListener() {
+        // See if Search Button is pressed
+        // Run Search for the word in the input EditText
+        btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etInput.setVisibility(View.VISIBLE);
-                btnSearch.setVisibility(View.VISIBLE);
-                btnMic.setVisibility(View.VISIBLE);
-                btnCapture.setVisibility(View.INVISIBLE);
-                btnCam.setVisibility(View.VISIBLE);
-                cameraView.setVisibility(View.INVISIBLE);
+                word = etInput.getText().toString();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main, new WordProfileFragment()).commit();
             }
         });
 
+        // See if Listen Button is pressed
+        // Run Speech Recognition
+        btnMic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Pronounce the word
+                if (!IsListening)
+                {
+                    speechrecognizer.startListening(speechrecognizerIntent);
+                }
+            }
+        });
+
+        // See if Camera Button is pressed
+        // Run Camera
         btnCam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,10 +102,26 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             }
         });
 
+        // See if Capture Button is pressed
+        // Run Text Recognition from Camera
+        btnCapture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etInput.setVisibility(View.VISIBLE);
+                btnSearch.setVisibility(View.VISIBLE);
+                btnMic.setVisibility(View.VISIBLE);
+                btnCapture.setVisibility(View.INVISIBLE);
+                btnCam.setVisibility(View.VISIBLE);
+                cameraView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // Code for the Camera
         TextRecognizer textRecognizer = new TextRecognizer.Builder(getActivity().getApplicationContext()).build();
         if (!textRecognizer.isOperational()) {
 
-        } else {
+        }
+        else {
             cameraSource = new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setRequestedPreviewSize(1280, 1024)
@@ -175,6 +186,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             });
         }
 
+        // Code for Voice Recorder
         speechrecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
         speechrecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -183,30 +195,26 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         SpeechRecognitionListener listener = new SpeechRecognitionListener();
         speechrecognizer.setRecognitionListener(listener);
 
-        // See if Search Button is pressed
-        // Run Search for the word in the input EditText
-        btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                word = etInput.getText().toString();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.main, new WordProfileFragment()).commit();
-            }
-        });
+        return view;
+    }
 
-        // See if Listen Button is pressed
-        // Run Speech Recognition
-        btnMic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Pronounce the word
-                if (!IsListening)
-                {
-                    speechrecognizer.startListening(speechrecognizerIntent);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case RequestCameraPermissionID: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    try {
+                        cameraSource.start(cameraView.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        });
-        return view;
+            break;
+        }
     }
 
     public boolean getPackageName() {

@@ -1,7 +1,5 @@
 package com.omidettehadi.language_learning_app;
 
-
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,9 +27,6 @@ import javax.net.ssl.HttpsURLConnection;
 import static com.omidettehadi.language_learning_app.DictionaryFragment.word;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class WordProfileFragment extends Fragment implements TextToSpeech.OnInitListener {
 
     Button btnBack, btnSpeak;
@@ -43,10 +38,10 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_word_profile, container, false);
 
@@ -56,6 +51,9 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
         tvProfile = (TextView) view.findViewById(R.id.tvProfile);
 
         tts = new TextToSpeech(getActivity(),WordProfileFragment.this);
+
+        tvWord.setText(word);
+        new CallbackTask().execute(dictionaryEntries());
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -71,9 +69,6 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
             }
         });
 
-        tvWord.setText(word);
-        new CallbackTask().execute(dictionaryEntries());
-
         return view;
     }
 
@@ -84,39 +79,33 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
     @Override
     public void onInit(int i) {
         if (i == TextToSpeech.SUCCESS) {
-
             int result = tts.setLanguage(Locale.US);
-
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
-            } else {
-                btnSpeak.setEnabled(true);
-                speakOut();
             }
-
-        } else {
+            else {
+                btnSpeak.setEnabled(true);
+            }
+        }
+        else {
             Log.e("TTS", "Initilization Failed!");
         }
-
     }
 
-
     private String dictionaryEntries() {
-
         final String language = "en";
         final String word_id = word.toLowerCase(); //word id is case sensitive and lowercase is required
         return "https://od-api.oxforddictionaries.com:443/api/v1/entries/" + language + "/" + word_id;
     }
 
-    //in android calling network requests on the main thread forbidden by default
-    //create class to do async job
+    // In android calling network requests on the main thread forbidden by default
+    // Create class to do async job
     private class CallbackTask extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... params) {
 
-            //TODO: replace with your own app id and app key
             final String app_id = "091e7ddf";
             final String app_key = "af40991963d253e055aaa9cd04a3731d";
             try {
@@ -186,10 +175,7 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
             catch (JSONException e) {
                 e.printStackTrace();
             }
-
             tvProfile.setText(definition);
-
         }
     }
-
 }

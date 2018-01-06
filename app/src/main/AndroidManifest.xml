@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SigninActivity">
+        <activity
+            android:name=".SigninActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -23,13 +25,21 @@
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ResetPasswordActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SignupActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="ocr"/>
+
     </application>
 
 </manifest>
