@@ -1,53 +1,72 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.omidettehadi.language_learning_app.DictionaryFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.omidettehadi.language_learning_app.DictionaryFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:background="@color/colorPrimaryDark">
+
+    </android.support.constraint.ConstraintLayout>
 
     <EditText
         android:id="@+id/etInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="19dp"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/btn_login_bg"
         android:ems="10"
         android:inputType="textPersonName"
+        android:text=" "
+        app:layout_constraintEnd_toStartOf="@+id/btnSearch"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/btnSearch"
-        android:layout_width="277dp"
-        android:layout_height="34dp"
-        android:layout_marginBottom="32dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginRight="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:drawable/ic_menu_search"
         android:elevation="0dp"
-        android:text="@string/search" tools:targetApi="lollipop" />
-
-    <Button
-        android:id="@+id/btnVoice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/ic_lock_silent_mode_off"
-        android:backgroundTint="@color/black"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="parent"
         tools:targetApi="lollipop" />
 
     <Button
         android:id="@+id/btnSpeakNow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="72dp"
         android:background="@android:drawable/ic_btn_speak_now"
-        android:backgroundTint="@color/black" tools:targetApi="lollipop" />
+        android:backgroundTint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/tvSpeakNow"
-        android:layout_width="match_parent"
-        android:layout_height="36dp" />
+        android:layout_width="201dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSpeakNow" />
 
-    <TextView
-        android:id="@+id/tvResult"
-        android:layout_width="match_parent"
-        android:layout_height="287dp"
-        android:layout_marginBottom="125dp" />
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
