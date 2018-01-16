@@ -21,11 +21,35 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Arrays;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.omidettehadi.language_learning_app.DictionaryFragment.word;
-
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_freq;
 
 public class WordProfileFragment extends Fragment implements TextToSpeech.OnInitListener {
 
@@ -33,6 +57,9 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
     TextView tvWord, tvProfile;
 
     TextToSpeech tts;
+
+    String IPAString = "";
+    String IPAFREQRESULT = "";
 
     public WordProfileFragment() {
         // Required empty public constructor
@@ -155,9 +182,11 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
                         JSONArray three = entries.getJSONArray("entries");
                         JSONArray IPA = pronunciations.getJSONArray("pronunciations");
 
+                        IPAString = IPA.toString().substring(IPA.toString().lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
+
                         number += 1 ;
                         definition += System.lineSeparator();
-                        definition += number + ") " + IPA.toString().substring(IPA.toString().lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
+                        definition += number + ") " + IPAString;
 
                         for(int k = 0 ; k < three.length() ; k++){
                             JSONObject senses = three.getJSONObject(k);
@@ -175,6 +204,73 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
             catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            for(int i = 0 ; i < IPAString.length() ; i++){
+                if(IPAString.charAt(i) == vowel_1_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_1_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_2_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_2_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_3_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_3_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_4_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_4_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_5_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_5_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_6_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_6_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_7_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_7_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_8_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_8_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_9_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_9_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_10_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_10_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_11_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_11_freq);
+                }
+                else if(IPAString.charAt(i) == vowel_12_character[0].charAt(0)){
+                    IPAFREQRESULT += System.lineSeparator();
+                    IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
+                    IPAFREQRESULT += Arrays.toString(vowel_12_freq);
+                }
+                else{
+                    IPAFREQRESULT += "";
+                }
+            }
+            definition += IPAFREQRESULT;
             tvProfile.setText(definition);
         }
     }
