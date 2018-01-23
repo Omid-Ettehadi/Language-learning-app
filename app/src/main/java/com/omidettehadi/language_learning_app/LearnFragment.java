@@ -159,10 +159,13 @@ public class LearnFragment extends Fragment {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             DataInputStream dataInputStream = new DataInputStream(bufferedInputStream);
 
-            int i = 0;
+/*            int i = 0;
             while (dataInputStream.available() > 0) {
                 audioDataRec[i] = dataInputStream.readShort();
                 i++;
+            }*/
+            while(dataInputStream.available() > 0) {
+                SampleFFT(dataInputStream);
             }
 
             dataInputStream.close();
@@ -210,5 +213,54 @@ public class LearnFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //should read 1024 samples at a time?
+    private double SampleFFT(DataInputStream dataInputStream){
+        try {
+            double[] dataRec = new double[1024];
+            double[] zeros = new double[1024];
+            double[] powerSpectrum = new double[512];
+            double max = 0.0;
+            int maxIndex = 0;
+            double maxFreq = 0.0;
+            int i = 0;
+            while (i < 1024) {
+                if (dataInputStream.available() > 0) {
+                    dataRec[i] = (double)dataInputStream.readShort();
+                } else {
+                    dataRec[i] = (short) 0;
+                }
+                zeros[i] = 0;
+                i++;
+            }
+
+            AudioRecordedFFT = new FFT(1024);
+            AudioRecordedFFT.fft(dataRec, zeros);
+
+            for(i = 0; i < 512; i++) {
+                powerSpectrum[i] = (dataRec[512+i] * dataRec[512+i]) + (zeros[512+i] * zeros[512+i]);
+                if(powerSpectrum[i] > max) {
+                    max = powerSpectrum[i];
+                    maxIndex = i;
+                }
+            }
+            maxFreq = (maxIndex * sampleFreq)/2;
+
+            return maxFreq;
+
+
+
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return 0.0;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+
     }
 }
