@@ -22,5 +22,7 @@
     <color name="btn_logut_bg">#ff6861</color>
 
     <color name="lbl_name">#333333</color>
+    <color name="LighterPrimaryDark">#294a61</color>
+    <color name="ALittleDarkerPrimary">#072c46</color>
 
 </resources>

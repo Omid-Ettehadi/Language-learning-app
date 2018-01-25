@@ -32,9 +32,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reset_password);
 
         // Definition
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        inputEmail = (EditText) findViewById(R.id.etEmail);
-        btnResetPassword = (Button) findViewById(R.id.btnResetPassword);
+        progressBar = findViewById(R.id.progressBar);
+        inputEmail = findViewById(R.id.etEmail);
+        btnResetPassword = findViewById(R.id.btnResetPassword);
 
         // Action when Reset Password button is pressed.
         // Send an email with details on how to reset their password.

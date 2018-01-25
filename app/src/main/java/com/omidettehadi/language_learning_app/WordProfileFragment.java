@@ -72,10 +72,10 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_word_profile, container, false);
 
-        btnBack = (Button) view.findViewById(R.id.btnBack);
-        btnSpeak = (Button) view.findViewById(R.id.btnSpeak);
-        tvWord = (TextView) view.findViewById(R.id.tvWord);
-        tvProfile = (TextView) view.findViewById(R.id.tvProfile);
+        btnBack = view.findViewById(R.id.btnBack);
+        btnSpeak = view.findViewById(R.id.btnSpeak);
+        tvWord = view.findViewById(R.id.tvWord);
+        tvProfile = view.findViewById(R.id.tvProfile);
 
         tts = new TextToSpeech(getActivity(),WordProfileFragment.this);
 
@@ -128,7 +128,7 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
 
     // In android calling network requests on the main thread forbidden by default
     // Create class to do async job
-    private class CallbackTask extends AsyncTask<String, Integer, String> {
+    class CallbackTask extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... params) {

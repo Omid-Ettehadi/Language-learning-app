@@ -2,8 +2,10 @@ package com.omidettehadi.language_learning_app;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -28,13 +30,25 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitListener {
 
     private EditText etInput;
     private Button btnSearch, btnMic, btnCapture, btnCam;
+    private TextView tvWordoftheDay, tvWordoftheDayAns;
     private SpeechRecognizer speechrecognizer;
     private Intent speechrecognizerIntent;
     private boolean IsListening, packageName;
@@ -43,7 +57,14 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
     private CameraSource cameraSource;
     private final int RequestCameraPermissionID = 1001;
 
-    public static String word;
+    private Random RandomGen;
+    private String[] catalogue = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p",
+    "q","r","s","t","u","v","w","x","y","z"};
+
+    private Handler mHandler;
+    private final static int Interval = 1000 * 60;
+
+    public static String word, wordoftheday, wordbeg, wordend;
 
     public DictionaryFragment() {
         // Required empty public constructor
@@ -56,13 +77,33 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dictionary, container, false);
 
-        etInput = (EditText) view.findViewById(R.id.etInput);
-        btnSearch = (Button) view.findViewById(R.id.btnSearch);
-        btnMic = (Button) view.findViewById(R.id.btnMic);
-        btnCapture = (Button) view.findViewById(R.id.btnCapture);
-        btnCam = (Button) view.findViewById(R.id.btnCam);
-        cameraView = (SurfaceView) view.findViewById(R.id.surface_view);
+        etInput = view.findViewById(R.id.etInput);
+        tvWordoftheDay = view.findViewById(R.id.tvWordoftheDay);
+        tvWordoftheDayAns = view.findViewById(R.id.tvWordoftheDayAns);
+        btnSearch = view.findViewById(R.id.btnSearch);
+        btnMic = view.findViewById(R.id.btnMic);
+        btnCam = view.findViewById(R.id.btnCam);
+        btnCapture = view.findViewById(R.id.btnCapture);
+        btnCapture.setVisibility(View.INVISIBLE);
+        cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
+
+        mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RandomGen = new Random();
+                int index = RandomGen.nextInt(catalogue.length);
+                wordbeg = catalogue[index];
+                index = RandomGen.nextInt(catalogue.length);
+                wordend= catalogue[index];
+                new DictionaryFragment.CallbackTask().execute(dictionaryEntries());
+                tvWordoftheDayAns.setText(wordoftheday);
+                mHandler.postDelayed(this,Interval);
+            }
+        }, Interval);
+
+        new DictionaryFragment.CallbackTask().execute(dictionaryEntries());
 
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
@@ -99,6 +140,8 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 btnCapture.setVisibility(View.VISIBLE);
                 btnCam.setVisibility(View.INVISIBLE);
                 cameraView.setVisibility(View.VISIBLE);
+                tvWordoftheDay.setVisibility(View.INVISIBLE);
+                tvWordoftheDayAns.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -178,7 +221,8 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                                     stringBuilder.append(item.getValue());
                                     stringBuilder.append("\n");
                                 }
-                                etInput.setText(stringBuilder.toString());
+                                String out [] = stringBuilder.toString().split(" ");
+                                etInput.setText(out[0]);
                             }
                         });
                     }
@@ -195,7 +239,59 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         SpeechRecognitionListener listener = new SpeechRecognitionListener();
         speechrecognizer.setRecognitionListener(listener);
 
+
         return view;
+    }
+
+    private String dictionaryEntries() {
+        return "http://api.datamuse.com/words?sp=" + wordbeg + "*" + wordend;
+    }
+
+    class CallbackTask extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String line = null;
+            StringBuilder stringBuilder = null;
+            URL url = null;
+            URLConnection urlConnection;
+
+            try {
+                url = new URL(strings[0]);
+                urlConnection = url.openConnection();
+
+                // read the output from the server
+                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+                stringBuilder = new StringBuilder();
+
+                while ((line = reader.readLine()) != null)
+                    stringBuilder.append(line);
+
+                reader.close();
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return stringBuilder != null ? stringBuilder.toString() : null;
+        }
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            try {
+                JSONArray resultsarray = new JSONArray(result);
+                Random r = new Random();
+                int randomnumber = r.nextInt(resultsarray.length()+1)+0;
+                //for (int i = 0; i < resultsarray.length(); i++) {
+                    HashMap<String, String> map = new HashMap<String,String>();
+                    JSONObject e = resultsarray.getJSONObject(randomnumber);
+                    wordoftheday = e.getString("word");
+                //}
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -229,17 +325,13 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         }
 
         @Override
-        public void onBufferReceived(byte[] buffer)
-        {
-
+        public void onBufferReceived(byte[] buffer) {
         }
 
         @Override
-        public void onEndOfSpeech()
-        {
+        public void onEndOfSpeech(){
             Toast.makeText(getActivity(), "Done!", Toast.LENGTH_SHORT).show();
             IsListening = false;
-
         }
 
         @Override
@@ -249,21 +341,15 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         }
 
         @Override
-        public void onEvent(int eventType, Bundle params)
-        {
-
+        public void onEvent(int eventType, Bundle params){
         }
 
         @Override
-        public void onPartialResults(Bundle partialResults)
-        {
-
+        public void onPartialResults(Bundle partialResults){
         }
 
         @Override
-        public void onReadyForSpeech(Bundle params)
-        {
-
+        public void onReadyForSpeech(Bundle params){
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -294,8 +380,8 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
 
     @Override
     public void onInit(int status) {
-
     }
+
     @Override
     public void onDestroy() {
         if (speechrecognizer != null)

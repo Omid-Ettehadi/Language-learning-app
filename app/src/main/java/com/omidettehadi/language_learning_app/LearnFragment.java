@@ -53,12 +53,12 @@ public class LearnFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_learn, container, false);
 
-        btnRecord = (Button) view.findViewById(R.id.btnRecord);
-        btnStop = (Button) view.findViewById(R.id.btnStop);
+        btnRecord = view.findViewById(R.id.btnRecord);
+        btnStop = view.findViewById(R.id.btnStop);
         btnStop.setEnabled(false);
-        btnPlay = (Button) view.findViewById(R.id.btnPlay);
+        btnPlay = view.findViewById(R.id.btnPlay);
         btnPlay.setEnabled(false);
-        textView = (TextView) view.findViewById(R.id.textView);
+        textView = view.findViewById(R.id.textView);
 
 
         btnRecord.setOnClickListener(new View.OnClickListener() {

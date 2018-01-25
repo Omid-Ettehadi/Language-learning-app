@@ -49,12 +49,12 @@ public class SigninActivity extends AppCompatActivity {
         int MY_PERMISSIONS_INTERNET = 0;
         int MY_PERMISSIONS_RECORD__AUDIO = 0;
         int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        inputEmail = (EditText) findViewById(R.id.etEmail);
-        inputPassword = (EditText) findViewById(R.id.etPassword);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnReset = (Button) findViewById(R.id.btnResetPassword);
-        btnSignup = (Button) findViewById(R.id.btnSignup);
+        progressBar = findViewById(R.id.progressBar);
+        inputEmail = findViewById(R.id.etEmail);
+        inputPassword = findViewById(R.id.etPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnReset = findViewById(R.id.btnResetPassword);
+        btnSignup = findViewById(R.id.btnSignup);
 
 
         // See if all permissions have been granted.

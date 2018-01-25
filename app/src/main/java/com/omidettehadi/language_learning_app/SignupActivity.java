@@ -33,12 +33,12 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         // Definition
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        inputEmail = (EditText) findViewById(R.id.etEmail);
-        inputPassword = (EditText) findViewById(R.id.etPassword);
-        btnSignup = (Button) findViewById(R.id.btnRegister);
-        btnResetPassword = (Button) findViewById(R.id.btnResetPassword);
-        btnSignin = (Button) findViewById(R.id.btnSignin);
+        progressBar = findViewById(R.id.progressBar);
+        inputEmail = findViewById(R.id.etEmail);
+        inputPassword = findViewById(R.id.etPassword);
+        btnSignup = findViewById(R.id.btnRegister);
+        btnResetPassword = findViewById(R.id.btnResetPassword);
+        btnSignin = findViewById(R.id.btnSignin);
 
         // Action when Register button is pressed.
         // Create an account in the database.

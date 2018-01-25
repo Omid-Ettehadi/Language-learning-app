@@ -40,5 +40,6 @@
     <string name="android_studio_android_com">android.studio@android.com</string>
     <string name="todo">TODO</string>
     <string name="capture">Capture</string>
+    <string name="word_of_the_day">Word of the Day</string>
 
 </resources>
