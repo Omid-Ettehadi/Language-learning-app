@@ -58,11 +58,14 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
     private final int RequestCameraPermissionID = 1001;
 
     private Random RandomGen;
-    private String[] catalogue = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p",
-    "q","r","s","t","u","v","w","x","y","z"};
+    private String[] catalogue = {"a","b","c","d","e","f","g",
+            "h","i","j","k","l","m","n","o","p",
+            "q","r","s","t","u","v","w","x","y","z"};
 
     private Handler mHandler;
-    private final static int Interval = 1000 * 60;
+    private final static int Interval = 1000 * 60 ;
+    private int wordofthedayscore;
+    private boolean printstatus;
 
     public static String word, wordoftheday, wordbeg, wordend;
 
@@ -96,14 +99,12 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 int index = RandomGen.nextInt(catalogue.length);
                 wordbeg = catalogue[index];
                 index = RandomGen.nextInt(catalogue.length);
-                wordend= catalogue[index];
-                new DictionaryFragment.CallbackTask().execute(dictionaryEntries());
-                tvWordoftheDayAns.setText(wordoftheday);
+                wordend = catalogue[index];
+                new DictionaryFragment.CallbackTask().execute(randomwordgeneratorEntries());
+                //tvWordoftheDayAns.setText(wordoftheday);
                 mHandler.postDelayed(this,Interval);
             }
         }, Interval);
-
-        new DictionaryFragment.CallbackTask().execute(dictionaryEntries());
 
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
@@ -122,8 +123,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             @Override
             public void onClick(View v) {
                 // Pronounce the word
-                if (!IsListening)
-                {
+                if (!IsListening) {
                     speechrecognizer.startListening(speechrecognizerIntent);
                 }
             }
@@ -243,7 +243,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         return view;
     }
 
-    private String dictionaryEntries() {
+    private String randomwordgeneratorEntries() {
         return "http://api.datamuse.com/words?sp=" + wordbeg + "*" + wordend;
     }
 
@@ -281,12 +281,21 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             try {
                 JSONArray resultsarray = new JSONArray(result);
                 Random r = new Random();
-                int randomnumber = r.nextInt(resultsarray.length()+1)+0;
-                //for (int i = 0; i < resultsarray.length(); i++) {
+                wordofthedayscore = 1;
+                int i = 0;
+                while(i < 50){
+                    int randomnumber = r.nextInt(resultsarray.length()+1);
                     HashMap<String, String> map = new HashMap<String,String>();
                     JSONObject e = resultsarray.getJSONObject(randomnumber);
                     wordoftheday = e.getString("word");
-                //}
+                    //wordoftheday += " " + e.getString("score");
+                    String score = e.getString("score");
+                    wordofthedayscore = Integer.parseInt(score);
+                    if(wordofthedayscore>600){
+                        tvWordoftheDayAns.setText(wordoftheday);
+                        break;
+                    }
+                }
             }
             catch (JSONException e) {
                 e.printStackTrace();
@@ -373,8 +382,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         }
 
         @Override
-        public void onRmsChanged(float rmsdB)
-        {
+        public void onRmsChanged(float rmsdB){
         }
     }
 
@@ -384,8 +392,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
 
     @Override
     public void onDestroy() {
-        if (speechrecognizer != null)
-        {
+        if (speechrecognizer != null){
             speechrecognizer.destroy();
         }
         super.onDestroy();
