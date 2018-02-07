@@ -1,9 +1,13 @@
 package com.omidettehadi.language_learning_app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,10 +18,25 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.Manifest;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Random;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -26,6 +45,15 @@ public class SigninActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private String [] permissions = {"android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+    public static String email;
+
+    private Random RandomGen;
+    private String[] catalogue = {"a","b","c","d","e","f","g",
+            "h","i","j","k","l","m","n","o","p",
+            "q","r","s","t","u","v","w","x","y","z"};
+    public static String word, wordoftheday, wordbeg, wordend;
+    private int wordofthedayscore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,13 +109,39 @@ public class SigninActivity extends AppCompatActivity {
                     MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
         }
 
+        RandomGen = new Random();
+        int index = RandomGen.nextInt(catalogue.length);
+        wordbeg = catalogue[index];
+        index = RandomGen.nextInt(catalogue.length);
+        wordend = catalogue[index];
+        new SigninActivity.CallbackTask().execute(randomwordgeneratorEntries());
+
+
+        Calendar calendar = Calendar.getInstance();
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        SharedPreferences settings = this.getSharedPreferences ("PREFS",0);
+        int lastDay = settings.getInt("day",0);
+
+        if(lastDay != currentDay){
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putInt("day",currentDay);
+            editor.commit();
+
+            RandomGen = new Random();
+            index = RandomGen.nextInt(catalogue.length);
+            wordbeg = catalogue[index];
+            index = RandomGen.nextInt(catalogue.length);
+            wordend = catalogue[index];
+            new SigninActivity.CallbackTask().execute(randomwordgeneratorEntries());
+        }
+
         // Action when Login button is pressed.
         // Check login info with database.
         // Go to Navigation Activity if successful
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = inputEmail.getText().toString();
+                email = inputEmail.getText().toString();
                 final String password = inputPassword.getText().toString();
 
                 // Check if email address is entered.
@@ -129,6 +183,7 @@ public class SigninActivity extends AppCompatActivity {
                                     }
                                 }
                                 else {
+
                                     Intent go_to_MainActivity = new Intent(SigninActivity.this,
                                             MainActivity.class);
                                     startActivity(go_to_MainActivity);
@@ -138,6 +193,8 @@ public class SigninActivity extends AppCompatActivity {
                         });
             }
         });
+
+
 
         // Action when Password Reset button is pressed.
         // Go to Reset Password Activity.
@@ -160,5 +217,64 @@ public class SigninActivity extends AppCompatActivity {
                 startActivity(go_to_SignupActivity);
             }
         });
+    }
+    private String randomwordgeneratorEntries() {
+        return "http://api.datamuse.com/words?sp=" + wordbeg + "*" + wordend;
+    }
+
+    class CallbackTask extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String line = null;
+            StringBuilder stringBuilder = null;
+            URL url = null;
+            URLConnection urlConnection;
+
+            try {
+                url = new URL(strings[0]);
+                urlConnection = url.openConnection();
+
+                // read the output from the server
+                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+                stringBuilder = new StringBuilder();
+
+                while ((line = reader.readLine()) != null)
+                    stringBuilder.append(line);
+
+                reader.close();
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return stringBuilder != null ? stringBuilder.toString() : null;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            try {
+                JSONArray resultsarray = new JSONArray(result);
+                Random r = new Random();
+                wordofthedayscore = 1;
+                int i = 0;
+                while (i < 50) {
+                    int randomnumber = r.nextInt(resultsarray.length() + 1);
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    JSONObject e = resultsarray.getJSONObject(randomnumber);
+                    wordoftheday = e.getString("word");
+                    //wordoftheday += " " + e.getString("score");
+                    String score = e.getString("score");
+                    wordofthedayscore = Integer.parseInt(score);
+                    if (wordofthedayscore > 1000) {
+                        //tvWordoftheDayAns.setText(wordoftheday);
+                        break;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

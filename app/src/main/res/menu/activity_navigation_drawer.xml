@@ -12,6 +12,16 @@
                     android:id="@+id/learn"
                     android:icon="@drawable/ic_menu_learn"
                     android:title="Learn" />
+
+            </menu>
+        </item>
+
+        <item android:title="Features">
+            <menu>
+                <item
+                    android:id="@+id/wordoftheday"
+                    android:icon="@drawable/ic_menu_learn"
+                    android:title="Word of the Day" />
             </menu>
         </item>
     </group>

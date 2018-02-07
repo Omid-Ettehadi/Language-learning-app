@@ -1,6 +1,8 @@
 package com.omidettehadi.language_learning_app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -40,9 +43,14 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
+
+import static com.omidettehadi.language_learning_app.SigninActivity.word;
+import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
 
 public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitListener {
 
@@ -56,18 +64,6 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
     private SurfaceView cameraView;
     private CameraSource cameraSource;
     private final int RequestCameraPermissionID = 1001;
-
-    private Random RandomGen;
-    private String[] catalogue = {"a","b","c","d","e","f","g",
-            "h","i","j","k","l","m","n","o","p",
-            "q","r","s","t","u","v","w","x","y","z"};
-
-    private Handler mHandler;
-    private final static int Interval = 1000 * 60 ;
-    private int wordofthedayscore;
-    private boolean printstatus;
-
-    public static String word, wordoftheday, wordbeg, wordend;
 
     public DictionaryFragment() {
         // Required empty public constructor
@@ -83,6 +79,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         etInput = view.findViewById(R.id.etInput);
         tvWordoftheDay = view.findViewById(R.id.tvWordoftheDay);
         tvWordoftheDayAns = view.findViewById(R.id.tvWordoftheDayAns);
+        tvWordoftheDayAns.setText(wordoftheday);
         btnSearch = view.findViewById(R.id.btnSearch);
         btnMic = view.findViewById(R.id.btnMic);
         btnCam = view.findViewById(R.id.btnCam);
@@ -91,20 +88,13 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
 
-        mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                RandomGen = new Random();
-                int index = RandomGen.nextInt(catalogue.length);
-                wordbeg = catalogue[index];
-                index = RandomGen.nextInt(catalogue.length);
-                wordend = catalogue[index];
-                new DictionaryFragment.CallbackTask().execute(randomwordgeneratorEntries());
-                //tvWordoftheDayAns.setText(wordoftheday);
-                mHandler.postDelayed(this,Interval);
+                tvWordoftheDayAns.setText(wordoftheday);
             }
-        }, Interval);
+        }, 500);
 
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
@@ -126,6 +116,17 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 if (!IsListening) {
                     speechrecognizer.startListening(speechrecognizerIntent);
                 }
+            }
+        });
+
+        tvWordoftheDayAns.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // the wordoftheday action
+                WordoftheDayFragment fragment = new WordoftheDayFragment();
+                FragmentTransaction fragmenttransaction = getFragmentManager().beginTransaction();
+                fragmenttransaction.replace(R.id.main,fragment,"Word of The Day");
+                fragmenttransaction.commit();
             }
         });
 
@@ -243,65 +244,6 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         return view;
     }
 
-    private String randomwordgeneratorEntries() {
-        return "http://api.datamuse.com/words?sp=" + wordbeg + "*" + wordend;
-    }
-
-    class CallbackTask extends AsyncTask<String, Integer, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            String line = null;
-            StringBuilder stringBuilder = null;
-            URL url = null;
-            URLConnection urlConnection;
-
-            try {
-                url = new URL(strings[0]);
-                urlConnection = url.openConnection();
-
-                // read the output from the server
-                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-                stringBuilder = new StringBuilder();
-
-                while ((line = reader.readLine()) != null)
-                    stringBuilder.append(line);
-
-                reader.close();
-            } catch (MalformedURLException e) {
-                //e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return stringBuilder != null ? stringBuilder.toString() : null;
-        }
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            try {
-                JSONArray resultsarray = new JSONArray(result);
-                Random r = new Random();
-                wordofthedayscore = 1;
-                int i = 0;
-                while(i < 50){
-                    int randomnumber = r.nextInt(resultsarray.length()+1);
-                    HashMap<String, String> map = new HashMap<String,String>();
-                    JSONObject e = resultsarray.getJSONObject(randomnumber);
-                    wordoftheday = e.getString("word");
-                    //wordoftheday += " " + e.getString("score");
-                    String score = e.getString("score");
-                    wordofthedayscore = Integer.parseInt(score);
-                    if(wordofthedayscore>600){
-                        tvWordoftheDayAns.setText(wordoftheday);
-                        break;
-                    }
-                }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

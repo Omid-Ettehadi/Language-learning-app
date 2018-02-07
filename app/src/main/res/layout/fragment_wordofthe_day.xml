@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.omidettehadi.language_learning_app.WordProfileFragment">
+    tools:context="com.omidettehadi.language_learning_app.WordoftheDayFragment">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/TopLayer"
@@ -89,7 +89,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.19" />
+            app:layout_constraintVertical_bias="0.19999999" />
 
     </android.support.constraint.ConstraintLayout>
 
