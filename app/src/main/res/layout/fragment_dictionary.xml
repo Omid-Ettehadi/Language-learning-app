@@ -33,6 +33,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <SurfaceView
+                android:id="@+id/surface_view"
+                android:layout_width="400dp"
+                android:layout_height="250dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+                app:layout_constraintVertical_bias="1.0" />
+
             <Button
                 android:id="@+id/btnSearch"
                 android:layout_width="50dp"
@@ -145,7 +156,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" android:focusable="true" tools:targetApi="o" />
 
         <TextView
             android:id="@+id/tvWordoftheDay"
@@ -164,17 +175,6 @@
             app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
-
-    <SurfaceView
-        android:id="@+id/surface_view"
-        android:layout_width="0dp"
-        android:layout_height="250dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
-        app:layout_constraintVertical_bias="0.0" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/BottomLayer"

@@ -12,15 +12,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import static com.omidettehadi.language_learning_app.SigninActivity.email;
+import static com.omidettehadi.language_learning_app.SigninActivity.historystatus;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
+
+    private TextView tvEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,14 @@ public class NavigationActivity extends AppCompatActivity
                 }
             }
         };
+
+        NavigationView navigationview = findViewById(R.id.nav_view);
+        View headerview = navigationview.getHeaderView(0);
+        tvEmail = headerview.findViewById(R.id.tvEmail);
+        //if (email.isEmpty()){
+            email = user.getEmail();
+        //}
+        tvEmail.setText(email);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -96,6 +111,15 @@ public class NavigationActivity extends AppCompatActivity
         if (id == R.id.action_signout) {
             auth.signOut();
             finish();
+            return true;
+        }
+        if (id == R.id.action_clearhistory) {
+            historystatus = true;
+            setTitle("Dictionary");
+            DictionaryFragment fragment = new DictionaryFragment();
+            FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
+            fragmenttransaction.replace(R.id.main,fragment,"Dictionary");
+            fragmenttransaction.commit();
             return true;
         }
 

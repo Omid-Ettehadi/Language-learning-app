@@ -5,4 +5,7 @@
         android:id="@+id/action_signout"
         android:orderInCategory="101"
         android:title="@string/action_signout" />
+    <item
+        android:id="@+id/action_clearhistory"
+        android:title="Clear History" />
 </menu>

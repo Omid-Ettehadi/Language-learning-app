@@ -56,7 +56,7 @@ public class SigninActivity extends AppCompatActivity {
     public int wordofthedayscore;
 
     public static String[] WordHistory = new String[]{};
-
+    public static boolean historystatus = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

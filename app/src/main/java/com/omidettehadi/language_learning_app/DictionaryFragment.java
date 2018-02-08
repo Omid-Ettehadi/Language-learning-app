@@ -55,6 +55,7 @@ import java.util.Random;
 import static com.omidettehadi.language_learning_app.SigninActivity.word;
 import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
 import static com.omidettehadi.language_learning_app.SigninActivity.WordHistory;
+import static com.omidettehadi.language_learning_app.SigninActivity.historystatus;
 
 public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitListener {
 
@@ -81,7 +82,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_dictionary, container, false);
+        final View view = inflater.inflate(R.layout.fragment_dictionary, container, false);
 
         etInput = view.findViewById(R.id.etInput);
         tvWordoftheDay = view.findViewById(R.id.tvWordoftheDay);
@@ -95,6 +96,16 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
 
+
+        listview = view.findViewById(R.id.lvHistory);
+        if (historystatus == true){
+            WordHistory = new String[]{};
+            historystatus = false;
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, WordHistory);
+        listview.setAdapter(adapter);
+
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -103,11 +114,6 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             }
         }, 500);
 
-
-        listview = view.findViewById(R.id.lvHistory);
-        //final String[][] WordHistory = {new String[]{"hello"}};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, WordHistory);
-        listview.setAdapter(adapter);
 
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
@@ -129,6 +135,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
                 listview.setAdapter(adapter);
                 listview.setOnItemClickListener(new ListClickHandler());
+
                 getFragmentManager().beginTransaction()
                         .replace(R.id.main, new WordProfileFragment()).commit();
             }
@@ -150,6 +157,20 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             @Override
             public void onClick(View v) {
                 // the wordoftheday action
+                int currentSize = WordHistory.length;
+                int newSize = currentSize + 1;
+                String[] tempArray = new String[ newSize ];
+                for (int i=0; i < currentSize; i++)
+                {
+                    tempArray[i] = WordHistory[i];
+                }
+                tempArray[newSize- 1] = wordoftheday;
+                WordHistory = tempArray;
+                //WordHistory.;
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
+                listview.setAdapter(adapter);
+                listview.setOnItemClickListener(new ListClickHandler());
+
                 WordoftheDayFragment fragment = new WordoftheDayFragment();
                 FragmentTransaction fragmenttransaction = getFragmentManager().beginTransaction();
                 fragmenttransaction.replace(R.id.main,fragment,"Word of The Day");
@@ -195,7 +216,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         else {
             cameraSource = new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setRequestedPreviewSize(800, 800)
+                    .setRequestedPreviewSize(800, 200)
                     .setRequestedFps(2.0f)
                     .setAutoFocusEnabled(true)
                     .build();
@@ -282,7 +303,6 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             FragmentTransaction fragmenttransaction = getFragmentManager().beginTransaction();
             fragmenttransaction.replace(R.id.main,fragment,"Word Profile");
             fragmenttransaction.commit();
-
         }
 
     }
