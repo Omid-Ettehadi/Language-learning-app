@@ -91,7 +91,7 @@
         android:id="@+id/btnCapture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -99,7 +99,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surface_view" />
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout3" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -114,7 +114,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"
-            android:layout_width="384dp"
+            android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_marginBottom="8dp"
             android:background="@color/ALittleDarkerPrimary"
@@ -129,13 +129,13 @@
 
         <TextView
             android:id="@+id/tvWordoftheDayAns"
-            android:clickable="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
+            android:clickable="true"
             android:fontFamily="sans-serif-condensed"
             android:keyboardNavigationCluster="false"
             android:textAlignment="center"
@@ -175,5 +175,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
         app:layout_constraintVertical_bias="0.0" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/BottomLayer"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/ALittleDarkerPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/surface_view"
+        app:layout_constraintVertical_bias="0.0">
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
+    </android.support.constraint.ConstraintLayout>
+
+    <ListView
+        android:id="@+id/lvHistory"
+        android:layout_width="368dp"
+        android:layout_height="134dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

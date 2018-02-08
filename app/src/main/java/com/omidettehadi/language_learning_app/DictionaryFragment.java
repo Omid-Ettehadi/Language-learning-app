@@ -23,8 +23,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +54,7 @@ import java.util.Random;
 
 import static com.omidettehadi.language_learning_app.SigninActivity.word;
 import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
+import static com.omidettehadi.language_learning_app.SigninActivity.WordHistory;
 
 public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitListener {
 
@@ -64,6 +68,9 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
     private SurfaceView cameraView;
     private CameraSource cameraSource;
     private final int RequestCameraPermissionID = 1001;
+
+    private ListView listview;
+    //private String[] WordHistory = new String[]{"hello"};
 
     public DictionaryFragment() {
         // Required empty public constructor
@@ -96,12 +103,32 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             }
         }, 500);
 
+
+        listview = view.findViewById(R.id.lvHistory);
+        //final String[][] WordHistory = {new String[]{"hello"}};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, WordHistory);
+        listview.setAdapter(adapter);
+
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 word = etInput.getText().toString();
+
+                int currentSize = WordHistory.length;
+                int newSize = currentSize + 1;
+                String[] tempArray = new String[ newSize ];
+                for (int i=0; i < currentSize; i++)
+                {
+                    tempArray[i] = WordHistory[i];
+                }
+                tempArray[newSize- 1] = word;
+                WordHistory = tempArray;
+                //WordHistory.;
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
+                listview.setAdapter(adapter);
+                listview.setOnItemClickListener(new ListClickHandler());
                 getFragmentManager().beginTransaction()
                         .replace(R.id.main, new WordProfileFragment()).commit();
             }
@@ -168,7 +195,7 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         else {
             cameraSource = new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setRequestedPreviewSize(1280, 1024)
+                    .setRequestedPreviewSize(800, 800)
                     .setRequestedFps(2.0f)
                     .setAutoFocusEnabled(true)
                     .build();
@@ -244,6 +271,21 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         return view;
     }
 
+    public class ListClickHandler implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
+            TextView listText = (TextView) view.findViewById(R.id.lvHistory);
+            String text = listText.getText().toString();
+            word = text;
+            WordProfileFragment fragment = new WordProfileFragment();
+            FragmentTransaction fragmenttransaction = getFragmentManager().beginTransaction();
+            fragmenttransaction.replace(R.id.main,fragment,"Word Profile");
+            fragmenttransaction.commit();
+
+        }
+
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

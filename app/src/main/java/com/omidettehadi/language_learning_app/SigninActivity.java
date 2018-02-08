@@ -48,12 +48,15 @@ public class SigninActivity extends AppCompatActivity {
 
     public static String email;
 
-    private Random RandomGen;
-    private String[] catalogue = {"a","b","c","d","e","f","g",
+    public Random RandomGen;
+    public String[] catalogue = {"a","b","c","d","e","f","g",
             "h","i","j","k","l","m","n","o","p",
             "q","r","s","t","u","v","w","x","y","z"};
     public static String word, wordoftheday, wordbeg, wordend;
-    private int wordofthedayscore;
+    public int wordofthedayscore;
+
+    public static String[] WordHistory = new String[]{};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
