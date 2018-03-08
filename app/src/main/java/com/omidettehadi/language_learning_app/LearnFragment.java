@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.Math;
 
 import com.omidettehadi.language_learning_app.FFT;
 
@@ -164,8 +165,15 @@ public class LearnFragment extends Fragment {
                 audioDataRec[i] = dataInputStream.readShort();
                 i++;
             }*/
+            double[] freqArray = new double[8192];
+            double[] maxFreq = {0.0, 0.0, 0.0};
+            int i = 0;
             while(dataInputStream.available() > 0) {
-                SampleFFT(dataInputStream);
+                maxFreq = SampleFFT(dataInputStream);
+                if(i < 8192) {
+                  freqArray[i] = maxFreq[0];
+                  i++;
+                }
             }
 
             dataInputStream.close();
@@ -216,16 +224,16 @@ public class LearnFragment extends Fragment {
     }
 
     //should read 1024 samples at a time?
-    private double SampleFFT(DataInputStream dataInputStream){
+    private double[] SampleFFT(DataInputStream dataInputStream){
         try {
-            double[] dataRec = new double[1024];
-            double[] zeros = new double[1024];
-            double[] powerSpectrum = new double[512];
+            double[] dataRec = new double[8192];
+            double[] zeros = new double[8192];
+            double[] powerSpectrum = new double[8192];
             double max = 0.0;
-            int maxIndex = 0;
-            double maxFreq = 0.0;
+            int[] maxIndex = {0, 0, 0};
+            double[] maxFreq = {0.0, 0.0, 0.0};
             int i = 0;
-            while (i < 1024) {
+            while (i < 8192) {
                 if (dataInputStream.available() > 0) {
                     dataRec[i] = (double)dataInputStream.readShort();
                 } else {
@@ -235,31 +243,46 @@ public class LearnFragment extends Fragment {
                 i++;
             }
 
-            AudioRecordedFFT = new FFT(1024);
+            AudioRecordedFFT = new FFT(8192);
             AudioRecordedFFT.fft(dataRec, zeros);
 
-            for(i = 0; i < 512; i++) {
-                powerSpectrum[i] = (dataRec[512+i] * dataRec[512+i]) + (zeros[512+i] * zeros[512+i]);
-                if(powerSpectrum[i] > max) {
+            //these loops start at 1 and end at 4094 because we don't check the first and last frequencies
+            for(i = 1; i < 4095; i++) {
+                powerSpectrum[i] = (dataRec[4096+i] * dataRec[4096+i]) + (zeros[4096+i] * zeros[4096+i]);
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
                     max = powerSpectrum[i];
-                    maxIndex = i;
+                    maxIndex[0] = i;
                 }
             }
-            maxFreq = (maxIndex * sampleFreq)/2;
+            max = 0.0;
+            for(i = 1; i < 4095; i++) {
+                powerSpectrum[i] = (dataRec[4096+i] * dataRec[4096+i]) + (zeros[4096+i] * zeros[4096+i]);
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 2)) {
+                    max = powerSpectrum[i];
+                    maxIndex[1] = i;
+                }
+            }
+            max = 0.0;
+            for(i = 1; i < 4095; i++) {
+                powerSpectrum[i] = (dataRec[4096+i] * dataRec[4096+i]) + (zeros[4096+i] * zeros[4096+i]);
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 2) && (Math.abs(i - maxIndex[1]) > 2)) {
+                    max = powerSpectrum[i];
+                    maxIndex[2] = i;
+                }
+            }
+            maxFreq[0] = (maxIndex[0] * sampleFreq)/(2 * 4096);
+            maxFreq[1] = (maxIndex[1] * sampleFreq)/(2 * 4096);
+            maxFreq[2] = (maxIndex[2] * sampleFreq)/(2 * 4096);
 
             return maxFreq;
 
 
-
-
-
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return 0.0;
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
-            return 0.0;
+            return null;
         }
 
     }
