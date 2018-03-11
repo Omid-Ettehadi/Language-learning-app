@@ -106,6 +106,9 @@ public class LearnFragment extends Fragment {
                 double[] answer = SampleFFT(datainputStream);
                 String text = answer[0]+ " - " +answer[1]+ " - " + answer[2];
                 textView.setText(text);
+
+                double [][] test = {{760, 1320, 2500},{360, 2220, 2960}};
+                feedback(test);
             }
         });
 
@@ -264,101 +267,167 @@ public class LearnFragment extends Fragment {
         String character;
         String[] vowel_character;
         int[] vowel_freq;
-    };
+    }
 
+    // Given the right input, an array of array of frequencies, It will see if the frequencies match
+    // the required frequencies.
     private void feedback(double[][] InputFreq){
         String word = "Hi";
         String [] IPAs = {"h","ʌ","ɪ"};
+        double ePerD = 0.1;
 
-        IPA[] LookedUp = new IPA[10];
+        IPA[] LookedUp = new IPA[IPAs.length];
 
         int j = 0;
         for ( int i = 0; i<IPAs.length; i++) {
             if(IPAs[i] == "iː") {
-                LookedUp[j].character = "i:";
-                LookedUp[j].vowel_character = new String[]{"iː", "Close", "Front", "Long"};
-                LookedUp[j].vowel_freq = new int[]{280, 2620, 3380};
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "i:";
+                temp.vowel_character = new String[]{"iː", "Close", "Front", "Long"};
+                temp.vowel_freq = new int[]{280, 2620, 3380};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ɪ") {
-                LookedUp[j].character = "ɪ";
-                LookedUp[j].vowel_character = new String[]{"ɪ", "Close", "Front", "Short"};
-                LookedUp[j].vowel_freq = new int[]{360, 2220, 2960};
+            else if (IPAs[i] == "ɪ") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ɪ";
+                temp.vowel_character = new String[]{"ɪ", "Close", "Front", "Short"};
+                temp.vowel_freq = new int[]{360, 2220, 2960};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "e") {
-                LookedUp[j].character = "e";
-                LookedUp[j].vowel_character = new String[]{"e", "Half-open", "Front", "Short"};
-                LookedUp[j].vowel_freq = new int[]{600, 2060, 2840};
+            else if (IPAs[i] == "e") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "e";
+                temp.vowel_character = new String[]{"e", "Half-open", "Front", "Short"};
+                temp.vowel_freq = new int[]{600, 2060, 2840};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "æ") {
-                LookedUp[j].character = "æ";
-                LookedUp[j].vowel_character = new String[]{"æ", "Open", "Front", "Short"};
-                LookedUp[j].vowel_freq = new int[]{800, 1760, 2500};
+            else if (IPAs[i] == "æ") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "æ";
+                temp.vowel_character = new String[]{"æ", "Open", "Front", "Short"};
+                temp.vowel_freq = new int[]{800, 1760, 2500};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ʌ") {
-                LookedUp[j].character = "ʌ";
-                LookedUp[j].vowel_character = new String[]{"ʌ", "Open", "Central", "Short"};
-                LookedUp[j].vowel_freq = new int[]{760, 1320, 2500};
+            else if (IPAs[i] == "ʌ") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ʌ";
+                temp.vowel_character = new String[]{"ʌ", "Open", "Central", "Short"};
+                temp.vowel_freq = new int[]{760, 1320, 2500};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ɑː") {
-                LookedUp[j].character = "ɑː";
-                LookedUp[j].vowel_character = new String[]{"ɑː", "Open", "Back", "Long"};
-                LookedUp[j].vowel_freq = new int[]{740, 1180, 2640};
+            else if (IPAs[i] == "ɑː") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ɑː";
+                temp.vowel_character = new String[]{"ɑː", "Open", "Back", "Long"};
+                temp.vowel_freq = new int[]{740, 1180, 2640};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ɒ") {
-                LookedUp[j].character = "ɒ";
-                LookedUp[j].vowel_character = new String[]{"ɒ", "Open", "Back", "Short"};
-                LookedUp[j].vowel_freq = new int[]{560, 920, 2560};
+            else if (IPAs[i] == "ɒ") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ɒ";
+                temp.vowel_character = new String[]{"ɒ", "Open", "Back", "Short"};
+                temp.vowel_freq = new int[]{560, 920, 2560};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ɔː") {
-                LookedUp[j].character = "ɔː";
-                LookedUp[j].vowel_character = new String[]{"ɔː", "Half-open", "Back", "Long"};
-                LookedUp[j].vowel_freq = new int[]{480, 760, 2620};
+            else if (IPAs[i] == "ɔː") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ɔː";
+                temp.vowel_character = new String[]{"ɔː", "Half-open", "Back", "Long"};
+                temp.vowel_freq = new int[]{480, 760, 2620};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ʊ") {
-                LookedUp[j].character = "ʊ";
-                LookedUp[j].vowel_character = new String[]{"ʊ", "Close", "Back", "Short"};
-                LookedUp[j].vowel_freq = new int[]{380, 940, 2300};
+            else if (IPAs[i] == "ʊ") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ʊ";
+                temp.vowel_character = new String[]{"ʊ", "Close", "Back", "Short"};
+                temp.vowel_freq = new int[]{380, 940, 2300};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "uː") {
-                LookedUp[j].character = "uː";
-                LookedUp[j].vowel_character = new String[]{"uː", "Close", "Back", "Long"};
-                LookedUp[j].vowel_freq = new int[]{320, 920, 2200};
+            else if (IPAs[i] == "uː") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "uː";
+                temp.vowel_character = new String[]{"uː", "Close", "Back", "Long"};
+                temp.vowel_freq = new int[]{320, 920, 2200};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ɜː") {
-                LookedUp[j].character = "ɜː";
-                LookedUp[j].vowel_character = new String[]{"ɜː", "Half-open", "Central", "Long"};
-                LookedUp[j].vowel_freq = new int[]{560, 1480, 2520};
+            else if (IPAs[i] == "ɜː") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ɜː";
+                temp.vowel_character = new String[]{"ɜː", "Half-open", "Central", "Long"};
+                temp.vowel_freq = new int[]{560, 1480, 2520};
+                LookedUp[j] = temp;
                 j++;
             }
-            if (IPAs[i] == "ə") {
-                LookedUp[j].character = "ə";
-                LookedUp[j].vowel_character = new String[]{"ə", "Half-open", "Central", "Short"};
-                LookedUp[j].vowel_freq = new int[]{500, 1500, 3000};
+            else if (IPAs[i] == "ə") {
+                IPA temp = new IPA();
+                LookedUp[j] = new IPA();
+                temp.character = "ə";
+                temp.vowel_character = new String[]{"ə", "Half-open", "Central", "Short"};
+                temp.vowel_freq = new int[]{500, 1500, 3000};
+                LookedUp[j] = temp;
                 j++;
             }
             else {
-
+                word += " Not a vowel ";
             }
         }
 
-        /*boolean[] flag = new boolean[10];
+        boolean[][] flag = new boolean[InputFreq.length][3];
 
-        double ePerD = 0.1;
         double hThresh = 1 + (ePerD);
         double lThresh = 1 - (ePerD);
-        for ( int i = 0; i<InputFreq.length ; i++){
-            if( (lThresh * LookedUp[i].vowel_freq[0])  <= InputFreq[i][0] <= (hThresh * LookedUp[i].vowel_freq[0]) )
 
-        }*/
+        for ( int i = 0; i<InputFreq.length ; i++){
+            double Lower, Higher, freq;
+            for ( int k = 0; k<InputFreq[i].length; k++){
+                Lower = lThresh * LookedUp[i].vowel_freq[k];
+                Higher = hThresh * LookedUp[i].vowel_freq[k];
+                freq = InputFreq[i][k];
+                if (freq < Lower){
+                    flag[i][k] = false;
+                    //word += " " + i + "-" + k +" false is found (lower) " + LookedUp[i].vowel_freq[k] + " ";
+                }
+                else if (freq > Higher){
+                    flag[i][k] = false;
+                    //word += " " + i + "-" + k +" false is found (higher) " + LookedUp[i].vowel_freq[k] + " ";
+                }
+                else {
+                    flag[i][k] = true;
+                    //word += " " + i + "-" + k +" Correct " + LookedUp[i].vowel_freq[k] + " ";
+                }
+            }
+        }
+
+        for ( int i = 0; i< flag.length ; i++){
+            for ( int k = 0; k<flag.length ; k++) {
+                if (flag[i][k] == false) {
+                    textView.setText( " False Pronunciation of " + LookedUp[k].vowel_character );
+
+                } else {
+                    textView.setText(" Perfect ");
+                }
+            }
+        }
     }
 }
