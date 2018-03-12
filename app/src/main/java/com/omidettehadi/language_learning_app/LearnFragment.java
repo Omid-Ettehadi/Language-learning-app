@@ -1,5 +1,7 @@
 package com.omidettehadi.language_learning_app;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -8,16 +10,33 @@ import android.media.MediaRecorder;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.AutomaticGainControl;
 import android.media.audiofx.NoiseSuppressor;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -26,22 +45,77 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.Math;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 import com.omidettehadi.language_learning_app.FFT;
 
-public class LearnFragment extends Fragment {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    Button btnRecord, btnStop, btnPlay;
-    TextView textView;
-    File file;
-    AudioRecord AudioRecorded;
-    AudioTrack AudioRecordedTrack;
-    FFT AudioRecordedFFT;
+import javax.net.ssl.HttpsURLConnection;
 
-    boolean recording;
-    int sampleFreq = 44100;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_character;
+import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_freq;
+
+public class LearnFragment extends Fragment implements TextToSpeech.OnInitListener{
+
+    private EditText etInput;
+    private Button btnSearch, btnMic, btnCapture, btnCam, btnRecord, btnStop, btnPlay;
+    private TextView textView;
+    private File file;
+    private AudioRecord AudioRecorded;
+    private AudioTrack AudioRecordedTrack;
+    private FFT AudioRecordedFFT;
+
+    private SurfaceView cameraView;
+    private CameraSource cameraSource;
+    private final int RequestCameraPermissionID = 1001;
+
+    private boolean recording;
+    private int sampleFreq = 44100;
+
+    private SpeechRecognizer speechrecognizer;
+    private Intent speechrecognizerIntent;
+    private boolean IsListening;
+
+    private TextToSpeech tts;
+
+    private String IPAString = "";
+    private String word;
+    private String [] IPAs;
 
     public LearnFragment() {
         // Required empty public constructor
@@ -54,13 +128,150 @@ public class LearnFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_learn, container, false);
 
+        etInput = view.findViewById(R.id.etInput);
+        btnSearch = view.findViewById(R.id.btnSearch);
+        btnMic = view.findViewById(R.id.btnMic);
+        btnCam = view.findViewById(R.id.btnCam);
+        btnCapture = view.findViewById(R.id.btnCapture);
+        btnCapture.setVisibility(View.INVISIBLE);
+
+        cameraView = view.findViewById(R.id.surface_view);
+        cameraView.setVisibility(View.INVISIBLE);
+
         btnRecord = view.findViewById(R.id.btnRecord);
         btnStop = view.findViewById(R.id.btnStop);
         btnStop.setEnabled(false);
         btnPlay = view.findViewById(R.id.btnPlay);
         btnPlay.setEnabled(false);
+
         textView = view.findViewById(R.id.textView);
 
+        // Code for the Camera
+        TextRecognizer textRecognizer = new TextRecognizer.Builder(getActivity().getApplicationContext()).build();
+        if (!textRecognizer.isOperational()) {
+
+        }
+        else {
+            cameraSource = new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
+                    .setFacing(CameraSource.CAMERA_FACING_BACK)
+                    .setRequestedPreviewSize(800, 200)
+                    .setRequestedFps(2.0f)
+                    .setAutoFocusEnabled(true)
+                    .build();
+            cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
+                @Override
+                public void surfaceCreated(SurfaceHolder surfaceHolder) {
+
+                    try {
+                        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+                            ActivityCompat.requestPermissions(getActivity(),
+                                    new String[]{android.Manifest.permission.CAMERA},
+                                    RequestCameraPermissionID);
+                            return;
+                        }
+                        cameraSource.start(cameraView.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {}
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+                    cameraSource.stop();
+                }
+            });
+
+            textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
+                @Override
+                public void release() {}
+
+                @Override
+                public void receiveDetections(Detector.Detections<TextBlock> detections) {
+                    final SparseArray<TextBlock> items = detections.getDetectedItems();
+                    if(items.size() != 0)
+                    {
+                        etInput.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                for(int i =0;i<items.size();++i)
+                                {
+                                    TextBlock item = items.valueAt(i);
+                                    stringBuilder.append(item.getValue());
+                                    stringBuilder.append("\n");
+                                }
+                                String out [] = stringBuilder.toString().split(" ");
+                                etInput.setText(out[0]);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        // Code for Voice Recorder
+        speechrecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
+        speechrecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,false);
+        LearnFragment.SpeechRecognitionListener listener = new LearnFragment.SpeechRecognitionListener();
+        speechrecognizer.setRecognitionListener(listener);
+
+        // See if Search Button is pressed
+        // Run Search for the word in the input EditText
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                word = etInput.getText().toString();
+                speakOut();
+                new CallbackTask().execute(dictionaryEntries());
+            }
+        });
+
+        // See if Listen Button is pressed
+        // Run Speech Recognition
+        btnMic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Pronounce the word
+                if (!IsListening) {
+                    speechrecognizer.startListening(speechrecognizerIntent);
+                }
+            }
+        });
+
+        // See if Camera Button is pressed
+        // Run Camera
+        btnCam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etInput.setVisibility(View.INVISIBLE);
+                btnSearch.setVisibility(View.INVISIBLE);
+                btnMic.setVisibility(View.INVISIBLE);
+                btnCapture.setVisibility(View.VISIBLE);
+                btnCam.setVisibility(View.INVISIBLE);
+                cameraView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // See if Capture Button is pressed
+        // Run Text Recognition from Camera
+        btnCapture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etInput.setVisibility(View.VISIBLE);
+                btnSearch.setVisibility(View.VISIBLE);
+                btnMic.setVisibility(View.VISIBLE);
+                btnCapture.setVisibility(View.INVISIBLE);
+                btnCam.setVisibility(View.VISIBLE);
+                cameraView.setVisibility(View.INVISIBLE);
+            }
+        });
 
         btnRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -108,11 +319,141 @@ public class LearnFragment extends Fragment {
                 textView.setText(text);
 
                 double [][] test = {{760, 1320, 2500},{360, 2220, 2960}};
-                feedback(test);
+                comparator(test);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onInit(int i) {
+        if (i == TextToSpeech.SUCCESS) {
+            int result = tts.setLanguage(Locale.US);
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            }
+            else {
+                //btnSpeak.setEnabled(true);
+            }
+        }
+        else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    protected class SpeechRecognitionListener implements RecognitionListener {
+        @Override
+        public void onBeginningOfSpeech() { Toast.makeText(getActivity(), "Recording", Toast.LENGTH_SHORT).show();}
+
+        @Override
+        public void onBufferReceived(byte[] buffer) { }
+
+        @Override
+        public void onEndOfSpeech(){
+            Toast.makeText(getActivity(), "Done!", Toast.LENGTH_SHORT).show();
+            IsListening = false;
+        }
+
+        @Override
+        public void onError(int error)
+        {
+            speechrecognizer.startListening(speechrecognizerIntent);
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params){ }
+
+        @Override
+        public void onPartialResults(Bundle partialResults){ }
+
+        @Override
+        public void onReadyForSpeech(Bundle params){ }
+
+        @Override
+        public void onResults(Bundle results){
+            ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            etInput.setText(matches.get(0).toString());
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB){ }
+    }
+
+    private void speakOut() {
+        tts.speak(word , TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    private String dictionaryEntries() {
+        final String language = "en";
+        final String word_id = word.toLowerCase(); //word id is case sensitive and lowercase is required
+        return "https://od-api.oxforddictionaries.com:443/api/v1/entries/" + language + "/" + word_id;
+    }
+
+    // In android calling network requests on the main thread forbidden by default
+    // Create class to do async job
+    class CallbackTask extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            final String app_id = "091e7ddf";
+            final String app_key = "af40991963d253e055aaa9cd04a3731d";
+            try {
+                URL url = new URL(params[0]);
+                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setRequestProperty("Accept","application/json");
+                urlConnection.setRequestProperty("app_id",app_id);
+                urlConnection.setRequestProperty("app_key",app_key);
+
+                // read the output from the server
+                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder stringBuilder = new StringBuilder();
+                String line = null;
+
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line + "\n");
+                }
+                return stringBuilder.toString();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return e.toString();
+            }
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        protected void onPostExecute(String result) {
+            
+            super.onPostExecute(result);
+            try {
+                JSONObject results = new JSONObject(result);
+                JSONArray one = results.getJSONArray("results");
+
+                for(int i = 0 ; i < one.length() ; i++){
+                    JSONObject lexicalEntries = one.getJSONObject(i);
+                    JSONArray two = lexicalEntries.getJSONArray("lexicalEntries");
+
+                    for(int j = 0 ; j < two.length() ; j++){
+                        JSONObject pronunciations = two.getJSONObject(j);
+                        JSONObject entries = two.getJSONObject(j);
+                        JSONArray three = entries.getJSONArray("entries");
+                        JSONArray IPA = pronunciations.getJSONArray("pronunciations");
+
+                        IPAString = IPA.toString().substring(IPA.toString().lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
+
+                    }
+                }
+                for(int i = 0 ; i < IPAString.length() ; i++){
+                    IPAs[i] = String.valueOf(IPAString.charAt(i));
+                }
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void StartRecording() {
@@ -262,7 +603,6 @@ public class LearnFragment extends Fragment {
 
     }
 
-
     class IPA {
         String character;
         String[] vowel_character;
@@ -271,11 +611,8 @@ public class LearnFragment extends Fragment {
 
     // Given the right input, an array of array of frequencies, It will see if the frequencies match
     // the required frequencies.
-    private void feedback(double[][] InputFreq){
-        String word = "Hi";
-        String [] IPAs = {"h","ʌ","ɪ"};
+    private void comparator(double[][] InputFreq){
         double ePerD = 0.1;
-
         IPA[] LookedUp = new IPA[IPAs.length];
 
         int j = 0;
@@ -430,4 +767,9 @@ public class LearnFragment extends Fragment {
             }
         }
     }
+
+    private void feedback(double[][] InputFreq){
+
+    }
+
 }
