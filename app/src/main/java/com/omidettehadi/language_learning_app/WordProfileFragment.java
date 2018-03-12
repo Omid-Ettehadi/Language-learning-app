@@ -145,14 +145,12 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
                 // read the output from the server
                 BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder();
-
                 String line = null;
+
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line + "\n");
                 }
-
                 return stringBuilder.toString();
-
             }
             catch (Exception e) {
                 e.printStackTrace();

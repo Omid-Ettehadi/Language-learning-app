@@ -142,7 +142,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
         btnStop = view.findViewById(R.id.btnStop);
         btnStop.setEnabled(false);
         btnPlay = view.findViewById(R.id.btnPlay);
-        btnPlay.setEnabled(false);
+        //btnPlay.setEnabled(false);
 
         textView = view.findViewById(R.id.textView);
 
@@ -228,8 +228,10 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
             @Override
             public void onClick(View v) {
                 word = etInput.getText().toString();
-                speakOut();
-                new CallbackTask().execute(dictionaryEntries());
+                //speakOut();
+                //new CallbackTask().execute(dictionaryEntries());
+                double [][] test = {{760, 1320, 2500},{360, 2220, 2960}};
+                comparator(test);
             }
         });
 
@@ -317,9 +319,6 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 double[] answer = SampleFFT(datainputStream);
                 String text = answer[0]+ " - " +answer[1]+ " - " + answer[2];
                 textView.setText(text);
-
-                double [][] test = {{760, 1320, 2500},{360, 2220, 2960}};
-                comparator(test);
             }
         });
 
@@ -426,7 +425,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected void onPostExecute(String result) {
-            
+
             super.onPostExecute(result);
             try {
                 JSONObject results = new JSONObject(result);
@@ -612,6 +611,8 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
     // Given the right input, an array of array of frequencies, It will see if the frequencies match
     // the required frequencies.
     private void comparator(double[][] InputFreq){
+        word = "hi";
+        IPAs = new String[]{"h", "ʌ", "ɪ"};
         double ePerD = 0.1;
         IPA[] LookedUp = new IPA[IPAs.length];
 
