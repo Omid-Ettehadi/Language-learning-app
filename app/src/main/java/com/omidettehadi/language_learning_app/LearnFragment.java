@@ -591,34 +591,34 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
 
             AudioRecordedFFT = new FFT(8192);
             AudioRecordedFFT.fft(dataRec, zeros);
-
-            //these loops start at 1 and end at 4094 because we don't check the first and last frequencies
-            for(i = 1; i < 4095; i++) {
+            for(i = 0; i < 4096; i++) {
                 powerSpectrum[i] = (dataRec[4096+i] * dataRec[4096+i]) + (zeros[4096+i] * zeros[4096+i]);
+            }
+
+            //these loops start at 1 because we look at i-1 so don't want an error. They end at 4096/4 because we don't care about frequencies higher than ~5000Hz
+            for(i = 1; i < 1024; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
                     max = powerSpectrum[i];
                     maxIndex[0] = i;
                 }
             }
             max = 0.0;
-            for(i = 1; i < 4095; i++) {
-                powerSpectrum[i] = (dataRec[4096+i] * dataRec[4096+i]) + (zeros[4096+i] * zeros[4096+i]);
+            for(i = 1; i < 1024; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 2)) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
                 }
             }
             max = 0.0;
-            for(i = 1; i < 4095; i++) {
-                powerSpectrum[i] = (dataRec[4096+i] * dataRec[4096+i]) + (zeros[4096+i] * zeros[4096+i]);
+            for(i = 1; i < 1024; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 2) && (Math.abs(i - maxIndex[1]) > 2)) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
                 }
             }
-            maxFreq[0] = (maxIndex[0] * sampleFreq)/(2 * 4096);
-            maxFreq[1] = (maxIndex[1] * sampleFreq)/(2 * 4096);
-            maxFreq[2] = (maxIndex[2] * sampleFreq)/(2 * 4096);
+            maxFreq[0] = (((double) maxIndex[0])/4096.0) * (sampleFreq / 2.0);
+            maxFreq[1] = (((double) maxIndex[1])/4096.0) * (sampleFreq / 2.0);
+            maxFreq[2] = (((double) maxIndex[2])/4096.0) * (sampleFreq / 2.0);
 
             return maxFreq;
 
