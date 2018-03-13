@@ -13,6 +13,7 @@ import android.media.audiofx.NoiseSuppressor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -51,6 +52,7 @@ import java.lang.Math;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import com.google.android.gms.vision.CameraSource;
@@ -89,6 +91,7 @@ import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_charac
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_freq;
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_character;
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_freq;
+import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
 
 public class LearnFragment extends Fragment implements TextToSpeech.OnInitListener{
 
@@ -229,9 +232,15 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
             public void onClick(View v) {
                 word = etInput.getText().toString();
                 //speakOut();
-                //new CallbackTask().execute(dictionaryEntries());
-                double [][] test = {{760, 1320, 2500},{360, 2220, 2960}};
-                comparator(test);
+                new CallbackTask().execute(dictionaryEntries());
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        double [][] test = {{760, 1320, 2500},{360, 2220, 2960}};
+                        comparator(test);
+                    }
+                }, 10000);
             }
         });
 
@@ -425,6 +434,9 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected void onPostExecute(String result) {
+            // Definition for local variables
+            String definition = "";
+            int number = 0;
 
             super.onPostExecute(result);
             try {
@@ -443,14 +455,33 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
 
                         IPAString = IPA.toString().substring(IPA.toString().lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
 
+                        number += 1 ;
+                        definition += System.lineSeparator();
+                        definition += number + ") " + IPAString;
+
+                        for(int k = 0 ; k < three.length() ; k++){
+                            JSONObject senses = three.getJSONObject(k);
+                            JSONArray four = senses.getJSONArray("senses");
+                            for(int l = 0 ; l < four.length() ; l++) {
+                                JSONObject definitions = four.getJSONObject(l);
+                                JSONArray five = definitions.getJSONArray("definitions");
+                                definition += System.lineSeparator() + " - ";
+                                definition += five.getString(0);
+                            }
+                        }
                     }
-                }
-                for(int i = 0 ; i < IPAString.length() ; i++){
-                    IPAs[i] = String.valueOf(IPAString.charAt(i));
                 }
             }
             catch (JSONException e) {
                 e.printStackTrace();
+            }
+
+            //IPAs = IPAString.split("");
+
+
+            IPAs = new String[IPAString.length()];
+            for ( int i = 0; i<IPAString.length();i++){
+                IPAs[i] = String.valueOf(IPAString.charAt(i)).toString();
             }
         }
     }
@@ -611,14 +642,13 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
     // Given the right input, an array of array of frequencies, It will see if the frequencies match
     // the required frequencies.
     private void comparator(double[][] InputFreq){
-        word = "hi";
-        IPAs = new String[]{"h", "ʌ", "ɪ"};
         double ePerD = 0.1;
         IPA[] LookedUp = new IPA[IPAs.length];
 
         int j = 0;
         for ( int i = 0; i<IPAs.length; i++) {
-            if(IPAs[i] == "iː") {
+            word += IPAs[i];
+            if("iː".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "i:";
@@ -627,7 +657,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ɪ") {
+            else if ("ɪ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɪ";
@@ -636,7 +666,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "e") {
+            else if ("e".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "e";
@@ -645,7 +675,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "æ") {
+            else if ("æ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "æ";
@@ -654,7 +684,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ʌ") {
+            else if ("ʌ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ʌ";
@@ -663,7 +693,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ɑː") {
+            else if ("ɑː".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɑː";
@@ -672,7 +702,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ɒ") {
+            else if ("ɒ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɒ";
@@ -681,7 +711,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ɔː") {
+            else if ("ɔː".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɔː";
@@ -690,7 +720,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ʊ") {
+            else if ("ʊ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ʊ";
@@ -699,7 +729,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "uː") {
+            else if ("uː".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "uː";
@@ -708,7 +738,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ɜː") {
+            else if ("ɜː".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɜː";
@@ -717,7 +747,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if (IPAs[i] == "ə") {
+            else if ("ə".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ə";
@@ -730,6 +760,8 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 word += " Not a vowel ";
             }
         }
+
+        //textView.setText(word);
 
         boolean[][] flag = new boolean[InputFreq.length][3];
 
