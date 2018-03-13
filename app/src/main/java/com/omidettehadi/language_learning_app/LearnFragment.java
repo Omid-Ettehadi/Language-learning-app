@@ -67,6 +67,7 @@ import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.google.android.gms.internal.zzs.TAG;
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_character;
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_freq;
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_character;
@@ -232,15 +233,35 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
             public void onClick(View v) {
                 word = etInput.getText().toString();
                 //speakOut();
+                IPAString = null;
+                textView.setText(" Loading... ");
                 new CallbackTask().execute(dictionaryEntries());
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        double [][] test = {{760, 1320, 2500},{360, 2220, 2960}};
-                        comparator(test);
-                    }
-                }, 10000);
+
+
+
+
+                if(IPAString == null){
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                       @Override
+                       public void run() {
+                           if(IPAString == null){
+                               final Handler handler = new Handler();
+                               handler.postDelayed(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       double[][] test = {{760, 1320, 2500}, {360, 2220, 2960}};
+                                       comparator(test);
+                                   }
+                               }, 5000);
+                           }
+                           else {
+                               double[][] test = {{760, 1320, 2500}, {360, 2220, 2960}};
+                               comparator(test);
+                           }
+                        }
+                    }, 3000);
+                }
             }
         });
 
@@ -434,9 +455,6 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected void onPostExecute(String result) {
-            // Definition for local variables
-            String definition = "";
-            int number = 0;
 
             super.onPostExecute(result);
             try {
@@ -455,18 +473,12 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
 
                         IPAString = IPA.toString().substring(IPA.toString().lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
 
-                        number += 1 ;
-                        definition += System.lineSeparator();
-                        definition += number + ") " + IPAString;
-
                         for(int k = 0 ; k < three.length() ; k++){
                             JSONObject senses = three.getJSONObject(k);
                             JSONArray four = senses.getJSONArray("senses");
                             for(int l = 0 ; l < four.length() ; l++) {
                                 JSONObject definitions = four.getJSONObject(l);
                                 JSONArray five = definitions.getJSONArray("definitions");
-                                definition += System.lineSeparator() + " - ";
-                                definition += five.getString(0);
                             }
                         }
                     }
@@ -475,9 +487,6 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
             catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            //IPAs = IPAString.split("");
-
 
             IPAs = new String[IPAString.length()];
             for ( int i = 0; i<IPAString.length();i++){
@@ -644,11 +653,12 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
     private void comparator(double[][] InputFreq){
         double ePerD = 0.1;
         IPA[] LookedUp = new IPA[IPAs.length];
+        boolean status = true;
 
         int j = 0;
         for ( int i = 0; i<IPAs.length; i++) {
             word += IPAs[i];
-            if("iː".equals(IPAs[i])) {
+            if("i".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "i:";
@@ -693,7 +703,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if ("ɑː".equals(IPAs[i])) {
+            else if ("ɑ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɑː";
@@ -711,7 +721,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if ("ɔː".equals(IPAs[i])) {
+            else if ("ɔ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɔː";
@@ -729,7 +739,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if ("uː".equals(IPAs[i])) {
+            else if ("u".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "uː";
@@ -738,7 +748,7 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
                 LookedUp[j] = temp;
                 j++;
             }
-            else if ("ɜː".equals(IPAs[i])) {
+            else if ("ɜ".equals(IPAs[i])) {
                 IPA temp = new IPA();
                 LookedUp[j] = new IPA();
                 temp.character = "ɜː";
@@ -769,40 +779,188 @@ public class LearnFragment extends Fragment implements TextToSpeech.OnInitListen
         double lThresh = 1 - (ePerD);
 
         for ( int i = 0; i<InputFreq.length ; i++){
-            double Lower, Higher, freq;
-            for ( int k = 0; k<InputFreq[i].length; k++){
-                Lower = lThresh * LookedUp[i].vowel_freq[k];
-                Higher = hThresh * LookedUp[i].vowel_freq[k];
-                freq = InputFreq[i][k];
-                if (freq < Lower){
-                    flag[i][k] = false;
-                    //word += " " + i + "-" + k +" false is found (lower) " + LookedUp[i].vowel_freq[k] + " ";
-                }
-                else if (freq > Higher){
-                    flag[i][k] = false;
-                    //word += " " + i + "-" + k +" false is found (higher) " + LookedUp[i].vowel_freq[k] + " ";
-                }
-                else {
-                    flag[i][k] = true;
-                    //word += " " + i + "-" + k +" Correct " + LookedUp[i].vowel_freq[k] + " ";
+            if (InputFreq.length != j){
+                status = false;
+            }
+            else {
+                double Lower, Higher, freq;
+                for (int k = 0; k < InputFreq[i].length; k++) {
+                    Lower = lThresh * LookedUp[i].vowel_freq[k];
+                    Higher = hThresh * LookedUp[i].vowel_freq[k];
+                    freq = InputFreq[i][k];
+                    if (freq < Lower) {
+                        flag[i][k] = false;
+                        //word += " " + i + "-" + k +" false is found (lower) " + LookedUp[i].vowel_freq[k] + " ";
+                    } else if (freq > Higher) {
+                        flag[i][k] = false;
+                        //word += " " + i + "-" + k +" false is found (higher) " + LookedUp[i].vowel_freq[k] + " ";
+                    } else {
+                        flag[i][k] = true;
+                        //word += " " + i + "-" + k +" Correct " + LookedUp[i].vowel_freq[k] + " ";
+                    }
                 }
             }
         }
 
-        for ( int i = 0; i< flag.length ; i++){
-            for ( int k = 0; k<flag.length ; k++) {
-                if (flag[i][k] == false) {
-                    textView.setText( " False Pronunciation of " + LookedUp[k].vowel_character );
-
-                } else {
-                    textView.setText(" Perfect ");
+        int z = -1;
+        if(status == true){
+            for ( int i = 0; i< flag.length ; i++){
+                for ( int k = 0; k<flag.length ; k++) {
+                    if (flag[i][k] == false) {
+                        //textView.setText( " False Pronunciation of " + LookedUp[k].vowel_character );
+                        status = false;
+                        z = i;
+                    } else {
+                        //textView.setText(" Perfect ");
+                    }
                 }
             }
+        }
+
+        if( status == true){
+            textView.setText(" Perfect ");
+        } else if (status == false && z != -1) {
+            textView.setText(" False at " + (z+1));
+        } else{
+            textView.setText(" Lengths don't match! ");
         }
     }
 
     private void feedback(double[][] InputFreq){
 
+    }
+
+    private IPA IPAfromFreq(double []InputFreq){
+
+        IPA youripa = new IPA();
+
+        double ePer = 0.1;
+
+            if(InputFreq[0] < 280*(1+ePer) && InputFreq[0] > 280*(1-ePer) &&
+                    InputFreq[1] < 2620*(1+ePer) && InputFreq[1] > 2620*(1-ePer) &&
+                    InputFreq[2] < 3380*(1+ePer) && InputFreq[2] > 3380*(1-ePer)){
+
+                IPA temp = new IPA();
+                temp.character = "i";
+                temp.vowel_character = new String[]{"i", "Close", "Front", "Long"};
+                temp.vowel_freq = new int[]{280, 2620, 3380};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 360*(1+ePer) && InputFreq[0] > 360*(1-ePer) &&
+                    InputFreq[1] < 2220*(1+ePer) && InputFreq[1] > 2220*(1-ePer) &&
+                    InputFreq[2] < 2960*(1+ePer) && InputFreq[2] > 2960*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "ɪ";
+                temp.vowel_character = new String[]{"ɪ", "Close", "Front", "Short"};
+                temp.vowel_freq = new int[]{360, 2220, 2960};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 600*(1+ePer) && InputFreq[0] > 600*(1-ePer) &&
+                    InputFreq[1] < 2060*(1+ePer) && InputFreq[1] > 2060*(1-ePer) &&
+                    InputFreq[2] < 2840*(1+ePer) && InputFreq[2] > 2840*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "e";
+                temp.vowel_character = new String[]{"e", "Half-open", "Front", "Short"};
+                temp.vowel_freq = new int[]{600, 2060, 2840};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 800*(1+ePer) && InputFreq[0] > 800*(1-ePer) &&
+                    InputFreq[1] < 1760*(1+ePer) && InputFreq[1] > 1760*(1-ePer) &&
+                    InputFreq[2] < 2500*(1+ePer) && InputFreq[2] > 2500*(1-ePer)){
+
+                IPA temp = new IPA();
+                temp.character = "æ";
+                temp.vowel_character = new String[]{"æ", "Open", "Front", "Short"};
+                temp.vowel_freq = new int[]{800, 1760, 2500};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 760*(1+ePer) && InputFreq[0] > 760*(1-ePer) &&
+                    InputFreq[1] < 1320*(1+ePer) && InputFreq[1] > 1320*(1-ePer) &&
+                    InputFreq[2] < 2500*(1+ePer) && InputFreq[2] > 2500*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "ʌ";
+                temp.vowel_character = new String[]{"ʌ", "Open", "Central", "Short"};
+                temp.vowel_freq = new int[]{760, 1320, 2500};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 740*(1+ePer) && InputFreq[0] > 740*(1-ePer) &&
+                    InputFreq[1] < 1180*(1+ePer) && InputFreq[1] > 1180*(1-ePer) &&
+                    InputFreq[2] < 2640*(1+ePer) && InputFreq[2] > 2640*(1-ePer)){
+
+                IPA temp = new IPA();
+                temp.character = "ɑ";
+                temp.vowel_character = new String[]{"ɑ", "Open", "Back", "Long"};
+                temp.vowel_freq = new int[]{740, 1180, 2640};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 560*(1+ePer) && InputFreq[0] > 560*(1-ePer) &&
+                    InputFreq[1] < 920*(1+ePer) && InputFreq[1] > 920*(1-ePer) &&
+                    InputFreq[2] < 2560*(1+ePer) && InputFreq[2] > 2560*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "ɒ";
+                temp.vowel_character = new String[]{"ɒ", "Open", "Back", "Short"};
+                temp.vowel_freq = new int[]{560, 920, 2560};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 480*(1+ePer) && InputFreq[0] > 480*(1-ePer) &&
+                    InputFreq[1] < 760*(1+ePer) && InputFreq[1] > 760*(1-ePer) &&
+                    InputFreq[2] < 2620*(1+ePer) && InputFreq[2] > 2620*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "ɔ";
+                temp.vowel_character = new String[]{"ɔ", "Half-open", "Back", "Long"};
+                temp.vowel_freq = new int[]{480, 760, 2620};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 380*(1+ePer) && InputFreq[0] > 380*(1-ePer) &&
+                    InputFreq[1] < 940*(1+ePer) && InputFreq[1] > 940*(1-ePer) &&
+                    InputFreq[2] < 2300*(1+ePer) && InputFreq[2] > 2300*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "ʊ";
+                temp.vowel_character = new String[]{"ʊ", "Close", "Back", "Short"};
+                temp.vowel_freq = new int[]{380, 940, 2300};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 320*(1+ePer) && InputFreq[0] > 320*(1-ePer) &&
+                    InputFreq[1] < 920*(1+ePer) && InputFreq[1] > 920*(1-ePer) &&
+                    InputFreq[2] < 2200*(1+ePer) && InputFreq[2] > 2200*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "u";
+                temp.vowel_character = new String[]{"u", "Close", "Back", "Long"};
+                temp.vowel_freq = new int[]{320, 920, 2200};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 560*(1+ePer) && InputFreq[0] > 560*(1-ePer) &&
+                    InputFreq[1] < 1480*(1+ePer) && InputFreq[1] > 1480*(1-ePer) &&
+                    InputFreq[2] < 2520*(1+ePer) && InputFreq[2] > 2520*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "ɜ";
+                temp.vowel_character = new String[]{"ɜ", "Half-open", "Central", "Long"};
+                temp.vowel_freq = new int[]{560, 1480, 2520};
+                youripa = temp;
+            }
+            else if (InputFreq[0] < 500*(1+ePer) && InputFreq[0] > 500*(1-ePer) &&
+                    InputFreq[1] < 1500*(1+ePer) && InputFreq[1] > 1500*(1-ePer) &&
+                    InputFreq[2] < 3000*(1+ePer) && InputFreq[2] > 3000*(1-ePer)) {
+
+                IPA temp = new IPA();
+                temp.character = "ə";
+                temp.vowel_character = new String[]{"ə", "Half-open", "Central", "Short"};
+                temp.vowel_freq = new int[]{500, 1500, 3000};
+                youripa = temp;
+            }
+            else {
+                textView.setText( " Not a vowel ");
+            }
+        textView.setText(youripa.character);
+    return youripa;
     }
 
 }
