@@ -110,6 +110,8 @@ public class LearnFragment extends Fragment {
     private AudioRecord AudioRecorded;
     private AudioTrack AudioRecordedTrack;
     private FFT AudioRecordedFFT;
+    private double [][] user_recording_freq;
+    IPA[] UsersRecordingIPA;
 
     // Camera
     private SurfaceView cameraView;
@@ -137,6 +139,9 @@ public class LearnFragment extends Fragment {
         String[] vowel_character;
         int[] vowel_freq;
     }
+    IPA[] LookedUp;
+    int LookedUp_Length;
+    int[] mispronounced_vowel_index;
 
     // Pronunciation Status
     boolean status = true;
@@ -198,6 +203,7 @@ public class LearnFragment extends Fragment {
                            }
                            else {
                                double[][] test = {{760, 1320, 2500}, {360, 2220, 2960}};
+                               user_recording_freq = test;
                                comparator(test);
                            }
                         }
@@ -384,7 +390,8 @@ public class LearnFragment extends Fragment {
         speechrecognizer.setRecognitionListener(listener);
     }
 
-    protected class SpeechRecognitionListener implements RecognitionListener {
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
+    private class SpeechRecognitionListener implements RecognitionListener {
         @Override
         public void onBeginningOfSpeech() { Toast.makeText(getActivity(), "Recording", Toast.LENGTH_SHORT).show();}
 
@@ -431,7 +438,7 @@ public class LearnFragment extends Fragment {
 
     // In android calling network requests on the main thread forbidden by default
     // Create class to do async job
-    class CallbackTask extends AsyncTask<String, Integer, String> {
+    private class CallbackTask extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -592,14 +599,14 @@ public class LearnFragment extends Fragment {
     // Returns the vowel's characteristic as an IPA class
     // From vowel if given (String of the vowel, null , 'v')
     // From Frequency if given (null, array of frequencies, 'f')
-    private IPA vowel_characteristics_lookup( String vowel, int [] InputFreq, char s){
+    private IPA vowel_characteristics_lookup( String vowel, double [] InputFreq, char s){
         IPA result = new IPA();
 
         if( s == 'v' ){
             if("i".equals(vowel)) {
                 IPA temp = new IPA();
-                temp.character = "i:";
-                temp.vowel_character = new String[]{"iː", "Close", "Front", "Long"};
+                temp.character = "i";
+                temp.vowel_character = new String[]{"i", "Close", "Front", "Long"};
                 temp.vowel_freq = new int[]{280, 2620, 3380};
                 result = temp;
             }
@@ -633,8 +640,8 @@ public class LearnFragment extends Fragment {
             }
             else if ("ɑ".equals(vowel)) {
                 IPA temp = new IPA();
-                temp.character = "ɑː";
-                temp.vowel_character = new String[]{"ɑː", "Open", "Back", "Long"};
+                temp.character = "ɑ";
+                temp.vowel_character = new String[]{"ɑ", "Open", "Back", "Long"};
                 temp.vowel_freq = new int[]{740, 1180, 2640};
                 result = temp;
             }
@@ -647,8 +654,8 @@ public class LearnFragment extends Fragment {
             }
             else if ("ɔ".equals(vowel)) {
                 IPA temp = new IPA();
-                temp.character = "ɔː";
-                temp.vowel_character = new String[]{"ɔː", "Half-open", "Back", "Long"};
+                temp.character = "ɔ";
+                temp.vowel_character = new String[]{"ɔ", "Half-open", "Back", "Long"};
                 temp.vowel_freq = new int[]{480, 760, 2620};
                 result = temp;
             }
@@ -661,15 +668,15 @@ public class LearnFragment extends Fragment {
             }
             else if ("u".equals(vowel)) {
                 IPA temp = new IPA();
-                temp.character = "uː";
-                temp.vowel_character = new String[]{"uː", "Close", "Back", "Long"};
+                temp.character = "u";
+                temp.vowel_character = new String[]{"u", "Close", "Back", "Long"};
                 temp.vowel_freq = new int[]{320, 920, 2200};
                 result = temp;
             }
             else if ("ɜ".equals(vowel)) {
                 IPA temp = new IPA();
-                temp.character = "ɜː";
-                temp.vowel_character = new String[]{"ɜː", "Half-open", "Central", "Long"};
+                temp.character = "ɜ";
+                temp.vowel_character = new String[]{"ɜ", "Half-open", "Central", "Long"};
                 temp.vowel_freq = new int[]{560, 1480, 2520};
                 result = temp;
             }
@@ -841,29 +848,29 @@ public class LearnFragment extends Fragment {
     // Given the right input, an array of array of frequencies, It will see if the frequencies match
     // the required frequencies.
     private void comparator(double[][] InputFreq){
-        IPA[] LookedUp = new IPA[IPAs.length];
+        LookedUp = new IPA[IPAs.length];
         status = true;
 
         // Retrieve data for the vowels in the searched word
-        int LookedUp_Length = 0;
+        LookedUp_Length = 0;
         for ( int i = 0; i<IPAs.length; i++) {
             LookedUp[LookedUp_Length] = vowel_characteristics_lookup(IPAs[i], null, 'v');
             if (LookedUp[LookedUp_Length] != null){
                 LookedUp_Length++;
             }
-
         }
 
         // Check if the recording's frequencies match the desired frequencies
         // if yes -> flag [][] = true
         // if no ->  flag [][] = false
         boolean[][] flag = new boolean[InputFreq.length][3];
-
+        boolean lenghtmismatch = false;
         for ( int i = 0; i<InputFreq.length ; i++){
             // Check if the lengths of from the recording and the searched word mismatch
             // if there is a mismatch set:  status = false
             if (InputFreq.length != LookedUp_Length){
                 status = false;
+                lenghtmismatch = true;
             }
             else {
                 double Lower, Higher, freq;
@@ -884,14 +891,15 @@ public class LearnFragment extends Fragment {
 
         // Check if any flag is false
         // If a flag is is false set: status = false
-        //                              z    = the vowel with the false flag index
-        int z = -1;
+        //                            mispronounced_vowel_index[i]= the index of vowel with flag
+        mispronounced_vowel_index = new int[10];
+        Arrays.fill(mispronounced_vowel_index,0);
         if(status == true){
             for ( int i = 0; i< flag.length ; i++){
                 for ( int k = 0; k<flag.length ; k++) {
                     if (flag[i][k] == false) {
                         status = false;
-                        z = i;
+                        mispronounced_vowel_index[i] = 1;
                     }
                 }
             }
@@ -901,12 +909,49 @@ public class LearnFragment extends Fragment {
         // output: Perfect
         // If status is false, check if there is a mismatch in length
         //                           or comment on which vowel is mispronounced
+        boolean firstFault = true;
         if( status == true){
             textView.setText(" Perfect ");
-        } else if (status == false && z != -1) {
-            textView.setText(" False at " + LookedUp[z].character.toString());
+        } else if (status == false && lenghtmismatch == false) {
+            String message = " False at ";
+            for(int i = 0; i < LookedUp_Length; i++){
+                if(mispronounced_vowel_index[i] == 1){
+                    if(firstFault){
+                        message = message + LookedUp[i].character.toString();
+                        firstFault = false;
+                    }
+                    else{
+                        message += " & " + LookedUp[i].character.toString();
+                    }
+                }
+            }
+            textView.setText(message + "!");
+            feedback();
         } else{
             textView.setText(" Lengths don't match! ");
+        }
+    }
+
+    // Feedback
+    private void feedback(){
+        // Lookup the vowels for the voice recording
+        UsersRecordingIPA = new IPA[user_recording_freq.length];
+        int j = 0;
+        for (int i = 0; i < user_recording_freq.length ; i++){
+            IPA temp = new IPA();
+            temp = vowel_characteristics_lookup(null,user_recording_freq[i],'f');
+            if ( temp != null){
+                UsersRecordingIPA[j] = temp;
+                j++;
+            }
+        }
+
+        for ( int i = 0; i < LookedUp_Length ; i++){
+            if(mispronounced_vowel_index[i] == 1){
+
+                textView.setText(textView.getText() + "\n" + " You were supposed to say " + LookedUp[i].character+
+                        " but you pronounced " + UsersRecordingIPA[i].character);
+            }
         }
     }
 }
