@@ -153,6 +153,13 @@ public class NavigationActivity extends AppCompatActivity
             FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
             fragmenttransaction.replace(R.id.main,fragment,"Word of The Day");
             fragmenttransaction.commit();
+        } else if (id == R.id.ipavowels){
+            // the IPAVowels action
+            setTitle("IPA Vowels");
+            IPAVowelsFragment fragment = new IPAVowelsFragment();
+            FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
+            fragmenttransaction.replace(R.id.main,fragment,"IPA Vowels");
+            fragmenttransaction.commit();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

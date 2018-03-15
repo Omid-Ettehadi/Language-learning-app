@@ -12,6 +12,10 @@
                     android:id="@+id/learn"
                     android:icon="@drawable/ic_menu_learn"
                     android:title="Learn" />
+                <item
+                    android:id="@+id/ipavowels"
+                    android:icon="@drawable/ic_menu_learn"
+                    android:title="IPA Vowels" />
 
             </menu>
         </item>

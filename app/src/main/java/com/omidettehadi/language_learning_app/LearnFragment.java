@@ -688,7 +688,7 @@ public class LearnFragment extends Fragment {
                 result = temp;
             }
             else {
-                Log.d(TAG, "Vowel_characteristis_Lookup: Not a vowel");
+                Log.e(TAG, "Vowel_characteristis_Lookup: Not a vowel");
                 return null;
             }
         }
@@ -766,12 +766,12 @@ public class LearnFragment extends Fragment {
                 result = vowel_characteristics_lookup("ə",null,'v');
             }
             else {
-                Log.d(TAG, "vowel_characteristics_lookup: Not a vowel");
+                Log.e(TAG, "vowel_characteristics_lookup: Not a vowel");
                 return null;
             }
         }
         else {
-            Log.d(TAG, "vowel_characteristics_lookup: Wrong character input");
+            Log.e(TAG, "vowel_characteristics_lookup: Wrong character input");
             return null;
         }
         return result;

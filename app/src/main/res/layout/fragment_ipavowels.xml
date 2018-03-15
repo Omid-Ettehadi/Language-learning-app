@@ -1,0 +1,224 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/LighterPrimaryDark"
+    tools:context="com.omidettehadi.language_learning_app.IPAVowelsFragment">
+
+    <Button
+        android:id="@+id/btni"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/IPA_i"
+        app:layout_constraintBottom_toTopOf="@+id/btnɪ"
+        app:layout_constraintEnd_toStartOf="@+id/btnɒ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnɪ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/IPA_ɪ"
+        app:layout_constraintBottom_toTopOf="@+id/btne"
+        app:layout_constraintEnd_toStartOf="@+id/btnɔ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btni" />
+
+    <Button
+        android:id="@+id/btne"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_e"
+        app:layout_constraintBottom_toTopOf="@+id/btnæ"
+        app:layout_constraintEnd_toStartOf="@+id/btnʊ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnɪ" />
+
+    <Button
+        android:id="@+id/btnæ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_æ"
+        app:layout_constraintBottom_toTopOf="@+id/btnʌ"
+        app:layout_constraintEnd_toStartOf="@+id/btnu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btne" />
+
+    <Button
+        android:id="@+id/btnʌ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_ʌ"
+        app:layout_constraintBottom_toTopOf="@+id/btnɑ"
+        app:layout_constraintEnd_toStartOf="@+id/btnɜ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnæ" />
+
+    <Button
+        android:id="@+id/btnɑ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_ɑ"
+        app:layout_constraintBottom_toTopOf="@+id/btnɛ"
+        app:layout_constraintEnd_toStartOf="@+id/btnə"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnʌ" />
+
+    <Button
+        android:id="@+id/btnɒ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/IPA_ɒ"
+        app:layout_constraintBottom_toTopOf="@+id/btnɔ"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btni"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnɔ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_ɔ"
+        app:layout_constraintBottom_toTopOf="@+id/btnʊ"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnɪ"
+        app:layout_constraintTop_toBottomOf="@+id/btnɒ" />
+
+    <Button
+        android:id="@+id/btnʊ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_ʊ"
+        app:layout_constraintBottom_toTopOf="@+id/btnu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btne"
+        app:layout_constraintTop_toBottomOf="@+id/btnɔ" />
+
+    <Button
+        android:id="@+id/btnu"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_u"
+        app:layout_constraintBottom_toTopOf="@+id/btnɜ"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnæ"
+        app:layout_constraintTop_toBottomOf="@+id/btnʊ" />
+
+    <Button
+        android:id="@+id/btnɜ"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_ɜ"
+        app:layout_constraintBottom_toTopOf="@+id/btnə"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnʌ"
+        app:layout_constraintTop_toBottomOf="@+id/btnu" />
+
+    <Button
+        android:id="@+id/btnə"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_ə"
+        app:layout_constraintBottom_toTopOf="@+id/btna"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnɑ"
+        app:layout_constraintTop_toBottomOf="@+id/btnɜ" />
+
+    <Button
+        android:id="@+id/btnɛ"
+        android:layout_width="50dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="66dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_ɛ"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btna"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnɑ" />
+
+    <Button
+        android:id="@+id/btna"
+        android:layout_width="50dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="66dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_a"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnɛ"
+        app:layout_constraintTop_toBottomOf="@+id/btnə" />
+
+    <Button
+        android:id="@+id/btno"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/IPA_o"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+</android.support.constraint.ConstraintLayout>

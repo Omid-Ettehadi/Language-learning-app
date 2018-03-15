@@ -42,4 +42,20 @@
     <string name="capture">Capture</string>
     <string name="word_of_the_day">Word of the Day</string>
 
+    <string name="IPA_i">i</string>
+    <string name="IPA_ɪ">ɪ</string>
+    <string name="IPA_e">e</string>
+    <string name="IPA_ə">ə</string>
+    <string name="IPA_ɜ">ɜ</string>
+    <string name="IPA_u">u</string>
+    <string name="IPA_ʊ">ʊ</string>
+    <string name="IPA_ɔ">ɔ</string>
+    <string name="IPA_ɒ">ɒ</string>
+    <string name="IPA_ɑ">ɑ</string>
+    <string name="IPA_ʌ">ʌ</string>
+    <string name="IPA_æ">æ</string>
+    <string name="IPA_ɛ">ɛ</string>
+    <string name="IPA_a">a</string>
+    <string name="IPA_o">o</string>
+
 </resources>
