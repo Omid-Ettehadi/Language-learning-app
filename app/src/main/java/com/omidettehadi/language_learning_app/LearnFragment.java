@@ -21,6 +21,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -93,6 +94,7 @@ import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_freq;
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_character;
 import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_freq;
 import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
+import static java.lang.Math.sqrt;
 
 public class LearnFragment extends Fragment {
 
@@ -106,8 +108,8 @@ public class LearnFragment extends Fragment {
     private TextView textView;
 
     // Audio Recording
-    private File file;
-    private AudioRecord AudioRecorded;
+    private File file, noise_file;
+    private AudioRecord AudioRecorded, NoiseRecorded;
     private AudioTrack AudioRecordedTrack;
     private FFT AudioRecordedFFT;
     private double [][] user_recording_freq;
@@ -120,7 +122,7 @@ public class LearnFragment extends Fragment {
 
     // Speech to Text
     private boolean recording, IsListening;
-    private int sampleFreq = 44100;
+    private int sampleFreq = 16000;
     private SpeechRecognizer speechrecognizer;
     private Intent speechrecognizerIntent;
 
@@ -146,6 +148,15 @@ public class LearnFragment extends Fragment {
     // Pronunciation Status
     boolean status = true;
 
+
+
+    int resultcount = 0;
+    String text = "";
+
+
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -156,6 +167,7 @@ public class LearnFragment extends Fragment {
         etInput = view.findViewById(R.id.etInput);
 
         textView = view.findViewById(R.id.textView);
+        textView.setMovementMethod(new ScrollingMovementMethod());
 
         cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
@@ -284,19 +296,50 @@ public class LearnFragment extends Fragment {
                 btnStop.setEnabled(false);
                 btnPlay.setEnabled(true);
 
+                text = "";
+
                 Play();
 
-                /*InputStream inputStream = null;
+                int i = 0;
+                double[][] answer = new double[i][3];
+
+                InputStream inputStream = null;
                 try {
                     inputStream = new FileInputStream(file);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
                 DataInputStream datainputStream = new DataInputStream(inputStream);
-                double[] answer = SampleFFT(datainputStream);
-                String text = answer[0]+ " - " +answer[1]+ " - " + answer[2];
+                try {
+                    while (datainputStream.available() > 0){
+
+                        double[][] temp = answer;
+                        answer = new double[i+1][3];
+                        for ( int j = 0; j<i; j++){
+                            answer[j] = temp[j];
+                        }
+                        answer [i] = SampleFFT(datainputStream);
+                        text += "{" + answer[i][0]+ " - " +answer[i][1]+ " - " + answer[i][2] + "}" +"\n";
+                        i++;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                text += "----------------------------------------------------------------------"+"\n";
+
+                //double[][] answer = {{50,100,150},{200,300,400},{75,100,150},{30,150,200},{131,150,200},{40,150,200},{175,150,200},{175,150,200}};
+                double[][] answer2 = vowel_from_recording(answer);
+
+                text += resultcount + "\n";
+                for ( int k = 0; k < resultcount; k++){
+                    text += "{" + answer2[k][0]+ " - " +answer2[k][1]+ " - " + answer2[k][2] + "}" + "\n";
+                }
+
                 textView.setText(text);
-                */
+
+                resultcount = 0;
+
             }
         });
         return view;
@@ -512,6 +555,53 @@ public class LearnFragment extends Fragment {
     }
 
     // ------------------------------------------------------------------------------------Recording
+    // Take and audio sample so that we can call fft 5 times, find power spectrum for each, then take and average of their results for each frequency
+    // use this later to subtract from our voice recording power spectrum calculation
+    private void noise(){
+        noise_file = new File(getContext().getCacheDir().getAbsolutePath() + File.separator, "noise.pcm");
+
+        try {
+            file.createNewFile();
+
+            OutputStream outputStream = new FileOutputStream(noise_file);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
+
+            int minBufferSize = AudioRecord.getMinBufferSize(sampleFreq,
+                    AudioFormat.CHANNEL_IN_DEFAULT,
+                    AudioFormat.ENCODING_PCM_16BIT);
+
+            short[] audioDataRec = new short[minBufferSize];
+
+            NoiseRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                    sampleFreq,
+                    AudioFormat.CHANNEL_IN_DEFAULT,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    minBufferSize);
+
+            // Filters for audio
+            AcousticEchoCanceler.create(NoiseRecorded.getAudioSessionId());
+            NoiseSuppressor.create(NoiseRecorded.getAudioSessionId());
+            AutomaticGainControl.create(NoiseRecorded.getAudioSessionId());
+
+            NoiseRecorded.startRecording();
+
+            while (recording) {
+                int numberOfShort = NoiseRecorded.read(audioDataRec, 0, minBufferSize);
+                for (int i = 0; i < numberOfShort; i++) {
+                    dataOutputStream.writeShort(audioDataRec[i]);
+                }
+            }
+
+            NoiseRecorded.stop();
+            dataOutputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void StartRecording() {
 
         file = new File(getContext().getCacheDir().getAbsolutePath() + File.separator, "Recording.pcm");
@@ -529,7 +619,7 @@ public class LearnFragment extends Fragment {
 
             short[] audioDataRec = new short[minBufferSize];
 
-            AudioRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
+            AudioRecorded = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION,
                     sampleFreq,
                     AudioFormat.CHANNEL_IN_DEFAULT,
                     AudioFormat.ENCODING_PCM_16BIT,
@@ -782,14 +872,14 @@ public class LearnFragment extends Fragment {
     // should read 1024 samples at a time?
     private double[] SampleFFT(DataInputStream dataInputStream){
         try {
-            double[] dataRec = new double[8192];
-            double[] zeros = new double[8192];
-            double[] powerSpectrum = new double[8192];
+            double[] dataRec = new double[2048];
+            double[] zeros = new double[2048];
+            double[] powerSpectrum = new double[2048];
             double max = 0.0;
             int[] maxIndex = {0, 0, 0};
             double[] maxFreq = {0.0, 0.0, 0.0};
             int i = 0;
-            while (i < 8192) {
+            while (i < 2048) {
                 if (dataInputStream.available() > 0) {
                     dataRec[i] = (double)dataInputStream.readShort();
                 } else {
@@ -799,36 +889,37 @@ public class LearnFragment extends Fragment {
                 i++;
             }
 
-            AudioRecordedFFT = new FFT(8192);
+            AudioRecordedFFT = new FFT(2048);
             AudioRecordedFFT.fft(dataRec, zeros);
-            for(i = 0; i < 4096; i++) {
-                powerSpectrum[i] = (dataRec[4096+i] * dataRec[4096+i]) + (zeros[4096+i] * zeros[4096+i]);
+            for(i = 0; i < 1024; i++) {
+                powerSpectrum[i] = (dataRec[i] * dataRec[i]) + (zeros[i] * zeros[i]);
             }
 
             //these loops start at 1 because we look at i-1 so don't want an error. They end at 4096/4 because we don't care about frequencies higher than ~5000Hz
+            max = 0;
             for(i = 1; i < 1024; i++) {
-                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
+                if((powerSpectrum[i] > max)) {
                     max = powerSpectrum[i];
                     maxIndex[0] = i;
                 }
             }
-            max = 0.0;
-            for(i = 1; i < 1024; i++) {
-                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 2)) {
+            max = 0;
+            for(i = maxIndex[0]+50; i < 1024; i++) {
+                if((powerSpectrum[i] > max)) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
                 }
             }
-            max = 0.0;
-            for(i = 1; i < 1024; i++) {
-                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 2) && (Math.abs(i - maxIndex[1]) > 2)) {
+            max = 0;
+            for(i = maxIndex[1]+50; i < 1024; i++) {
+                if((powerSpectrum[i] > max)) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
                 }
             }
-            maxFreq[0] = (((double) maxIndex[0])/4096.0) * (sampleFreq / 2.0);
-            maxFreq[1] = (((double) maxIndex[1])/4096.0) * (sampleFreq / 2.0);
-            maxFreq[2] = (((double) maxIndex[2])/4096.0) * (sampleFreq / 2.0);
+            maxFreq[0] = (((double) maxIndex[0])/2048.0) * (sampleFreq / 2.0);
+            maxFreq[1] = (((double) maxIndex[1])/2048.0) * (sampleFreq / 2.0);
+            maxFreq[2] = (((double) maxIndex[2])/2048.0) * (sampleFreq / 2.0);
 
             return maxFreq;
 
@@ -841,6 +932,86 @@ public class LearnFragment extends Fragment {
             return null;
         }
 
+    }
+
+    private double[][] vowel_from_recording (double[][] Input){
+        double[][] result = new double[Input.length][3];
+        double thresh = 200;
+        double value = 0;
+        double next_value = 0;
+        double next_next_value = 0;
+        double sum1 = 0;
+        double sum2 = 0;
+        double sum3 = 0;
+        int count = 0;
+
+
+        text += "\n";
+        for (int i = 0; i < Input.length ; i++){
+
+            if ( i < Input.length-2) {
+                value = Input[i][0];
+                next_value = Input[i + 1][0];
+                next_next_value = Input[i + 2][0];
+                if (value < next_value + thresh && value > next_value - thresh) {
+                    text += "1";
+                    count++;
+                    sum1 += Input[i][0];
+                    sum2 += Input[i][1];
+                    sum3 += Input[i][2];
+                } else {
+                    if (value < next_next_value + thresh && value > next_next_value - thresh) {
+                        text += "2";
+                        count++;
+                        sum1 += Input[i][0];
+                        sum2 += Input[i][1];
+                        sum3 += Input[i][2];
+                        i++;
+                    } else if (count > 0) {
+                        text += "3";
+                        count++;
+                        sum1 += value;
+                        sum2 += Input[i][1];
+                        sum3 += Input[i][2];
+                        result[resultcount][0] = (sum1 / count);
+                        result[resultcount][1] = (sum2 / count);
+                        result[resultcount][2] = (sum3 / count);
+                        resultcount++;
+                        text += "result:" + (sum1 / count) + " - ";
+                        count = 0;
+                        sum1 = 0;
+                        sum2 = 0;
+                        sum3 = 0;
+                    }
+                    //text += "4" + "COUNT:" + count;
+                }
+            }
+            else if ( i < Input.length-1 ) {
+
+            }
+        }
+
+        /*
+        sum1 += Input[Input.length-2][0];
+        sum2 += Input[Input.length-2][1];
+        sum3 += Input[Input.length-2][2];
+        result[resultcount][0]= (sum1/count);
+        result[resultcount][1]= (sum2/count);
+        result[resultcount][2]= (sum3/count);
+*/
+
+        result[resultcount][0] = (sum1 / count);
+        result[resultcount][1] = (sum2 / count);
+        result[resultcount][2] = (sum3 / count);
+        resultcount++;
+        text += "result:" + (sum1 / count) + " - ";
+        count = 0;
+        sum1 = 0;
+        sum2 = 0;
+        sum3 = 0;
+
+        textView.setText(text);
+        return result;
     }
 
     // -------------------------------------------------------------------------------------Analysis
