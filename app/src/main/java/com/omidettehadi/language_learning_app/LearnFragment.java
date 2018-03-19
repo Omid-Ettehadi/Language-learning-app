@@ -874,7 +874,7 @@ public class LearnFragment extends Fragment {
         try {
             double[] dataRec = new double[2048];
             double[] zeros = new double[2048];
-            double[] powerSpectrum = new double[2048];
+            double[] powerSpectrum = new double[1024];
             double max = 0.0;
             int[] maxIndex = {0, 0, 0};
             double[] maxFreq = {0.0, 0.0, 0.0};
@@ -892,34 +892,35 @@ public class LearnFragment extends Fragment {
             AudioRecordedFFT = new FFT(2048);
             AudioRecordedFFT.fft(dataRec, zeros);
             for(i = 0; i < 1024; i++) {
-                powerSpectrum[i] = (dataRec[i] * dataRec[i]) + (zeros[i] * zeros[i]);
+                powerSpectrum[i] = (dataRec[i + 1024] * dataRec[i + 1024]) + (zeros[i + 1024] * zeros[i +1024]);
             }
 
             //these loops start at 1 because we look at i-1 so don't want an error. They end at 4096/4 because we don't care about frequencies higher than ~5000Hz
-            max = 0;
-            for(i = 1; i < 1024; i++) {
-                if((powerSpectrum[i] > max)) {
+            max = 0.0;
+            for(i = 1; i < 1023; i++) {
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
                     max = powerSpectrum[i];
                     maxIndex[0] = i;
                 }
             }
-            max = 0;
-            for(i = maxIndex[0]+50; i < 1024; i++) {
-                if((powerSpectrum[i] > max)) {
+            max = 0.0;
+            for(i = 1; i < 1023; i++) {
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (i != maxIndex[0])) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
                 }
             }
-            max = 0;
-            for(i = maxIndex[1]+50; i < 1024; i++) {
-                if((powerSpectrum[i] > max)) {
+            max = 0.0;
+            for(i = 1; i < 1023; i++) {
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (i != maxIndex[0]) && (i != maxIndex[1])) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
                 }
             }
-            maxFreq[0] = (((double) maxIndex[0])/2048.0) * (sampleFreq / 2.0);
-            maxFreq[1] = (((double) maxIndex[1])/2048.0) * (sampleFreq / 2.0);
-            maxFreq[2] = (((double) maxIndex[2])/2048.0) * (sampleFreq / 2.0);
+            //the lowest and highest frequencies this can detect are 0, and half the sample rate. there are 1024 indexes. therefore, the maxIndex/1024 * sampleFreq/2 is the translated frequency
+            maxFreq[0] = (((double) maxIndex[0])/1024.0) * (sampleFreq / 2.0);
+            maxFreq[1] = (((double) maxIndex[1])/1024.0) * (sampleFreq / 2.0);
+            maxFreq[2] = (((double) maxIndex[2])/1024.0) * (sampleFreq / 2.0);
 
             return maxFreq;
 
