@@ -51,6 +51,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.Math;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,8 +109,10 @@ public class LearnFragment extends Fragment {
     private Button btnSearch, btnMic, btnCapture, btnCam, btnRecord, btnStop, btnPlay;
     private TextView textView;
 
+    private InputStream test_input;
+
     // Audio Recording
-    private File file, noise_file;
+    private File file, noise_file, test_file;
     private AudioRecord AudioRecorded, NoiseRecorded;
     private AudioTrack AudioRecordedTrack;
     private FFT AudioRecordedFFT;
@@ -122,7 +126,8 @@ public class LearnFragment extends Fragment {
 
     // Speech to Text
     private boolean recording, IsListening;
-    private int sampleFreq = 16000;
+    //private int sampleFreq = 16000;
+    private int sampleFreq = 44100;
     private SpeechRecognizer speechrecognizer;
     private Intent speechrecognizerIntent;
 
@@ -163,6 +168,31 @@ public class LearnFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_learn, container, false);
+
+        test_input = getContext().getResources().openRawResource(R.raw.test_tone);
+        DataInputStream test_datainputStream = new DataInputStream(test_input);
+        int t = 0;
+        double[][] test_answer = new double[t][3];
+        Log.d("TEST", "TEST BEGIN");
+        try {
+            while (test_datainputStream.available() > 0){
+
+                double[][] temp = test_answer;
+                test_answer = new double[t+1][3];
+                for ( int j = 0; j<t; j++){
+                    test_answer[j] = temp[j];
+                }
+                test_answer [t] = SampleFFT(test_datainputStream);
+                Log.d("TEST", "{" + test_answer[t][0]+ " - " +test_answer[t][1]+ " - " + test_answer[t][2] + "}" +"\n");
+
+                t++;
+                //break;
+            }
+        } catch (IOException e) {
+            Log.d("TEST", "TEST EXCEPTION");
+            e.printStackTrace();
+        }
+        Log.d("TEST", "TEST END");
 
         etInput = view.findViewById(R.id.etInput);
 
@@ -568,14 +598,14 @@ public class LearnFragment extends Fragment {
             DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
 
             int minBufferSize = AudioRecord.getMinBufferSize(sampleFreq,
-                    AudioFormat.CHANNEL_IN_DEFAULT,
+                    AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT);
 
             short[] audioDataRec = new short[minBufferSize];
 
             NoiseRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     sampleFreq,
-                    AudioFormat.CHANNEL_IN_DEFAULT,
+                    AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
                     minBufferSize);
 
@@ -614,14 +644,14 @@ public class LearnFragment extends Fragment {
             DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
 
             int minBufferSize = AudioRecord.getMinBufferSize(sampleFreq,
-                    AudioFormat.CHANNEL_IN_DEFAULT,
+                    AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT);
 
             short[] audioDataRec = new short[minBufferSize];
 
             AudioRecorded = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION,
                     sampleFreq,
-                    AudioFormat.CHANNEL_IN_DEFAULT,
+                    AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
                     minBufferSize);
 
@@ -700,7 +730,7 @@ public class LearnFragment extends Fragment {
                 temp.vowel_freq = new int[]{280, 2620, 3380};
                 result = temp;
             }
-            else if ("ɪ".equals(vowel)) {
+            else if ("ɪ".equals(vowel)) { //this is the tone i put in tonalhell.wav
                 IPA temp = new IPA();
                 temp.character = "ɪ";
                 temp.vowel_character = new String[]{"ɪ", "Close", "Front", "Short"};
@@ -869,58 +899,96 @@ public class LearnFragment extends Fragment {
 
     // ---------------------------------------------------------------------------Frequency Analysis
     // FFT
-    // should read 1024 samples at a time?
+    // we want to have a resolution of ~20Hz in our FFT
+    // output buffer is half the size of the input buffer, and the max freq is sampleFreq/2 so
+    // sampleFreq/(inputBufferSizeFloor) < 20
     private double[] SampleFFT(DataInputStream dataInputStream){
         try {
-            double[] dataRec = new double[2048];
-            double[] zeros = new double[2048];
-            double[] powerSpectrum = new double[1024];
+            Log.d("TEST", "SampleFFT Instance");
+            double inputBufferSizeFloor = (double)sampleFreq / 25.0;
+            int inputBufferSize, i;
+            i = 0;
+            while(true) {
+                inputBufferSize = (int)Math.pow(2.0, (double)i);
+                if(inputBufferSize > inputBufferSizeFloor) break;
+                else i++;
+            }
+            int outputBufferSize = inputBufferSize/2;
+
+            Log.d("TEST", "SampleFFT input buffer size: " + inputBufferSize + " output buffer size: " + outputBufferSize);
+            short[] testData = new short[inputBufferSize];
+            double[] dataRec = new double[inputBufferSize];
+            double[] zeros = new double[inputBufferSize];
+            double[] powerSpectrum = new double[outputBufferSize];
+
+
             double max = 0.0;
             int[] maxIndex = {0, 0, 0};
             double[] maxFreq = {0.0, 0.0, 0.0};
-            int i = 0;
-            while (i < 2048) {
+            i = 0;
+            //the bytebuffer is here to convert dataInputStream endianness. dataInputStream only outputs big endian stuff
+            while (i < inputBufferSize) {
                 if (dataInputStream.available() > 0) {
-                    dataRec[i] = (double)dataInputStream.readShort();
+                    Byte temp = dataInputStream.readByte();
+                    ByteBuffer bb = ByteBuffer.allocate(2);
+                    bb.order(ByteOrder.LITTLE_ENDIAN);
+                    bb.put(temp);
+                    if(dataInputStream.available() > 0)
+                        temp = dataInputStream.readByte();
+                    else
+                        temp = (byte)0;
+                    bb.put(temp);
+                    testData[i] = bb.getShort(0);
+
+                    dataRec[i] = testData[i];
                 } else {
-                    dataRec[i] = (short) 0;
+                    testData[i] = 0;
                 }
-                zeros[i] = 0;
+                zeros[i] = 0.0;
                 i++;
             }
 
-            AudioRecordedFFT = new FFT(2048);
+            AudioRecordedFFT = new FFT(inputBufferSize);
             AudioRecordedFFT.fft(dataRec, zeros);
-            for(i = 0; i < 1024; i++) {
-                powerSpectrum[i] = (dataRec[i + 1024] * dataRec[i + 1024]) + (zeros[i + 1024] * zeros[i +1024]);
+            for(i = 0; i < outputBufferSize; i++) {
+                powerSpectrum[i] = Math.pow(dataRec[i + outputBufferSize], 2.0) + Math.pow(zeros[i + outputBufferSize], 2.0);
+            }
+            Log.d("TEST_POWER", "Power spectrum calculated");
+
+            for(i = 0; i < 100; i++) {
+                Log.d("TEST_POWER", "Power spectrum "+i+": "+ powerSpectrum[i]);
             }
 
-            //these loops start at 1 because we look at i-1 so don't want an error. They end at 4096/4 because we don't care about frequencies higher than ~5000Hz
+
+            //loops from
             max = 0.0;
-            for(i = 1; i < 1023; i++) {
+            for(i = 1; i < outputBufferSize-1; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
                     max = powerSpectrum[i];
                     maxIndex[0] = i;
                 }
             }
+            Log.d("TEST", "maxIndex[0] is" + maxIndex[0]);
             max = 0.0;
-            for(i = 1; i < 1023; i++) {
+            for(i = 1; i < outputBufferSize-1; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (i != maxIndex[0])) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
                 }
             }
+            Log.d("TEST", "maxIndex[1] is" + maxIndex[1]);
             max = 0.0;
-            for(i = 1; i < 1023; i++) {
+            for(i = 1; i < outputBufferSize-1; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (i != maxIndex[0]) && (i != maxIndex[1])) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
                 }
             }
-            //the lowest and highest frequencies this can detect are 0, and half the sample rate. there are 1024 indexes. therefore, the maxIndex/1024 * sampleFreq/2 is the translated frequency
-            maxFreq[0] = (((double) maxIndex[0])/1024.0) * (sampleFreq / 2.0);
-            maxFreq[1] = (((double) maxIndex[1])/1024.0) * (sampleFreq / 2.0);
-            maxFreq[2] = (((double) maxIndex[2])/1024.0) * (sampleFreq / 2.0);
+            Log.d("TEST", "maxIndex[2] is" + maxIndex[2]);
+
+            maxFreq[0] = (sampleFreq/2.0) - ((((double) maxIndex[0])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
+            maxFreq[1] = (sampleFreq/2.0) - ((((double) maxIndex[1])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
+            maxFreq[2] = (sampleFreq/2.0) - ((((double) maxIndex[2])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
 
             return maxFreq;
 
