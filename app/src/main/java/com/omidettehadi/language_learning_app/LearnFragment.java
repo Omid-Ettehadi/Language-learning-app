@@ -1129,7 +1129,7 @@ public class LearnFragment extends Fragment {
         if( status == true){
             textView.setText(" Perfect ");
         } else if (status == false && lenghtmismatch == false) {
-            String message = " False at ";
+            String message = " False pronunciation of  ";
             for(int i = 0; i < LookedUp_Length; i++){
                 if(mispronounced_vowel_index[i] == 1){
                     if(firstFault){
@@ -1165,9 +1165,47 @@ public class LearnFragment extends Fragment {
         for ( int i = 0; i < LookedUp_Length ; i++){
             if(mispronounced_vowel_index[i] == 1){
 
-                textView.setText(textView.getText() + "\n" + " You were supposed to say " + LookedUp[i].character+
-                        " but you pronounced " + UsersRecordingIPA[i].character);
+                textView.setText(textView.getText() + "\n" + " You were supposed to pronounce " + LookedUp[i].character+
+                        " but you pronounced " + UsersRecordingIPA[i].character + " !" + "\n" + "\n");
+
+                String char1, char2, char3;
+                char1 = LookedUp[i].vowel_character[1];
+                char2 = LookedUp[i].vowel_character[2];
+                char3 = LookedUp[i].vowel_character[3];
+
+
+                if (LookedUp[i].vowel_character[1] != UsersRecordingIPA[i].vowel_character[1]){
+                    if(char1 == "Close" ){
+                        textView.setText(textView.getText() + "Try closing your mouth.");
+
+                    } else if (char1 == "Open"){
+                        textView.setText(textView.getText() + "Try opening your mouth.");
+
+                    } else{
+
+                    }
+                }
+
+                if (LookedUp[i].vowel_character[2] != UsersRecordingIPA[i].vowel_character[2]){
+                    if(char2 == "Round"){
+                        textView.setText(textView.getText() + "Try making your lips rounder");
+
+                    } else{
+                        textView.setText(textView.getText() + "Try making your lips less round");
+                    }
+                }
+
+                if (LookedUp[i].vowel_character[3] != UsersRecordingIPA[i].vowel_character[3]){
+                    if(char3 == "Front"){
+                        textView.setText(textView.getText() + "Try bringing your tongue to the front of your mouth");
+                    } else if (char3 == "Back" ){
+                        textView.setText(textView.getText() + "Try bringing your tongue to the back of your mouth");
+                    } else{
+
+                    }
+                }
             }
         }
+
     }
 }
