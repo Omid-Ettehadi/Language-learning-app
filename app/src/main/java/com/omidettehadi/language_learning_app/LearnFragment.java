@@ -71,31 +71,7 @@ import org.json.JSONObject;
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.google.android.gms.internal.zzs.TAG;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_freq;
-import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
+import static com.omidettehadi.language_learning_app.SigninActivity.word;
 import static java.lang.Math.sqrt;
 
 public class LearnFragment extends Fragment {
@@ -138,7 +114,6 @@ public class LearnFragment extends Fragment {
     private double lThresh = 1 - (ePer);
 
     // Searched Word
-    private String word;
     private String IPAString = "";
     private String [] IPAs;
     class IPA {
@@ -213,6 +188,7 @@ public class LearnFragment extends Fragment {
         btnPlay = view.findViewById(R.id.btnPlay);
         btnPlay.setEnabled(false);
 
+        etInput.setText(word);
         // Call the camera and the voice recording for Speech to Text
         camera();
         speech_to_text();

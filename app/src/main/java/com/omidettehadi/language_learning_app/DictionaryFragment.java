@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -57,21 +58,21 @@ import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday
 import static com.omidettehadi.language_learning_app.SigninActivity.WordHistory;
 import static com.omidettehadi.language_learning_app.SigninActivity.historystatus;
 
-public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitListener {
+public class DictionaryFragment extends Fragment {
 
     private EditText etInput;
-    private Button btnSearch, btnMic, btnCapture, btnCam;
+    private Button btnSearch, btnMic, btnCapture, btnCam, btnYES, btnNO;
     private TextView tvWordoftheDay, tvWordoftheDayAns;
     private SpeechRecognizer speechrecognizer;
     private Intent speechrecognizerIntent;
-    private boolean IsListening, packageName;
-    private String GoogleScore;
+    private boolean IsListening;
+
     private SurfaceView cameraView;
     private CameraSource cameraSource;
     private final int RequestCameraPermissionID = 1001;
 
     private ListView listview;
-    //private String[] WordHistory = new String[]{"hello"};
+
 
     public DictionaryFragment() {
         // Required empty public constructor
@@ -95,16 +96,13 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         btnCapture.setVisibility(View.INVISIBLE);
         cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
-
+        btnYES = view.findViewById(R.id.btnYES);
+        btnNO = view.findViewById(R.id.btnNO);
 
         listview = view.findViewById(R.id.lvHistory);
-        if (historystatus == true){
-            WordHistory = new String[]{};
-            historystatus = false;
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, WordHistory);
-        listview.setAdapter(adapter);
 
+        camera();
+        speech_to_text();
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -114,6 +112,37 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             }
         }, 500);
 
+        if (historystatus == true){
+            WordHistory = new String[]{};
+            historystatus = false;
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, WordHistory);
+        listview.setAdapter(adapter);
+
+        btnYES.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WordoftheDayFragment fragment = new WordoftheDayFragment();
+                FragmentManager fragmentmanager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentttransaction = fragmentmanager.beginTransaction();
+                fragmentttransaction.replace(R.id.main, fragment);
+                fragmentttransaction.addToBackStack(null);
+                fragmentttransaction.commit();
+            }
+        });
+
+        btnNO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                word = wordoftheday;
+                LearnFragment fragment = new LearnFragment();
+                FragmentManager fragmentmanager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentttransaction = fragmentmanager.beginTransaction();
+                fragmentttransaction.replace(R.id.main, fragment);
+                fragmentttransaction.addToBackStack(null);
+                fragmentttransaction.commit();
+            }
+        });
 
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
@@ -131,7 +160,6 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 }
                 tempArray[newSize- 1] = word;
                 WordHistory = tempArray;
-                //WordHistory.;
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
                 listview.setAdapter(adapter);
                 listview.setOnItemClickListener(new ListClickHandler());
@@ -166,7 +194,6 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 }
                 tempArray[newSize- 1] = wordoftheday;
                 WordHistory = tempArray;
-                //WordHistory.;
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
                 listview.setAdapter(adapter);
                 listview.setOnItemClickListener(new ListClickHandler());
@@ -208,24 +235,34 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
             }
         });
 
+        return view;
+    }
+
+    // ----------------------------------------------------------------------------------Input Tools
+    // Camera
+    private void camera(){
         // Code for the Camera
-        TextRecognizer textRecognizer = new TextRecognizer.Builder(getActivity().getApplicationContext()).build();
+        TextRecognizer textRecognizer =
+                new TextRecognizer.Builder(getActivity().getApplicationContext()).build();
         if (!textRecognizer.isOperational()) {
 
         }
         else {
-            cameraSource = new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
-                    .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setRequestedPreviewSize(800, 200)
-                    .setRequestedFps(2.0f)
-                    .setAutoFocusEnabled(true)
-                    .build();
+            cameraSource =
+                    new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
+                            .setFacing(CameraSource.CAMERA_FACING_BACK)
+                            .setRequestedPreviewSize(800, 200)
+                            .setRequestedFps(2.0f)
+                            .setAutoFocusEnabled(true)
+                            .build();
             cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
                 public void surfaceCreated(SurfaceHolder surfaceHolder) {
 
                     try {
-                        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(getContext(),
+                                android.Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) {
 
                             ActivityCompat.requestPermissions(getActivity(),
                                     new String[]{android.Manifest.permission.CAMERA},
@@ -239,24 +276,20 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 }
 
                 @Override
-                public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-                }
+                public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {}
 
                 @Override
                 public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
                     cameraSource.stop();
                 }
             });
+
             textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
                 @Override
-                public void release() {
-
-                }
+                public void release() {}
 
                 @Override
                 public void receiveDetections(Detector.Detections<TextBlock> detections) {
-
                     final SparseArray<TextBlock> items = detections.getDetectedItems();
                     if(items.size() != 0)
                     {
@@ -278,68 +311,27 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
                 }
             });
         }
+    }
 
+    // Speech to Text
+    private void speech_to_text() {
         // Code for Voice Recorder
         speechrecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
         speechrecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
+        speechrecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, false);
         SpeechRecognitionListener listener = new SpeechRecognitionListener();
         speechrecognizer.setRecognitionListener(listener);
-
-
-        return view;
     }
 
-    public class ListClickHandler implements AdapterView.OnItemClickListener {
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
+    class SpeechRecognitionListener implements RecognitionListener {
+        @Override
+        public void onBeginningOfSpeech() { Toast.makeText(getActivity(), "Recording", Toast.LENGTH_SHORT).show();}
 
         @Override
-        public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
-            TextView listText = (TextView) view.findViewById(R.id.lvHistory);
-            String text = listText.getText().toString();
-            word = text;
-            WordProfileFragment fragment = new WordProfileFragment();
-            FragmentTransaction fragmenttransaction = getFragmentManager().beginTransaction();
-            fragmenttransaction.replace(R.id.main,fragment,"Word Profile");
-            fragmenttransaction.commit();
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case RequestCameraPermissionID: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    try {
-                        cameraSource.start(cameraView.getHolder());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            break;
-        }
-    }
-
-    public boolean getPackageName() {
-        return packageName;
-    }
-
-    protected class SpeechRecognitionListener implements RecognitionListener {
-        @Override
-        public void onBeginningOfSpeech()
-        {
-            Toast.makeText(getActivity(), "Recording", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onBufferReceived(byte[] buffer) {
-        }
+        public void onBufferReceived(byte[] buffer) { }
 
         @Override
         public void onEndOfSpeech(){
@@ -354,51 +346,57 @@ public class DictionaryFragment extends Fragment implements TextToSpeech.OnInitL
         }
 
         @Override
-        public void onEvent(int eventType, Bundle params){
-        }
+        public void onEvent(int eventType, Bundle params){ }
 
         @Override
-        public void onPartialResults(Bundle partialResults){
-        }
+        public void onPartialResults(Bundle partialResults){ }
 
         @Override
-        public void onReadyForSpeech(Bundle params){
-        }
+        public void onReadyForSpeech(Bundle params){ }
 
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onResults(Bundle results)
-        {
+        public void onResults(Bundle results){
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            float[] score = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
             etInput.setText(matches.get(0).toString());
-            /*
-            for (int i = 0 ; i < matches.size() ; i++){
-                if(matches.get(i).toString().equals(etInput.getText().toString())){
-                    GoogleScore = String.valueOf(score[i]*100);
-                    tvSpeakNow.setText( System.lineSeparator() + "Your pronunciation is at " + GoogleScore + " % ");
-                    break;
-                }
-                else{
-                    tvSpeakNow.setText( System.lineSeparator() + "Sorry, What was that?");
-                }
-            }*/
         }
 
         @Override
-        public void onRmsChanged(float rmsdB){
+        public void onRmsChanged(float rmsdB){ }
+    }
+
+    // -----------------------------------------------------------------------------------Item Click
+    public class ListClickHandler implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
+            TextView listText = (TextView) view.findViewById(R.id.lvHistory);
+            String text = listText.getText().toString();
+            word = text;
+            WordProfileFragment fragment = new WordProfileFragment();
+            FragmentTransaction fragmenttransaction = getFragmentManager().beginTransaction();
+            fragmenttransaction.replace(R.id.main,fragment,"Word Profile");
+            fragmenttransaction.commit();
         }
     }
 
+    // ---------------------------------------------------------------------------Permission-Request
     @Override
-    public void onInit(int status) {
-    }
-
-    @Override
-    public void onDestroy() {
-        if (speechrecognizer != null){
-            speechrecognizer.destroy();
+    public void onRequestPermissionsResult(int requestCode,String[] permissions,int[] grantResults) {
+        switch (requestCode) {
+            case RequestCameraPermissionID: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(
+                            getContext(),android.Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    try {
+                        cameraSource.start(cameraView.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            break;
         }
-        super.onDestroy();
     }
 }
