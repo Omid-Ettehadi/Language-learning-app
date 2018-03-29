@@ -27,13 +27,17 @@
 
             <Button
                 android:id="@+id/btnBack"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:background="@android:drawable/ic_menu_revert"
                 android:backgroundTint="@color/bg_register"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvWord"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:targetApi="lollipop" />
@@ -41,12 +45,13 @@
             <TextView
                 android:id="@+id/tvWord"
                 android:layout_width="200dp"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/btn_login_bg"
+                android:fontFamily="@font/tradegothicltstd"
                 android:lineSpacingExtra="10sp"
                 android:textAlignment="textStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -58,16 +63,20 @@
 
             <Button
                 android:id="@+id/btnSpeak"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:background="@android:drawable/ic_lock_silent_mode_off"
                 android:backgroundTint="@color/common_plus_signin_btn_text_light_focused"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" tools:targetApi="lollipop"/>
+                app:layout_constraintStart_toEndOf="@+id/tvWord"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:targetApi="lollipop" />
         </android.support.constraint.ConstraintLayout>
     </android.support.constraint.ConstraintLayout>
 
@@ -78,12 +87,15 @@
 
         <TextView
             android:id="@+id/tvProfile"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:fontFamily="@font/tradegothicltstd"
             android:textAlignment="viewStart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

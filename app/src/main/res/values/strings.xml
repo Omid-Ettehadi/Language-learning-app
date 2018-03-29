@@ -57,5 +57,7 @@
     <string name="IPA_ɛ">ɛ</string>
     <string name="IPA_a">a</string>
     <string name="IPA_o">o</string>
+    <string name="stop">Stop</string>
+    <string name="how_did_i_do">How did I do?</string>
 
 </resources>

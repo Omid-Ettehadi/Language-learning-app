@@ -184,7 +184,7 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
 
                         number += 1 ;
                         definition += System.lineSeparator();
-                        definition += number + ") " + IPAString;
+                        definition += number + ") " + IPAString + "\n" + "\n";
 
                         for(int k = 0 ; k < three.length() ; k++){
                             JSONObject senses = three.getJSONObject(k);
@@ -192,8 +192,8 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
                             for(int l = 0 ; l < four.length() ; l++) {
                                 JSONObject definitions = four.getJSONObject(l);
                                 JSONArray five = definitions.getJSONArray("definitions");
-                                definition += System.lineSeparator() + " - ";
-                                definition += five.getString(0);
+                                definition += "- ";
+                                definition += five.getString(0) + "\n";
                             }
                         }
                     }
@@ -203,7 +203,7 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
                 e.printStackTrace();
             }
 
-            for(int i = 0 ; i < IPAString.length() ; i++){
+            /*for(int i = 0 ; i < IPAString.length() ; i++){
                 if(IPAString.charAt(i) == vowel_1_character[0].charAt(0)){
                     IPAFREQRESULT += System.lineSeparator();
                     IPAFREQRESULT += " " + IPAString.charAt(i) + " ";
@@ -268,7 +268,7 @@ public class WordProfileFragment extends Fragment implements TextToSpeech.OnInit
                     IPAFREQRESULT += "";
                 }
             }
-            definition += IPAFREQRESULT;
+            definition += IPAFREQRESULT;*/
             tvProfile.setText(definition);
         }
     }

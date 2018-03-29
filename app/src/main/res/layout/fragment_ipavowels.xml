@@ -9,12 +9,14 @@
 
     <Button
         android:id="@+id/btni"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/tradegothicltstdlight"
         android:text="@string/IPA_i"
         app:layout_constraintBottom_toTopOf="@+id/btnɪ"
         app:layout_constraintEnd_toStartOf="@+id/btnɒ"
@@ -23,12 +25,14 @@
 
     <Button
         android:id="@+id/btnɪ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/tradegothicltstdlight"
         android:text="@string/IPA_ɪ"
         app:layout_constraintBottom_toTopOf="@+id/btne"
         app:layout_constraintEnd_toStartOf="@+id/btnɔ"
@@ -37,6 +41,7 @@
 
     <Button
         android:id="@+id/btne"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -51,6 +56,7 @@
 
     <Button
         android:id="@+id/btnæ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -65,6 +71,7 @@
 
     <Button
         android:id="@+id/btnʌ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -79,6 +86,7 @@
 
     <Button
         android:id="@+id/btnɑ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -93,6 +101,7 @@
 
     <Button
         android:id="@+id/btnɒ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -107,6 +116,7 @@
 
     <Button
         android:id="@+id/btnɔ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -121,6 +131,7 @@
 
     <Button
         android:id="@+id/btnʊ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -135,6 +146,7 @@
 
     <Button
         android:id="@+id/btnu"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -149,6 +161,7 @@
 
     <Button
         android:id="@+id/btnɜ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -163,6 +176,7 @@
 
     <Button
         android:id="@+id/btnə"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
@@ -177,6 +191,7 @@
 
     <Button
         android:id="@+id/btnɛ"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="48dp"
         android:layout_marginBottom="66dp"
@@ -191,6 +206,7 @@
 
     <Button
         android:id="@+id/btna"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="48dp"
         android:layout_marginBottom="66dp"
@@ -205,6 +221,7 @@
 
     <Button
         android:id="@+id/btno"
+        android:textAllCaps="false"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"

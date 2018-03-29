@@ -72,7 +72,6 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
         btnSpeak.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 speakOut();
-
             }
         });
 
@@ -80,7 +79,7 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
     }
 
     private void speakOut() {
-        tts.speak(word , TextToSpeech.QUEUE_FLUSH, null);
+        tts.speak( wordoftheday , TextToSpeech.QUEUE_FLUSH, null);
     }
 
     @Override
@@ -166,7 +165,7 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
 
                         number += 1 ;
                         definition += System.lineSeparator();
-                        definition += number + ") " + IPAString;
+                        definition += number + ") " + IPAString + "\n" + "\n";
 
                         for(int k = 0 ; k < three.length() ; k++){
                             JSONObject senses = three.getJSONObject(k);
@@ -174,7 +173,7 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
                             for(int l = 0 ; l < four.length() ; l++) {
                                 JSONObject definitions = four.getJSONObject(l);
                                 JSONArray five = definitions.getJSONArray("definitions");
-                                definition += System.lineSeparator() + " - ";
+                                definition += "- ";
                                 definition += five.getString(0);
                             }
                         }
