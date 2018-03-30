@@ -2,6 +2,7 @@ package com.omidettehadi.language_learning_app;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -17,7 +18,6 @@ import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -29,12 +29,23 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.androidplot.xy.BoundaryMode;
+import com.androidplot.xy.BubbleFormatter;
+import com.androidplot.xy.BubbleSeries;
+import com.androidplot.xy.XYPlot;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -49,30 +60,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.Math;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.text.TextBlock;
-import com.google.android.gms.vision.text.TextRecognizer;
-import com.omidettehadi.language_learning_app.FFT;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.google.android.gms.internal.zzs.TAG;
 import static com.omidettehadi.language_learning_app.SigninActivity.word;
-import static java.lang.Math.sqrt;
 
 public class LearnFragment extends Fragment {
 
@@ -84,11 +81,10 @@ public class LearnFragment extends Fragment {
     private EditText etInput;
     private Button btnSearch, btnMic, btnCapture, btnCam, btnRecord, btnStop, btnPlay;
     private TextView textView;
-
-    private InputStream test_input;
+    private XYPlot plot;
 
     // Audio Recording
-    private File file, noise_file, test_file;
+    private File file, noise_file;
     private AudioRecord AudioRecorded, NoiseRecorded;
     private AudioTrack AudioRecordedTrack;
     private FFT AudioRecordedFFT;
@@ -102,7 +98,6 @@ public class LearnFragment extends Fragment {
 
     // Speech to Text
     private boolean recording, IsListening;
-    //private int sampleFreq = 16000;
     private int sampleFreq = 44100;
     private SpeechRecognizer speechrecognizer;
     private Intent speechrecognizerIntent;
@@ -116,25 +111,23 @@ public class LearnFragment extends Fragment {
     // Searched Word
     private String IPAString = "";
     private String [] IPAs;
-    class IPA {
+    private class IPA {
         String character;
         String[] vowel_character;
         int[] vowel_freq;
     }
-    IPA[] LookedUp;
-    int LookedUp_Length;
-    int[] mispronounced_vowel_index;
+    private IPA[] LookedUp;
+    private int LookedUp_Length;
+    private int[] mispronounced_vowel_index;
 
     // Pronunciation Status
-    boolean status = true;
-
-
+    private boolean status = true;
 
     int resultcount = 0;
     String text = "";
 
-
-
+    private InputStream test_input;
+    private File test_file;
 
 
     @Override
@@ -170,9 +163,11 @@ public class LearnFragment extends Fragment {
         Log.d("TEST", "TEST END");*/
 
         etInput = view.findViewById(R.id.etInput);
+        etInput.setText(word);
 
         textView = view.findViewById(R.id.textView);
         textView.setMovementMethod(new ScrollingMovementMethod());
+        textView.setText("First you have to search for the word that you want to pronounce!");
 
         cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
@@ -188,7 +183,11 @@ public class LearnFragment extends Fragment {
         btnPlay = view.findViewById(R.id.btnPlay);
         btnPlay.setEnabled(false);
 
-        etInput.setText(word);
+        plot = view.findViewById(R.id.xyPlot);
+        plot.setDomainBoundaries(0,1000, BoundaryMode.AUTO);
+        plot.setRangeBoundaries(0,3000,BoundaryMode.AUTO);
+        plot.setVisibility(View.INVISIBLE);
+
         // Call the camera and the voice recording for Speech to Text
         camera();
         speech_to_text();
@@ -204,7 +203,7 @@ public class LearnFragment extends Fragment {
 
                 new CallbackTask().execute(dictionaryEntries());
 
-                if(IPAString == null){
+                /*if(IPAString == null){
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                        @Override
@@ -220,13 +219,18 @@ public class LearnFragment extends Fragment {
                                }, 5000);
                            }
                            else {
-                               double[][] test = {{760, 1320, 2500}, {360, 2220, 2960}};
-                               user_recording_freq = test;
-                               comparator(test);
+                               final Handler handler = new Handler();
+                               handler.postDelayed(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       double[][] test = {{760, 1320, 2500}, {360, 2220, 2960}};
+                                       comparator(test);
+                                   }
+                               }, 5000);
                            }
                         }
                     }, 3000);
-                }
+                }*/
             }
         });
 
@@ -272,6 +276,8 @@ public class LearnFragment extends Fragment {
 
         btnRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                plot.clear();
+                plot.setVisibility(View.INVISIBLE);
                 btnRecord.setEnabled(false);
                 btnStop.setEnabled(true);
                 btnPlay.setEnabled(false);
@@ -302,7 +308,7 @@ public class LearnFragment extends Fragment {
                 btnStop.setEnabled(false);
                 btnPlay.setEnabled(true);
 
-                text = "";
+                //text = "";
 
                 Play();
 
@@ -337,7 +343,7 @@ public class LearnFragment extends Fragment {
                 //double[][] answer = {{50,100,150},{200,300,400},{75,100,150},{30,150,200},{131,150,200},{40,150,200},{175,150,200},{175,150,200}};
                 double[][] answer2 = vowel_from_recording(answer);
 
-                text += resultcount + "\n";
+                //text += resultcount + "\n";
                 for ( int k = 0; k < resultcount; k++){
                     text += "{" + answer2[k][0]+ " - " +answer2[k][1]+ " - " + answer2[k][2] + "}" + "\n";
                 }
@@ -442,7 +448,10 @@ public class LearnFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.FROYO)
     private class SpeechRecognitionListener implements RecognitionListener {
         @Override
-        public void onBeginningOfSpeech() { Toast.makeText(getActivity(), "Recording", Toast.LENGTH_SHORT).show();}
+        public void onBeginningOfSpeech() {
+            Toast.makeText(getActivity(), "Recording", Toast.LENGTH_SHORT).show();
+            IsListening = true;
+        }
 
         @Override
         public void onBufferReceived(byte[] buffer) { }
@@ -1042,21 +1051,21 @@ public class LearnFragment extends Fragment {
                 next_value = Input[i + 1][0];
                 next_next_value = Input[i + 2][0];
                 if (value < next_value + thresh && value > next_value - thresh) {
-                    text += "1";
+                    //text += "1";
                     count++;
                     sum1 += Input[i][0];
                     sum2 += Input[i][1];
                     sum3 += Input[i][2];
                 } else {
                     if (value < next_next_value + thresh && value > next_next_value - thresh) {
-                        text += "2";
+                        //text += "2";
                         count++;
                         sum1 += Input[i][0];
                         sum2 += Input[i][1];
                         sum3 += Input[i][2];
                         i++;
                     } else if (count > 0) {
-                        text += "3";
+                        //text += "3";
                         count++;
                         sum1 += value;
                         sum2 += Input[i][1];
@@ -1065,7 +1074,7 @@ public class LearnFragment extends Fragment {
                         result[resultcount][1] = (sum2 / count);
                         result[resultcount][2] = (sum3 / count);
                         resultcount++;
-                        text += "result:" + (sum1 / count) + " - ";
+                        //text += "result:" + (sum1 / count) + " - ";
                         count = 0;
                         sum1 = 0;
                         sum2 = 0;
@@ -1092,7 +1101,7 @@ public class LearnFragment extends Fragment {
         result[resultcount][1] = (sum2 / count);
         result[resultcount][2] = (sum3 / count);
         resultcount++;
-        text += "result:" + (sum1 / count) + " - ";
+        //text += "result:" + (sum1 / count) + " - ";
         count = 0;
         sum1 = 0;
         sum2 = 0;
@@ -1205,11 +1214,37 @@ public class LearnFragment extends Fragment {
             }
         }
 
+        String user_text = "";
+        String data_text = "";
+        int k = 1;
         for ( int i = 0; i < LookedUp_Length ; i++){
             if(mispronounced_vowel_index[i] == 1){
 
                 textView.setText(textView.getText() + "\n" + " You were supposed to pronounce " + LookedUp[i].character+
                         " but you pronounced " + UsersRecordingIPA[i].character + " !" + "\n" + "\n");
+
+
+                plot.setVisibility(View.VISIBLE);
+                data_text = "Ideal phoneme " + k;
+                BubbleSeries data = new BubbleSeries(
+                        Arrays.asList(new Number[]{LookedUp[i].vowel_freq[0]}),
+                        Arrays.asList(new Number[]{LookedUp[i].vowel_freq[1]}),
+                        Arrays.asList(new Number[]{5}),
+                        data_text
+                );
+                BubbleFormatter format_Data = new BubbleFormatter (Color.GREEN, Color.WHITE);
+                plot.addSeries(data,format_Data);
+
+                user_text = "User's phoneme " + k;
+                BubbleSeries user = new BubbleSeries(
+                        Arrays.asList(new Number[]{UsersRecordingIPA[i].vowel_freq[0]}),
+                        Arrays.asList(new Number[]{UsersRecordingIPA[i].vowel_freq[1]}),
+                        Arrays.asList(new Number[]{1}),
+                        user_text
+                );
+                BubbleFormatter format_user = new BubbleFormatter (Color.RED, Color.WHITE);
+                plot.addSeries(user,format_user);
+
 
                 String char1, char2, char3;
                 char1 = LookedUp[i].vowel_character[1];
