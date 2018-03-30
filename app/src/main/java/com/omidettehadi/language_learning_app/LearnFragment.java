@@ -144,7 +144,7 @@ public class LearnFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_learn, container, false);
 
-        test_input = getContext().getResources().openRawResource(R.raw.test_tone);
+        /*test_input = getContext().getResources().openRawResource(R.raw.newtest);
         DataInputStream test_datainputStream = new DataInputStream(test_input);
         int t = 0;
         double[][] test_answer = new double[t][3];
@@ -167,7 +167,7 @@ public class LearnFragment extends Fragment {
             Log.d("TEST", "TEST EXCEPTION");
             e.printStackTrace();
         }
-        Log.d("TEST", "TEST END");
+        Log.d("TEST", "TEST END");*/
 
         etInput = view.findViewById(R.id.etInput);
 
@@ -926,7 +926,7 @@ public class LearnFragment extends Fragment {
     // sampleFreq/(inputBufferSizeFloor) < 20
     private double[] SampleFFT(DataInputStream dataInputStream){
         try {
-            Log.d("TEST", "SampleFFT Instance");
+            //Log.d("TEST", "SampleFFT Instance");
             double inputBufferSizeFloor = (double)sampleFreq / 25.0;
             int inputBufferSize, i;
             i = 0;
@@ -937,7 +937,7 @@ public class LearnFragment extends Fragment {
             }
             int outputBufferSize = inputBufferSize/2;
 
-            Log.d("TEST", "SampleFFT input buffer size: " + inputBufferSize + " output buffer size: " + outputBufferSize);
+            //Log.d("TEST", "SampleFFT input buffer size: " + inputBufferSize + " output buffer size: " + outputBufferSize);
             short[] testData = new short[inputBufferSize];
             double[] dataRec = new double[inputBufferSize];
             double[] zeros = new double[inputBufferSize];
@@ -953,7 +953,7 @@ public class LearnFragment extends Fragment {
                 if (dataInputStream.available() > 0) {
                     Byte temp = dataInputStream.readByte();
                     ByteBuffer bb = ByteBuffer.allocate(2);
-                    bb.order(ByteOrder.LITTLE_ENDIAN);
+                    bb.order(ByteOrder.BIG_ENDIAN); //set to BIG_ENDIAN or LITTLE_ENDIAN as appropriate
                     bb.put(temp);
                     if(dataInputStream.available() > 0)
                         temp = dataInputStream.readByte();
@@ -975,10 +975,8 @@ public class LearnFragment extends Fragment {
             for(i = 0; i < outputBufferSize; i++) {
                 powerSpectrum[i] = Math.pow(dataRec[i + outputBufferSize], 2.0) + Math.pow(zeros[i + outputBufferSize], 2.0);
             }
-            Log.d("TEST_POWER", "Power spectrum calculated");
 
             for(i = 0; i < 100; i++) {
-                Log.d("TEST_POWER", "Power spectrum "+i+": "+ powerSpectrum[i]);
             }
 
             //loops from
@@ -989,23 +987,23 @@ public class LearnFragment extends Fragment {
                     maxIndex[0] = i;
                 }
             }
-            Log.d("TEST", "maxIndex[0] is" + maxIndex[0]);
+            //Log.d("TEST", "maxIndex[0] is" + maxIndex[0]);
             max = 0.0;
             for(i = 1; i < outputBufferSize-1; i++) {
-                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (i != maxIndex[0])) {
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
                 }
             }
-            Log.d("TEST", "maxIndex[1] is" + maxIndex[1]);
+            //Log.d("TEST", "maxIndex[1] is" + maxIndex[1]);
             max = 0.0;
             for(i = 1; i < outputBufferSize-1; i++) {
-                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (i != maxIndex[0]) && (i != maxIndex[1])) {
+                if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3) && (Math.abs(i - maxIndex[1]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
                 }
             }
-            Log.d("TEST", "maxIndex[2] is" + maxIndex[2]);
+            //Log.d("TEST", "maxIndex[2] is" + maxIndex[2]);
 
             maxFreq[0] = (sampleFreq/2.0) - ((((double) maxIndex[0])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
             maxFreq[1] = (sampleFreq/2.0) - ((((double) maxIndex[1])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
