@@ -8,20 +8,27 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import static com.omidettehadi.language_learning_app.MainActivity.word;
+import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
+import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
+import static com.omidettehadi.language_learning_app.MainActivity.historystatus;
+import static com.omidettehadi.language_learning_app.MainActivity.email;
+
 public class SignupActivity extends AppCompatActivity {
 
+    // ----------------------------------------------------------------------------------Declaration
+    // Items
+    private FirebaseAuth auth;
     private EditText inputEmail, inputPassword;
     private Button btnSignin, btnSignup, btnResetPassword;
-    private FirebaseAuth auth;
-    private ProgressBar progressBar;
 
+    // ------------------------------------------------------------------------------------On Create
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,14 +40,16 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         // Definition
-        progressBar = findViewById(R.id.progressBar);
         inputEmail = findViewById(R.id.etEmail);
         inputPassword = findViewById(R.id.etPassword);
+
         btnSignup = findViewById(R.id.btnRegister);
         btnResetPassword = findViewById(R.id.btnResetPassword);
         btnSignin = findViewById(R.id.btnSignin);
 
-        // Action when Register button is pressed.
+
+        // ----------------------------------------------------------------------------------Buttons
+        // See if Register button is pressed.
         // Create an account in the database.
         // Go to Main Activity if successful
         btnSignup.setOnClickListener(new View.OnClickListener() {
@@ -51,23 +60,25 @@ public class SignupActivity extends AppCompatActivity {
 
                 // Check if email address is entered.
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address!",
+                    Toast.makeText(getApplicationContext(),
+                            "Enter email address!",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // Check if password is entered.
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!",
+                    Toast.makeText(getApplicationContext(),
+                            "Enter password!",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // Check if password length is acceptable.
                 if (password.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Password too short, enter minimum 6 characters!",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                progressBar.setVisibility(View.VISIBLE);
 
                 // Create a new user
                 auth.createUserWithEmailAndPassword(email, password)
@@ -75,10 +86,8 @@ public class SignupActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 Toast.makeText(SignupActivity.this,
-                                        "createUserWithEmail:onComplete:" + task.isSuccessful(),
+                                        "createUserWithEmail:onComplete:" +task.isSuccessful(),
                                         Toast.LENGTH_SHORT).show();
-
-                                progressBar.setVisibility(View.GONE);
 
                                 // If sign in succeeds the auth state listener will be notified and
                                 // logic to handle the user can be handled in the listener.
@@ -89,7 +98,8 @@ public class SignupActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    Intent go_to_MainActivity = new Intent(SignupActivity.this,
+                                    Intent go_to_MainActivity = new
+                                            Intent(SignupActivity.this,
                                             MainActivity.class);
                                     startActivity(go_to_MainActivity);
                                     finish();
@@ -99,7 +109,7 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        // Action when Password Reset button is pressed.
+        // See if Password Reset button is pressed.
         // Go to Reset Password Activity.
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +120,7 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        // Action when Sign in button is pressed.
+        // See if Sign in button is pressed.
         // Finish activity to go back to Signin Activity.
         btnSignin.setOnClickListener(new View.OnClickListener() {
             @Override

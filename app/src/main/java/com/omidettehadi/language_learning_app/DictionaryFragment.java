@@ -53,10 +53,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 
-import static com.omidettehadi.language_learning_app.SigninActivity.word;
-import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
-import static com.omidettehadi.language_learning_app.SigninActivity.WordHistory;
-import static com.omidettehadi.language_learning_app.SigninActivity.historystatus;
+import static com.omidettehadi.language_learning_app.MainActivity.word;
+import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
+import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
+import static com.omidettehadi.language_learning_app.MainActivity.historystatus;
 
 public class DictionaryFragment extends Fragment {
 

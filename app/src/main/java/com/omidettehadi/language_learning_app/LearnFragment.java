@@ -72,13 +72,10 @@ import java.util.Arrays;
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.google.android.gms.internal.zzs.TAG;
-import static com.omidettehadi.language_learning_app.SigninActivity.word;
+import static com.omidettehadi.language_learning_app.MainActivity.word;
 
 public class LearnFragment extends Fragment {
 
-    public LearnFragment() {
-        // Required empty public constructor
-    }
     // ----------------------------------------------------------------------------------Declaration
     // Items
     private EditText etInput;
@@ -133,6 +130,7 @@ public class LearnFragment extends Fragment {
     private File test_file;
 
 
+    //-------------------------------------------------------------------------------------On Create
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -195,6 +193,7 @@ public class LearnFragment extends Fragment {
         camera();
         speech_to_text();
 
+        //-----------------------------------------------------------------------------------Buttons
         // See if Search Button is pressed
         // Run Search for the word in the input EditText
         btnSearch.setOnClickListener(new View.OnClickListener() {

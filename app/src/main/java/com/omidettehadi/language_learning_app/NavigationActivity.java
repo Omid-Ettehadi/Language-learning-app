@@ -18,8 +18,8 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.omidettehadi.language_learning_app.SigninActivity.email;
-import static com.omidettehadi.language_learning_app.SigninActivity.historystatus;
+import static com.omidettehadi.language_learning_app.MainActivity.email;
+import static com.omidettehadi.language_learning_app.MainActivity.historystatus;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

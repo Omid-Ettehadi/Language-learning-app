@@ -14,7 +14,7 @@ import android.widget.Button;
 import java.util.Locale;
 
 import static android.content.Context.MEDIA_PROJECTION_SERVICE;
-import static com.omidettehadi.language_learning_app.SigninActivity.word;
+import static com.omidettehadi.language_learning_app.MainActivity.word;
 
 public class IPAVowelsFragment extends Fragment{
 

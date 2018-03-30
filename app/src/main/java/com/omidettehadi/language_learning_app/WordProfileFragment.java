@@ -21,35 +21,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Locale;
-import java.util.Arrays;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static com.omidettehadi.language_learning_app.SigninActivity.word;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_1_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_2_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_3_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_4_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_5_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_6_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_7_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_8_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_9_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_10_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_11_freq;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_character;
-import static com.omidettehadi.language_learning_app.MainActivity.vowel_12_freq;
+import static com.omidettehadi.language_learning_app.MainActivity.word;
+
 
 public class WordProfileFragment extends Fragment implements TextToSpeech.OnInitListener {
 

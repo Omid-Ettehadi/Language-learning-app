@@ -24,8 +24,8 @@ import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static com.omidettehadi.language_learning_app.SigninActivity.word;
-import static com.omidettehadi.language_learning_app.SigninActivity.wordoftheday;
+import static com.omidettehadi.language_learning_app.MainActivity.word;
+import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
 
 
 /**
