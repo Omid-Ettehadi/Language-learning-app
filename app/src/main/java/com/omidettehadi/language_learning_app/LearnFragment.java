@@ -50,6 +50,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.Math;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -1008,6 +1009,24 @@ public class LearnFragment extends Fragment {
             maxFreq[0] = (sampleFreq/2.0) - ((((double) maxIndex[0])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
             maxFreq[1] = (sampleFreq/2.0) - ((((double) maxIndex[1])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
             maxFreq[2] = (sampleFreq/2.0) - ((((double) maxIndex[2])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
+            double temp;
+
+            //the bubble sort shuffle (sorts lowest freq to high)
+            if(maxFreq[0] > maxFreq[1]) {
+                temp = maxFreq[0];
+                maxFreq[0] = maxFreq[1];
+                maxFreq[1] = temp;
+            }
+            if(maxFreq[1] > maxFreq[2]) {
+                temp = maxFreq[1];
+                maxFreq[1] = maxFreq[2];
+                maxFreq[2] = temp;
+            }
+            if(maxFreq[0] > maxFreq[1]) {
+                temp = maxFreq[0];
+                maxFreq[0] = maxFreq[1];
+                maxFreq[1] = temp;
+            }
 
             return maxFreq;
 
