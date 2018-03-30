@@ -9,10 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import me.anwarshahriar.calligrapher.Calligrapher;
 
 import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
@@ -39,6 +43,10 @@ public class SignupActivity extends AppCompatActivity {
         // Set the view now
         setContentView(R.layout.activity_signup);
 
+        // Set default font
+        Calligrapher calligrapher = new Calligrapher(this);
+        calligrapher.setFont(this,"tradegothicltstdlight.otf",true);
+
         // Definition
         inputEmail = findViewById(R.id.etEmail);
         inputPassword = findViewById(R.id.etPassword);
@@ -51,7 +59,7 @@ public class SignupActivity extends AppCompatActivity {
         // ----------------------------------------------------------------------------------Buttons
         // See if Register button is pressed.
         // Create an account in the database.
-        // Go to Main Activity if successful
+        // Go to Signin Activity if successful
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,10 +106,10 @@ public class SignupActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    Intent go_to_MainActivity = new
+                                    Intent go_to_SigninActivity = new
                                             Intent(SignupActivity.this,
-                                            MainActivity.class);
-                                    startActivity(go_to_MainActivity);
+                                            SigninActivity.class);
+                                    startActivity(go_to_SigninActivity);
                                     finish();
                                 }
                             }

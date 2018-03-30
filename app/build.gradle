@@ -32,5 +32,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'com.google.android.gms:play-services-vision:9.0.2'
     implementation 'com.androidplot:androidplot-core:1.5.4'
+    implementation 'me.anwarshahriar:calligrapher:1.0'
 }
 apply plugin: 'com.google.gms.google-services'

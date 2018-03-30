@@ -18,60 +18,80 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.omidettehadi.language_learning_app.MainActivity.email;
+import me.anwarshahriar.calligrapher.Calligrapher;
+
+import static com.omidettehadi.language_learning_app.MainActivity.word;
+import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
+import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
 import static com.omidettehadi.language_learning_app.MainActivity.historystatus;
+import static com.omidettehadi.language_learning_app.MainActivity.email;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // ----------------------------------------------------------------------------------Declaration
+    // Items
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
-
+    private FirebaseUser user;
     private TextView tvEmail;
 
+
+    // ------------------------------------------------------------------------------------On Create
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        //get firebase auth instance
+        // Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
 
-        //get current user
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        // Get current user
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
+        // Check if a change in User Authentication occurs
+        // if Yes, fgo to Signin Activity
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+                // user auth state is changed - user is null
                 if (user == null) {
-                    // user auth state is changed - user is null
-                    // launch login activity
-                    startActivity(new Intent(NavigationActivity.this, SigninActivity.class));
+                    startActivity(
+                            new Intent(NavigationActivity.this, SigninActivity.class));
                     finish();
                 }
             }
         };
 
+        // Set the view now
+        setContentView(R.layout.activity_navigation);
+
+        // Set default font
+        Calligrapher calligrapher = new Calligrapher(this);
+        calligrapher.setFont(this,"tradegothicltstdlight.otf",true);
+
+        // Definitions
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         NavigationView navigationview = findViewById(R.id.nav_view);
         View headerview = navigationview.getHeaderView(0);
         tvEmail = headerview.findViewById(R.id.tvEmail);
-        //if (email.isEmpty()){
-            email = user.getEmail();
-        //}
+
+        // Set data for the Drawer
+        email = user.getEmail();
         tvEmail.setText(email);
 
+
+        // Set up the Drawer
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Go to Dictionary Fragment
         setTitle("Dictionary");
         DictionaryFragment fragment = new DictionaryFragment();
         FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
@@ -79,6 +99,9 @@ public class NavigationActivity extends AppCompatActivity
         fragmenttransaction.commit();
     }
 
+    // ---------------------------------------------------------------------------------Back Pressed
+    // If Drawer is opened, close it
+    // else go to Dictionary Fragment
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -93,6 +116,8 @@ public class NavigationActivity extends AppCompatActivity
         }
     }
 
+    // ---------------------------------------------------------------------------------Options Menu
+    // Generate the option menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -100,6 +125,8 @@ public class NavigationActivity extends AppCompatActivity
         return true;
     }
 
+    // If Sign Out Button is pressed, sign out and close the application.
+    // If Clear History Button is pressed, set historystatus to true and go to Dictionary Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -111,6 +138,10 @@ public class NavigationActivity extends AppCompatActivity
         if (id == R.id.action_signout) {
             auth.signOut();
             finish();
+            Intent go_to_SigninActivity = new
+                    Intent(NavigationActivity.this,
+                    SigninActivity.class);
+            startActivity(go_to_SigninActivity);
             return true;
         }
         if (id == R.id.action_clearhistory) {
@@ -122,10 +153,11 @@ public class NavigationActivity extends AppCompatActivity
             fragmenttransaction.commit();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    // ---------------------------------------------------------------------------------------Drawer
+    // Create drawer and if any is pressed, go to their specified Fragment
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -146,19 +178,19 @@ public class NavigationActivity extends AppCompatActivity
             FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
             fragmenttransaction.replace(R.id.main,fragment,"Learn");
             fragmenttransaction.commit();
-        } else if (id == R.id.wordoftheday){
-            // the wordoftheday action
-            setTitle("Word of The Day");
-            WordoftheDayFragment fragment = new WordoftheDayFragment();
-            FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
-            fragmenttransaction.replace(R.id.main,fragment,"Word of The Day");
-            fragmenttransaction.commit();
         } else if (id == R.id.ipavowels){
             // the IPAVowels action
             setTitle("IPA Vowels");
             IPAVowelsFragment fragment = new IPAVowelsFragment();
             FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
             fragmenttransaction.replace(R.id.main,fragment,"IPA Vowels");
+            fragmenttransaction.commit();
+        } else if (id == R.id.wordoftheday) {
+            // the wordoftheday action
+            setTitle("Word of The Day");
+            WordoftheDayFragment fragment = new WordoftheDayFragment();
+            FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
+            fragmenttransaction.replace(R.id.main, fragment, "Word of The Day");
             fragmenttransaction.commit();
         }
 

@@ -13,6 +13,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import me.anwarshahriar.calligrapher.Calligrapher;
+
 import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
 import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
@@ -38,6 +40,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         // Set the view now
         setContentView(R.layout.activity_reset_password);
+
+        // Set default font
+        Calligrapher calligrapher = new Calligrapher(this);
+        calligrapher.setFont(this,"tradegothicltstdlight.otf",true);
 
         // Definitions
         inputEmail = findViewById(R.id.etEmail);

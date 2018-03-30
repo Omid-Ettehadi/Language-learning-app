@@ -1,18 +1,13 @@
 package com.omidettehadi.language_learning_app;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.speech.tts.TextToSpeech;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -37,29 +32,21 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Random;
+
+import me.anwarshahriar.calligrapher.Calligrapher;
 
 import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
 import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
 import static com.omidettehadi.language_learning_app.MainActivity.historystatus;
+import static com.omidettehadi.language_learning_app.MainActivity.email;
 
 public class DictionaryFragment extends Fragment {
 
+    // ----------------------------------------------------------------------------------Declaration
+    // Items
     private EditText etInput;
     private Button btnSearch, btnMic, btnCapture, btnCam, btnYES, btnNO;
     private TextView tvWordoftheDay, tvWordoftheDayAns;
@@ -84,6 +71,10 @@ public class DictionaryFragment extends Fragment {
 
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_dictionary, container, false);
+
+        // Set default font
+        Calligrapher calligrapher = new Calligrapher(getContext());
+        calligrapher.setFont(getActivity(),"tradegothicltstdlight.otf",true);
 
         etInput = view.findViewById(R.id.etInput);
         tvWordoftheDay = view.findViewById(R.id.tvWordoftheDay);
