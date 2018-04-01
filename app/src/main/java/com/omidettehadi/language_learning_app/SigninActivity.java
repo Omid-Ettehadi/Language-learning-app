@@ -103,6 +103,9 @@ public class SigninActivity extends AppCompatActivity {
         // Check for all permissions
         permissions();
 
+        // Word of teh Day Hard Coded
+        wordoftheday = "Opportunity";
+        /*
         // Random Word Generator for Word of the day
         RandomGen = new Random();
         int index = RandomGen.nextInt(catalogue.length);
@@ -128,6 +131,7 @@ public class SigninActivity extends AppCompatActivity {
             wordend = catalogue[index];
             new SigninActivity.CallbackTask().execute(randomwordgeneratorEntries());
         }
+        */
 
         // ----------------------------------------------------------------------------------Buttons
         // See if Login Button is pressed
@@ -156,34 +160,34 @@ public class SigninActivity extends AppCompatActivity {
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(SigninActivity.this,
                                 new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                // If sign in fails, display a message to the user.
-                                // If sign in succeeds, the auth state listener will be notified
-                                // and logic to handle the signed in user can be handled in the
-                                // listener.
-                                if (!task.isSuccessful()) {
-                                    // Password is short
-                                    if (password.length() < 6) {
-                                        inputPassword.setError(
-                                                getString(R.string.minimum_password));
-                                    }
-                                    else {
-                                        Toast.makeText(SigninActivity.this,
-                                                getString(R.string.auth_failed),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                                else {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        // If sign in fails, display a message to the user.
+                                        // If sign in succeeds, the auth state listener will be notified
+                                        // and logic to handle the signed in user can be handled in the
+                                        // listener.
+                                        if (!task.isSuccessful()) {
+                                            // Password is short
+                                            if (password.length() < 6) {
+                                                inputPassword.setError(
+                                                        getString(R.string.minimum_password));
+                                            }
+                                            else {
+                                                Toast.makeText(SigninActivity.this,
+                                                        getString(R.string.auth_failed),
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                        else {
 
-                                    Intent go_to_NavigationActivity = new
-                                            Intent(SigninActivity.this,
-                                            NavigationActivity.class);
-                                    startActivity(go_to_NavigationActivity);
-                                    finish();
-                                }
-                            }
-                        });
+                                            Intent go_to_NavigationActivity = new
+                                                    Intent(SigninActivity.this,
+                                                    NavigationActivity.class);
+                                            startActivity(go_to_NavigationActivity);
+                                            finish();
+                                        }
+                                    }
+                                });
             }
         });
 
@@ -292,8 +296,6 @@ public class SigninActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                // Word of teh Day Hard Coded
-                wordoftheday = "Opportunity";
             } catch (JSONException e) {
                 e.printStackTrace();
             }
