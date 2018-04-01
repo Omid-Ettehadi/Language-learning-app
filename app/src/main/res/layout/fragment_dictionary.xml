@@ -40,7 +40,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/InputLayer"
+                app:layout_constraintTop_toTopOf="@+id/BlueLayout"
                 app:layout_constraintVertical_bias="1.0" />
 
             <Button
@@ -62,7 +62,6 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:hint="Your Word ..."
                 android:inputType="textPersonName"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btnMic"
@@ -110,7 +109,7 @@
         app:layout_constraintTop_toBottomOf="@+id/TopLayer">
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/tvWordoftheDay"
             android:layout_width="0dp"
             android:layout_height="20dp"
             android:layout_marginBottom="8dp"
@@ -139,7 +138,7 @@
         app:layout_constraintTop_toBottomOf="@+id/TopBlueLayout">
 
         <TextView
-            android:id="@+id/tvWordoftheDay"
+            android:id="@+id/tvWordoftheDayAns"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginBottom="16dp"
@@ -171,7 +170,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvWordoftheDay" />
+            app:layout_constraintTop_toBottomOf="@+id/tvWordoftheDayAns" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -213,7 +212,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/tradegothicltstdlight"
-            android:text="@string/you_think_you_can_pronounce_it"
+            android:text="You think you can pronounce it?"
             app:layout_constraintBottom_toTopOf="@+id/btnYES"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.1"
@@ -232,7 +231,7 @@
             android:background="@android:drawable/presence_invisible"
             android:backgroundTint="@color/ALittleDarkerPrimary"
             android:fontFamily="@font/tradegothicltstdlight"
-            android:text="@string/yes"
+            android:text="Yes"
             android:textColor="@color/btn_login_bg"
             android:typeface="normal"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -251,7 +250,7 @@
             android:background="@android:drawable/presence_invisible"
             android:backgroundTint="@color/LighterPrimaryDark"
             android:fontFamily="@font/tradegothicltstd"
-            android:text="@string/no"
+            android:text="No"
             android:textColor="@color/btn_login_bg"
             android:typeface="normal"
             app:layout_constraintBottom_toBottomOf="parent"
