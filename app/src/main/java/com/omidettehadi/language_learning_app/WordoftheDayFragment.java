@@ -24,44 +24,54 @@ import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import me.anwarshahriar.calligrapher.Calligrapher;
+
 import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
+import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
+import static com.omidettehadi.language_learning_app.MainActivity.historystatus;
+import static com.omidettehadi.language_learning_app.MainActivity.email;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnInitListener {
 
+    // ----------------------------------------------------------------------------------Declaration
+    // Items
     Button btnBack, btnSpeak;
     TextView tvWord, tvProfile;
 
+    // Global Variables
     TextToSpeech tts;
 
-    String IPAString = "";
-    String IPAFREQRESULT = "";
 
-    public WordoftheDayFragment() {
-        // Required empty public constructor
-    }
-
-
+    // ------------------------------------------------------------------------------------On Create
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_word_profile, container, false);
 
+        // Set default font
+        Calligrapher calligrapher = new Calligrapher(getContext());
+        calligrapher.setFont(getActivity(),"tradegothicltstdlight.otf",true);
+
+        // Definitions
         btnBack = view.findViewById(R.id.btnBack);
         btnSpeak = view.findViewById(R.id.btnSpeak);
+
         tvWord = view.findViewById(R.id.tvWord);
+        tvWord.setText(wordoftheday);
         tvProfile = view.findViewById(R.id.tvProfile);
 
         tts = new TextToSpeech(getActivity(),WordoftheDayFragment.this);
 
-        tvWord.setText(wordoftheday);
+        // Call Oxford Dictionary
         new WordoftheDayFragment.CallbackTask().execute(dictionaryEntries());
 
+        // ----------------------------------------------------------------------------------Buttons
+        // See if Back Button is pressed
+        // Go back to Dictionary Fragment.
         btnBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 getFragmentManager().beginTransaction()
@@ -69,6 +79,8 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
             }
         });
 
+        // See if Speak Button is pressed
+        // Speak out the word.
         btnSpeak.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 speakOut();
@@ -78,10 +90,8 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
         return view;
     }
 
-    private void speakOut() {
-        tts.speak( wordoftheday , TextToSpeech.QUEUE_FLUSH, null);
-    }
 
+    // -------------------------------------------------------------------------------Text-to-Speech
     @Override
     public void onInit(int i) {
         if (i == TextToSpeech.SUCCESS) {
@@ -99,6 +109,11 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
         }
     }
 
+    private void speakOut() {
+        tts.speak( wordoftheday , TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    // ----------------------------------------------------------------------------Oxford Dictionary
     private String dictionaryEntries() {
         final String language = "en";
         final String word_id = wordoftheday.toLowerCase(); //word id is case sensitive and lowercase is required
@@ -121,7 +136,7 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
                 urlConnection.setRequestProperty("app_id",app_id);
                 urlConnection.setRequestProperty("app_key",app_key);
 
-                // read the output from the server
+                // Read the output from the server
                 BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder();
 
@@ -129,9 +144,7 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line + "\n");
                 }
-
                 return stringBuilder.toString();
-
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -161,7 +174,8 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
                         JSONArray three = entries.getJSONArray("entries");
                         JSONArray IPA = pronunciations.getJSONArray("pronunciations");
 
-                        IPAString = IPA.toString().substring(IPA.toString().lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
+                        String IPAString = IPA.toString().substring(IPA.toString().
+                                lastIndexOf(":")+2,IPA.toString().lastIndexOf('"'));
 
                         number += 1 ;
                         definition += System.lineSeparator();
@@ -184,7 +198,13 @@ public class WordoftheDayFragment  extends Fragment implements TextToSpeech.OnIn
                 e.printStackTrace();
             }
 
-            tvProfile.setText(definition);
+            // Check if the word was in the dictionary or not
+            if(definition.length() == 0){
+                tvProfile.setText("There seems to be a problem with the word of the day! " +
+                        "This word does not exist! Please try again.");
+            } else{
+                tvProfile.setText(definition);
+            }
         }
     }
 }

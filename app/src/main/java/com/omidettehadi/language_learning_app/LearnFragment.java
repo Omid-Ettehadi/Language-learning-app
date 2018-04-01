@@ -1055,7 +1055,7 @@ public class LearnFragment extends Fragment {
                 } else {
                     if (value < next_next_value + thresh && value > next_next_value - thresh) {
                         //text += "2";
-                        /count++;
+                        count++;
                         sum1 += Input[i][0];
                         sum2 += Input[i][1];
                         sum3 += Input[i][2];
@@ -1155,11 +1155,7 @@ public class LearnFragment extends Fragment {
                     freq = InputFreq[i][k];
                     if (freq < Lower) {
                         flag[i][k] = false;
-                    } else if (freq > Higher) {
-                        flag[i][k] = false;
-                    } else {
-                        flag[i][k] = true;
-                    }
+                    } else flag[i][k] = !(freq > Higher);
                 }
             }
         }
