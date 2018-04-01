@@ -179,6 +179,7 @@ public class LearnFragment extends Fragment {
         btnCapture = view.findViewById(R.id.btnCapture);
         btnCapture.setVisibility(View.INVISIBLE);
         btnRecord = view.findViewById(R.id.btnRecord);
+        btnRecord.setEnabled(false);
         btnStop = view.findViewById(R.id.btnStop);
         btnStop.setEnabled(false);
         btnPlay = view.findViewById(R.id.btnPlay);
@@ -199,40 +200,43 @@ public class LearnFragment extends Fragment {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                word = etInput.getText().toString();
-                IPAString = null;
-                textView.setText(" Loading... ");
 
-                new CallbackTask().execute(dictionaryEntries());
+                // Check if something is entered
+                if (etInput.getText().toString().length() != 0) {
+                    textView.setText(" Loading... ");
+                    word = etInput.getText().toString();
+                    IPAString = null;
 
-                /*if(IPAString == null){
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                       @Override
-                       public void run() {
-                           if(IPAString == null){
-                               final Handler handler = new Handler();
-                               handler.postDelayed(new Runnable() {
-                                   @Override
-                                   public void run() {
-                                       double[][] test = {{760, 1320, 2500}, {360, 2220, 2960}};
-                                       comparator(test);
-                                   }
-                               }, 5000);
-                           }
-                           else {
-                               final Handler handler = new Handler();
-                               handler.postDelayed(new Runnable() {
-                                   @Override
-                                   public void run() {
-                                       double[][] test = {{760, 1320, 2500}, {360, 2220, 2960}};
-                                       comparator(test);
-                                   }
-                               }, 5000);
-                           }
-                        }
-                    }, 3000);
-                }*/
+                    new CallbackTask().execute(dictionaryEntries());
+
+                    if (IPAString == null) {
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (IPAString == null) {
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            textView.setText("Now try pronouncing the word!");
+                                            btnRecord.setEnabled(true);
+                                        }
+                                    }, 5000);
+                                } else {
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            textView.setText("Now try pronouncing the word!");
+                                            btnRecord.setEnabled(true);
+                                        }
+                                    }, 5000);
+                                }
+                            }
+                        }, 3000);
+                    }
+                }
             }
         });
 
@@ -278,6 +282,7 @@ public class LearnFragment extends Fragment {
 
         btnRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                text = "";
                 plot.clear();
                 plot.setVisibility(View.INVISIBLE);
                 btnRecord.setEnabled(false);
@@ -310,8 +315,6 @@ public class LearnFragment extends Fragment {
                 btnStop.setEnabled(false);
                 btnPlay.setEnabled(true);
 
-                //text = "";
-
                 Play();
 
                 int i = 0;
@@ -342,17 +345,39 @@ public class LearnFragment extends Fragment {
 
                 text += "----------------------------------------------------------------------"+"\n";
 
+                int n = 0;
+                double [][] answer2 = new double[1][3];
+                for(int j = 0; j<answer.length ;j++){
+                    if(answer[j][0] > 200 && answer[j][0] <1000) {
+                        double[][] temp = answer2;
+                        answer2 = new double[n + 1][3];
+                        for (int m = 0; m < temp.length; m++) {
+                            answer2[m] = temp[m];
+                        }
+                        answer2[n ] = answer[j];
+                        n++;
+                    }
+                }
+
+                for ( n = 0 ; n<answer2.length; n++){
+                    text += "{" + answer2[n][0]+ " - " +answer2[n][1]+ " - " + answer2[n][2] + "}" +"\n";
+                }
+
+                text += "----------------------------------------------------------------------"+"\n";
+
                 //double[][] answer = {{50,100,150},{200,300,400},{75,100,150},{30,150,200},{131,150,200},{40,150,200},{175,150,200},{175,150,200}};
-                double[][] answer2 = vowel_from_recording(answer);
+                user_recording_freq = vowel_from_recording(answer2);
 
                 //text += resultcount + "\n";
                 for ( int k = 0; k < resultcount; k++){
-                    text += "{" + answer2[k][0]+ " - " +answer2[k][1]+ " - " + answer2[k][2] + "}" + "\n";
+                    text += "{" + user_recording_freq[k][0]+ " - " +user_recording_freq[k][1]+ " - " + user_recording_freq[k][2] + "}" + "\n";
                 }
 
                 textView.setText(text);
 
                 resultcount = 0;
+
+                comparator(user_recording_freq);
 
             }
         });
@@ -571,54 +596,6 @@ public class LearnFragment extends Fragment {
         }
     }
 
-    // ------------------------------------------------------------------------------------Recording
-    // Take and audio sample so that we can call fft 5 times, find power spectrum for each, then take and average of their results for each frequency
-    // use this later to subtract from our voice recording power spectrum calculation
-    private void noise(){
-        noise_file = new File(getContext().getCacheDir().getAbsolutePath() + File.separator, "noise.pcm");
-
-        try {
-            file.createNewFile();
-
-            OutputStream outputStream = new FileOutputStream(noise_file);
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
-            DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
-
-            int minBufferSize = AudioRecord.getMinBufferSize(sampleFreq,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT);
-
-            short[] audioDataRec = new short[minBufferSize];
-
-            NoiseRecorded = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                    sampleFreq,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    minBufferSize);
-
-            // Filters for audio
-            AcousticEchoCanceler.create(NoiseRecorded.getAudioSessionId());
-            NoiseSuppressor.create(NoiseRecorded.getAudioSessionId());
-            AutomaticGainControl.create(NoiseRecorded.getAudioSessionId());
-
-            NoiseRecorded.startRecording();
-
-            while (recording) {
-                int numberOfShort = NoiseRecorded.read(audioDataRec, 0, minBufferSize);
-                for (int i = 0; i < numberOfShort; i++) {
-                    dataOutputStream.writeShort(audioDataRec[i]);
-                }
-            }
-
-            NoiseRecorded.stop();
-            dataOutputStream.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     private void StartRecording() {
 
         file = new File(getContext().getCacheDir().getAbsolutePath() + File.separator, "Recording.pcm");
@@ -707,7 +684,7 @@ public class LearnFragment extends Fragment {
     // From vowel if given (String of the vowel, null , 'v')
     // From Frequency if given (null, array of frequencies, 'f')
     private IPA vowel_characteristics_lookup( String vowel, double [] InputFreq, char s){
-        IPA result = new IPA();
+        IPA result;
 
         if( s == 'v' ){
             if("i".equals(vowel)) {
@@ -1052,8 +1029,8 @@ public class LearnFragment extends Fragment {
     }
 
     private double[][] vowel_from_recording (double[][] Input){
-        double[][] result = new double[Input.length][3];
-        double thresh = 200;
+        double[][] result = new double[0][3];
+        double thresh = 100;
         double value = 0;
         double next_value = 0;
         double next_next_value = 0;
@@ -1061,7 +1038,6 @@ public class LearnFragment extends Fragment {
         double sum2 = 0;
         double sum3 = 0;
         int count = 0;
-
 
         text += "\n";
         for (int i = 0; i < Input.length ; i++){
@@ -1079,7 +1055,7 @@ public class LearnFragment extends Fragment {
                 } else {
                     if (value < next_next_value + thresh && value > next_next_value - thresh) {
                         //text += "2";
-                        count++;
+                        /count++;
                         sum1 += Input[i][0];
                         sum2 += Input[i][1];
                         sum3 += Input[i][2];
@@ -1090,6 +1066,11 @@ public class LearnFragment extends Fragment {
                         sum1 += value;
                         sum2 += Input[i][1];
                         sum3 += Input[i][2];
+                        double [][] temp = result;
+                        result = new double[resultcount+1][3];
+                        for(int k = 0 ; k<temp.length ; k++){
+                            result[k] = temp[k];
+                        }
                         result[resultcount][0] = (sum1 / count);
                         result[resultcount][1] = (sum2 / count);
                         result[resultcount][2] = (sum3 / count);
@@ -1117,6 +1098,11 @@ public class LearnFragment extends Fragment {
         result[resultcount][2]= (sum3/count);
 */
 
+        double [][] temp = result;
+        result = new double[resultcount+1][3];
+        for(int k = 0 ; k<temp.length ; k++){
+            result[k] = temp[k];
+        }
         result[resultcount][0] = (sum1 / count);
         result[resultcount][1] = (sum2 / count);
         result[resultcount][2] = (sum3 / count);
@@ -1148,6 +1134,7 @@ public class LearnFragment extends Fragment {
             }
         }
 
+        text += LookedUp_Length + " " + InputFreq.length + "\n";
         // Check if the recording's frequencies match the desired frequencies
         // if yes -> flag [][] = true
         // if no ->  flag [][] = false
@@ -1199,27 +1186,30 @@ public class LearnFragment extends Fragment {
         //                           or comment on which vowel is mispronounced
         boolean firstFault = true;
         if( status == true){
-            textView.setText(" Perfect ");
+            textView.setText( text + " Perfect ");
         } else if (status == false && lenghtmismatch == false) {
-            String message = " False pronunciation of  ";
+            text += " False pronunciation of  ";
             for(int i = 0; i < LookedUp_Length; i++){
                 if(mispronounced_vowel_index[i] == 1){
                     if(firstFault){
-                        message = message + LookedUp[i].character.toString();
+                        text += LookedUp[i].character.toString();
                         firstFault = false;
                     }
                     else{
-                        message += " & " + LookedUp[i].character.toString();
+                        text += " & " + LookedUp[i].character.toString();
                     }
                 }
             }
-            textView.setText(message + "!");
+            textView.setText(text  + "!");
             feedback();
         } else{
-            textView.setText(" Lengths don't match! ");
+            textView.setText( text + " Lengths don't match! ");
         }
     }
 
+    private void comparator2(double[][] InputFreq){
+
+    }
     // Feedback
     private void feedback(){
         // Lookup the vowels for the voice recording
@@ -1233,7 +1223,7 @@ public class LearnFragment extends Fragment {
                 j++;
             }
         }
-
+    /*
         String user_text = "";
         String data_text = "";
         int k = 1;
@@ -1241,7 +1231,7 @@ public class LearnFragment extends Fragment {
             if(mispronounced_vowel_index[i] == 1){
 
                 textView.setText(textView.getText() + "\n" + " You were supposed to pronounce " + LookedUp[i].character+
-                        " but you pronounced " + UsersRecordingIPA[i].character + " !" + "\n" + "\n");
+                        " but you pronounced ");// + UsersRecordingIPA[i].character + " !" + "\n" + "\n");
 
 
                 plot.setVisibility(View.VISIBLE);
@@ -1326,7 +1316,7 @@ public class LearnFragment extends Fragment {
                     }
                 }
             }
-        }
+        }*/
 
     }
 }

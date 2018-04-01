@@ -141,23 +141,27 @@ public class DictionaryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 word = etInput.getText().toString();
+                if (etInput.getText().toString().length() != 0) {
 
-                int currentSize = WordHistory.length;
-                int newSize = currentSize + 1;
-                String[] tempArray = new String[ newSize ];
-                for (int i=0; i < currentSize; i++)
-                {
-                    tempArray[i] = WordHistory[i];
+                    int currentSize = WordHistory.length;
+                    int newSize = currentSize + 1;
+                    String[] tempArray = new String[newSize];
+                    for (int i = 0; i < currentSize; i++) {
+                        tempArray[i] = WordHistory[i];
+                    }
+                    tempArray[newSize - 1] = word;
+                    WordHistory = tempArray;
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
+                    listview.setAdapter(adapter);
+                    listview.setOnItemClickListener(new ListClickHandler());
+
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.main, new WordProfileFragment()).commit();
+                } else{
+
                 }
-                tempArray[newSize- 1] = word;
-                WordHistory = tempArray;
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
-                listview.setAdapter(adapter);
-                listview.setOnItemClickListener(new ListClickHandler());
-
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.main, new WordProfileFragment()).commit();
             }
+
         });
 
         // See if Listen Button is pressed
