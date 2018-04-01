@@ -41,7 +41,6 @@ import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
 import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
 import static com.omidettehadi.language_learning_app.MainActivity.historystatus;
-import static com.omidettehadi.language_learning_app.MainActivity.email;
 
 public class DictionaryFragment extends Fragment {
 
@@ -49,22 +48,22 @@ public class DictionaryFragment extends Fragment {
     // Items
     private EditText etInput;
     private Button btnSearch, btnMic, btnCapture, btnCam, btnYES, btnNO;
-    private TextView tvWordoftheDay, tvWordoftheDayAns;
+    private TextView tvWordoftheDay;
+    private ListView listview;
+    private SurfaceView cameraView;
+
+    // --------------------------------------------------------------------------------Global Values
+    // Speech to text
     private SpeechRecognizer speechrecognizer;
     private Intent speechrecognizerIntent;
     private boolean IsListening;
 
-    private SurfaceView cameraView;
+    // Optical Character Recognition
     private CameraSource cameraSource;
     private final int RequestCameraPermissionID = 1001;
 
-    private ListView listview;
 
-
-    public DictionaryFragment() {
-        // Required empty public constructor
-    }
-
+    // ------------------------------------------------------------------------------------On Create
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,33 +75,43 @@ public class DictionaryFragment extends Fragment {
         Calligrapher calligrapher = new Calligrapher(getContext());
         calligrapher.setFont(getActivity(),"tradegothicltstdlight.otf",true);
 
+        // Definitions
         etInput = view.findViewById(R.id.etInput);
+
         tvWordoftheDay = view.findViewById(R.id.tvWordoftheDay);
-        tvWordoftheDayAns = view.findViewById(R.id.tvWordoftheDayAns);
-        tvWordoftheDayAns.setText(wordoftheday);
+        tvWordoftheDay.setText(wordoftheday);
+
         btnSearch = view.findViewById(R.id.btnSearch);
         btnMic = view.findViewById(R.id.btnMic);
         btnCam = view.findViewById(R.id.btnCam);
+        btnYES = view.findViewById(R.id.btnYES);
+        btnNO = view.findViewById(R.id.btnNO);
         btnCapture = view.findViewById(R.id.btnCapture);
         btnCapture.setVisibility(View.INVISIBLE);
         cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
-        btnYES = view.findViewById(R.id.btnYES);
-        btnNO = view.findViewById(R.id.btnNO);
 
         listview = view.findViewById(R.id.lvHistory);
 
+
+        // Call the camera and the voice recording for Speech to Text
         camera();
         speech_to_text();
 
+
+        // Word of teh Day Hard Coded
+        wordoftheday = "Opportunity";
+        /*
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                tvWordoftheDayAns.setText(wordoftheday);
+                tvWordoftheDay.setText(wordoftheday);
             }
         }, 500);
+        */
 
+        // Word History List Initiation
         if (historystatus == true){
             WordHistory = new String[]{};
             historystatus = false;
@@ -110,28 +119,26 @@ public class DictionaryFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, WordHistory);
         listview.setAdapter(adapter);
 
+
+        // ----------------------------------------------------------------------------------Buttons
+        // See if Yes Button is pressed
+        // Go to Word of the Day Fragment
         btnYES.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WordoftheDayFragment fragment = new WordoftheDayFragment();
-                FragmentManager fragmentmanager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentttransaction = fragmentmanager.beginTransaction();
-                fragmentttransaction.replace(R.id.main, fragment);
-                fragmentttransaction.addToBackStack(null);
-                fragmentttransaction.commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main, new WordProfileFragment()).commit();
             }
         });
 
+        // See if No Button is pressed
+        // Go to Learn Fragment with  Word of the Day set as the Word
         btnNO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 word = wordoftheday;
-                LearnFragment fragment = new LearnFragment();
-                FragmentManager fragmentmanager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentttransaction = fragmentmanager.beginTransaction();
-                fragmentttransaction.replace(R.id.main, fragment);
-                fragmentttransaction.addToBackStack(null);
-                fragmentttransaction.commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main, new LearnFragment()).commit();
             }
         });
 
@@ -141,8 +148,11 @@ public class DictionaryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 word = etInput.getText().toString();
+                // If there is a word in the word, add it to the history
+                // and go to Word profile fragment.
+                // If no word is insert don't do anything.
                 if (etInput.getText().toString().length() != 0) {
-
+                    // Add word to the history
                     int currentSize = WordHistory.length;
                     int newSize = currentSize + 1;
                     String[] tempArray = new String[newSize];
@@ -154,14 +164,13 @@ public class DictionaryFragment extends Fragment {
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, WordHistory);
                     listview.setAdapter(adapter);
                     listview.setOnItemClickListener(new ListClickHandler());
-
+                    // Go to Word Profile Fragment
                     getFragmentManager().beginTransaction()
                             .replace(R.id.main, new WordProfileFragment()).commit();
                 } else{
-
+                    // Nothing
                 }
             }
-
         });
 
         // See if Listen Button is pressed
@@ -176,10 +185,12 @@ public class DictionaryFragment extends Fragment {
             }
         });
 
-        tvWordoftheDayAns.setOnClickListener(new View.OnClickListener() {
+        // See if Word of the Day is pressed
+        // Run Word Profile Fragment on the Word of the Day
+        tvWordoftheDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // the wordoftheday action
+                // Add word to the history
                 int currentSize = WordHistory.length;
                 int newSize = currentSize + 1;
                 String[] tempArray = new String[ newSize ];
@@ -193,10 +204,10 @@ public class DictionaryFragment extends Fragment {
                 listview.setAdapter(adapter);
                 listview.setOnItemClickListener(new ListClickHandler());
 
-                WordoftheDayFragment fragment = new WordoftheDayFragment();
-                FragmentTransaction fragmenttransaction = getFragmentManager().beginTransaction();
-                fragmenttransaction.replace(R.id.main,fragment,"Word of The Day");
-                fragmenttransaction.commit();
+                // Run Word of the Day Fragment
+                word = wordoftheday;
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main, new WordProfileFragment()).commit();
             }
         });
 
@@ -212,7 +223,6 @@ public class DictionaryFragment extends Fragment {
                 btnCam.setVisibility(View.INVISIBLE);
                 cameraView.setVisibility(View.VISIBLE);
                 tvWordoftheDay.setVisibility(View.INVISIBLE);
-                tvWordoftheDayAns.setVisibility(View.INVISIBLE);
             }
         });
 

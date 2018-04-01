@@ -103,6 +103,9 @@ public class SigninActivity extends AppCompatActivity {
         // Check for all permissions
         permissions();
 
+        // Word of teh Day Hard Coded
+        wordoftheday = "Opportunity";
+        /*
         // Random Word Generator for Word of the day
         RandomGen = new Random();
         int index = RandomGen.nextInt(catalogue.length);
@@ -128,6 +131,7 @@ public class SigninActivity extends AppCompatActivity {
             wordend = catalogue[index];
             new SigninActivity.CallbackTask().execute(randomwordgeneratorEntries());
         }
+        */
 
         // ----------------------------------------------------------------------------------Buttons
         // See if Login Button is pressed
@@ -292,8 +296,6 @@ public class SigninActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                // Word of teh Day Hard Coded
-                wordoftheday = "Opportunity";
             } catch (JSONException e) {
                 e.printStackTrace();
             }

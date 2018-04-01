@@ -59,5 +59,8 @@
     <string name="IPA_o">o</string>
     <string name="stop">Stop</string>
     <string name="how_did_i_do">How did I do?</string>
+    <string name="you_think_you_can_pronounce_it">You think you can pronounce it?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>
