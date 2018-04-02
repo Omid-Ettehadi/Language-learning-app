@@ -48,38 +48,38 @@ public class MainActivity extends AppCompatActivity {
     public static double ɑ_1 = 800;
     public static double ɑ_2 = 1200;
 
-    public static double User_i_1;
-    public static double User_i_2;
-    public static double User_ɪ_1;
-    public static double User_ɪ_2;
-    public static double User_e_1;
-    public static double User_e_2;
-    public static double User_ɛ_1;
-    public static double User_ɛ_2;
-    public static double User_æ_1;
-    public static double User_æ_2;
-    public static double User_a_1;
-    public static double User_a_2;
+    public static double User_i_1 = 0;
+    public static double User_i_2 = 0;
+    public static double User_ɪ_1 = 0;
+    public static double User_ɪ_2 = 0;
+    public static double User_e_1 = 0;
+    public static double User_e_2 = 0;
+    public static double User_ɛ_1 = 0;
+    public static double User_ɛ_2 = 0;
+    public static double User_æ_1 = 0;
+    public static double User_æ_2 = 0;
+    public static double User_a_1 = 0;
+    public static double User_a_2 = 0;
 
-    public static double User_ə_1;
-    public static double User_ə_2;
-    public static double User_ɜ_1;
-    public static double User_ɜ_2;
+    public static double User_ə_1 = 0;
+    public static double User_ə_2 = 0;
+    public static double User_ɜ_1 = 0;
+    public static double User_ɜ_2 = 0;
 
-    public static double User_u_1;
-    public static double User_u_2;
-    public static double User_ʊ_1;
-    public static double User_ʊ_2;
-    public static double User_o_1;
-    public static double User_o_2;
-    public static double User_ʌ_1;
-    public static double User_ʌ_2;
-    public static double User_ɔ_1;
-    public static double User_ɔ_2;
-    public static double User_ɒ_1;
-    public static double User_ɒ_2;
-    public static double User_ɑ_1;
-    public static double User_ɑ_2;
+    public static double User_u_1 = 0;
+    public static double User_u_2 = 0;
+    public static double User_ʊ_1 = 0;
+    public static double User_ʊ_2 = 0;
+    public static double User_o_1 = 0;
+    public static double User_o_2 = 0;
+    public static double User_ʌ_1 = 0;
+    public static double User_ʌ_2 = 0;
+    public static double User_ɔ_1 = 0;
+    public static double User_ɔ_2 = 0;
+    public static double User_ɒ_1 = 0;
+    public static double User_ɒ_2 = 0;
+    public static double User_ɑ_1 = 0;
+    public static double User_ɑ_2 = 0;
 
     // ------------------------------------------------------------------------------------On Create
     @Override

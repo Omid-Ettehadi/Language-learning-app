@@ -988,11 +988,11 @@ public class SetUpFreqFragment extends Fragment {
             e.printStackTrace();
         }
 
-        // Filtering anything above 1000
+        // Filtering anything above 1000 and below 175
         int n = 0;
         double[][] answer2 = new double[1][3];
         for (int j = 0; j < answer.length; j++) {
-            if (answer[j][0] < 1000) {
+            if (answer[j][0] > 175 && answer[j][0] < 1000) {
                 double[][] temp = answer2;
                 answer2 = new double[n + 1][3];
                 for (int m = 0; m < temp.length; m++) {
@@ -1007,7 +1007,7 @@ public class SetUpFreqFragment extends Fragment {
         double sum2 = 0;
         int count = 0;
 
-        for (int m = 2; m < answer2.length-2 ; m++){
+        for (int m = 1; m < answer2.length-1 ; m++){
             sum1 += answer2[m][0];
             sum2 += answer2[m][1];
             count++;

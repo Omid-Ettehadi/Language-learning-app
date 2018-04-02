@@ -74,6 +74,36 @@ import javax.net.ssl.HttpsURLConnection;
 import static com.google.android.gms.internal.zzs.TAG;
 import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.sampleFreq;
+import static com.omidettehadi.language_learning_app.MainActivity.User_a_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_a_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_e_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_e_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_i_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_i_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_o_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_o_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_u_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_u_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_æ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_æ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɑ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɑ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɒ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɒ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɔ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɔ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ə_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ə_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɛ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɛ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɜ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɜ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɪ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɪ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʊ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʊ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʌ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʌ_2;
 
 public class LearnFragment extends Fragment {
 
@@ -86,8 +116,8 @@ public class LearnFragment extends Fragment {
 
     // Audio Recording
     private boolean recording;
-    private File file, noise_file;
-    private AudioRecord AudioRecorded, NoiseRecorded;
+    private File file;
+    private AudioRecord AudioRecorded;
     private AudioTrack AudioRecordedTrack;
     private FFT AudioRecordedFFT;
     private double [][] user_recording_freq;
@@ -115,7 +145,7 @@ public class LearnFragment extends Fragment {
     private class IPA {
         String character;
         String[] vowel_character;
-        int[] vowel_freq;
+        double[] vowel_freq;
     }
     private IPA[] LookedUp;
     private int LookedUp_Length;
@@ -169,7 +199,25 @@ public class LearnFragment extends Fragment {
 
         textView = view.findViewById(R.id.textView);
         textView.setMovementMethod(new ScrollingMovementMethod());
-        textView.setText("First you have to search for the word that you want to pronounce!");
+        if (User_a_1 == 0 || User_a_2 == 0
+                || User_e_1 == 0 || User_e_2 == 0
+                || User_i_1 == 0 || User_i_2 == 0
+                || User_o_1 == 0 || User_o_2 == 0
+                || User_u_1 == 0 || User_u_2 == 0
+                || User_æ_1 == 0 || User_æ_2 == 0
+                || User_ɑ_1 == 0 || User_ɑ_2 == 0
+                || User_ɒ_1 == 0 || User_ɒ_2 == 0
+                || User_ɔ_1 == 0 || User_ɔ_2 == 0
+                || User_ə_1 == 0 || User_ə_2 == 0
+                || User_ɛ_1 == 0 || User_ɛ_2 == 0
+                || User_ɜ_1 == 0 || User_ɜ_2 == 0
+                || User_ɪ_1 == 0 || User_ɪ_2 == 0
+                || User_ʊ_1 == 0 || User_ʊ_2 == 0
+                || User_ʌ_1 == 0 || User_ʌ_2 == 0){
+            textView.setText("You have to first set up your own set of frequencies!");
+        } else {
+            textView.setText("First you have to search for the word that you want to pronounce!");
+        }
 
         cameraView = view.findViewById(R.id.surface_view);
         cameraView.setVisibility(View.INVISIBLE);
@@ -223,7 +271,7 @@ public class LearnFragment extends Fragment {
                                             textView.setText("Now try pronouncing the word!");
                                             btnRecord.setEnabled(true);
                                         }
-                                    }, 5000);
+                                    }, 1000);
                                 } else {
                                     final Handler handler = new Handler();
                                     handler.postDelayed(new Runnable() {
@@ -232,10 +280,10 @@ public class LearnFragment extends Fragment {
                                             textView.setText("Now try pronouncing the word!");
                                             btnRecord.setEnabled(true);
                                         }
-                                    }, 5000);
+                                    }, 1000);
                                 }
                             }
-                        }, 3000);
+                        }, 2000);
                     }
                 }
             }
@@ -318,8 +366,20 @@ public class LearnFragment extends Fragment {
 
                 Play();
 
+                LookedUp = new IPA[IPAs.length];
+                status = true;
+
+                // Retrieve data for the vowels in the searched word
+                LookedUp_Length = 0;
+                for ( int k = 0; k<IPAs.length; k++) {
+                    LookedUp[LookedUp_Length] = vowel_characteristics_lookup(IPAs[k], null, 'v');
+                    if (LookedUp[LookedUp_Length] != null){
+                        LookedUp_Length++;
+                    }
+                }
+
                 int i = 0;
-                double[][] answer = new double[i][3];
+                user_recording_freq = new double[i][3];
 
                 InputStream inputStream = null;
                 try {
@@ -331,13 +391,13 @@ public class LearnFragment extends Fragment {
                 try {
                     while (datainputStream.available() > 0){
 
-                        double[][] temp = answer;
-                        answer = new double[i+1][3];
+                        double[][] temp = user_recording_freq;
+                        user_recording_freq = new double[i+1][3];
                         for ( int j = 0; j<i; j++){
-                            answer[j] = temp[j];
+                            user_recording_freq[j] = temp[j];
                         }
-                        answer [i] = SampleFFT(datainputStream);
-                        text += "{" + answer[i][0]+ " - " +answer[i][1]+ " - " + answer[i][2] + "}" +"\n";
+                        user_recording_freq [i] = SampleFFT(datainputStream);
+                        text += "{" + user_recording_freq[i][0]+ " - " +user_recording_freq[i][1] + "}" +"\n";
                         i++;
                     }
                 } catch (IOException e) {
@@ -346,10 +406,87 @@ public class LearnFragment extends Fragment {
 
                 text += "----------------------------------------------------------------------"+"\n";
 
-                IPA vowels[] = new IPA[answer.length];
-                for(i = 0; i < answer.length; i++)
-                    vowels[i] = vowel_characteristics_lookup(null, answer[i], 'f');
+                // Filtering anything above 1000 and below 175
+                int n = 0;
+                double[][] answer = new double[1][3];
+                for (int j = 0; j < user_recording_freq.length; j++) {
+                    if (user_recording_freq[j][0] > 175 && user_recording_freq[j][0] < 1000) {
+                        double[][] temp = answer;
+                        answer = new double[n + 1][3];
+                        for (int m = 0; m < temp.length; m++) {
+                            answer[m] = temp[m];
+                        }
+                        answer[n] = user_recording_freq[j];
+                        n++;
+                    }
+                }
+                user_recording_freq = answer;
 
+                // Find vowels from User recordings
+                i = 0;
+                UsersRecordingIPA = new IPA[i];
+                for(int m = 0; m < user_recording_freq.length; m++) {
+                    IPA temp = vowel_characteristics_lookup(null, user_recording_freq[i], 'f');
+                    if(temp != null){
+                        IPA [] recover = UsersRecordingIPA;
+                        UsersRecordingIPA = new IPA[i+1];
+                        for ( int j = 0; j<i; j++){
+                            UsersRecordingIPA[j] = recover[j];
+                        }
+                        UsersRecordingIPA[i] = temp;
+                    }
+                }
+                if ( UsersRecordingIPA.length == 0){
+                    text += " No vowels recovered form the user's recording!";
+                }
+
+                for (int m = 0; m<UsersRecordingIPA.length ; m++){
+                    text += UsersRecordingIPA[m].character + " - ";
+                }
+                text += "\n" + "-------------------------------------------------------------"+"\n";
+
+                textView.setText(text);
+
+
+                int c = 1;
+                mispronounced_vowel_index = new int[c];
+                int y = 0;
+                while( y < LookedUp_Length){
+                    for(int x = 0; x < UsersRecordingIPA.length; x++ ){
+                        if(UsersRecordingIPA[x].character.equals(LookedUp[y].character)){
+                            if ( y == LookedUp_Length-1){
+                                status = true;
+                            }
+                            else{
+                                y++;
+                            }
+                        }
+                    }
+                    int [] temp = mispronounced_vowel_index;
+                    mispronounced_vowel_index = new int[c];
+                    for(int f = 0; f < temp.length; f++){
+                        mispronounced_vowel_index[f] = temp[f];
+                    }
+                    mispronounced_vowel_index[c-1] = y;
+                    c++;
+                    y++;
+                    status = false;
+                }
+
+                if( status == true ){
+                    textView.setText("Perfect!");
+                } else {
+                    text += "false pronunciation of ";
+
+                   // text += mispronounced_vowel_index.length;
+                    for ( int f = 0; f <mispronounced_vowel_index.length; f++ ){
+                        text += LookedUp[f].character + " ";
+                    }
+                    textView.setText(text);
+                }
+
+                feedback();
+                /*
                 //this little loop does as such
                 //look for the first IPA in IPAs in the vowel array
                 //once found, start looking for the second one
@@ -358,17 +495,19 @@ public class LearnFragment extends Fragment {
                 int x = 0;
                 int progress = 0;
                 while(x < IPAs.length) {
-                    for (i = progress; i < vowels.length; i++) {
+                    for (i = progress; i < UsersRecordingIPA.length; i++) {
                         //look through IPAs array and compare vowels array
-                        if (vowels[i].character.equals(IPAs[x])) {
+                        if (UsersRecordingIPA[i].character.equals(IPAs[x])) {
                             progress = i + 1;
                             x++;
                         }
                     }
+                    /*
+                    mispronounced_vowel_index
                     if(x < IPAs.length)
                         //add x to list of unrepresented sounds
-                        ;
-                }
+                        ;/
+                }*/
 
 
 
@@ -424,7 +563,7 @@ public class LearnFragment extends Fragment {
             cameraSource =
                     new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
-                    .setRequestedPreviewSize(800, 200)
+                    .setRequestedPreviewSize(1600, 400)
                     .setRequestedFps(2.0f)
                     .setAutoFocusEnabled(true)
                     .build();
@@ -718,42 +857,42 @@ public class LearnFragment extends Fragment {
                 IPA temp = new IPA();
                 temp.character = "i";
                 temp.vowel_character = new String[]{"i", "Close", "Unrounded", "Front"};
-                temp.vowel_freq = new int[]{280, 2620, 3380};
+                temp.vowel_freq = new double[]{User_i_1, User_i_2};
                 result = temp;
             }
             else if ("ɪ".equals(vowel)) { //this is the tone i put in tonalhell.wav
                 IPA temp = new IPA();
                 temp.character = "ɪ";
                 temp.vowel_character = new String[]{"ɪ", "Near-close", "Unrounded", "Near-front"};
-                temp.vowel_freq = new int[]{360, 2220, 2960};
+                temp.vowel_freq = new double[]{User_ɪ_1, User_ɪ_2};
                 result = temp;
             }
             else if ("e".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "e";
                 temp.vowel_character = new String[]{"e", "Close-mid","Unrounded","Front"};
-                temp.vowel_freq = new int[]{600, 2060, 2840};
+                temp.vowel_freq = new double[]{User_e_1, User_e_2};
                 result = temp;
             }
             else if ("ɛ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "ɛ";
                 temp.vowel_character = new String[]{"ɛ", "Open-mid","Unrounded","Front"};
-                temp.vowel_freq = new int[]{0, 0, 0};
+                temp.vowel_freq = new double[]{User_ɛ_1, User_ɛ_2};
                 result = temp;
             }
             else if ("æ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "æ";
                 temp.vowel_character = new String[]{"æ", "Near-open", "Unrounded", "Front"};
-                temp.vowel_freq = new int[]{800, 1760, 2500};
+                temp.vowel_freq = new double[]{User_æ_1, User_æ_2};
                 result = temp;
             }
             else if ("a".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "a";
                 temp.vowel_character = new String[]{"a", "Open", "Unrounded", "Front"};
-                temp.vowel_freq = new int[]{0, 0, 0};
+                temp.vowel_freq = new double[]{User_a_1, User_a_2};
                 result = temp;
             }
 
@@ -763,14 +902,14 @@ public class LearnFragment extends Fragment {
                 IPA temp = new IPA();
                 temp.character = "ə";
                 temp.vowel_character = new String[]{"ə", "Mid", "Rounded", "Central"};
-                temp.vowel_freq = new int[]{500, 1500, 3000};
+                temp.vowel_freq = new double[]{User_ə_1, User_ə_2};
                 result = temp;
             }
             else if ("ɜ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "ɜ";
                 temp.vowel_character = new String[]{"ɜ", "Open-mid", "Unrounded", "Central"};
-                temp.vowel_freq = new int[]{560, 1480, 2520};
+                temp.vowel_freq = new double[]{User_ɜ_1, User_ɜ_2};
                 result = temp;
             }
 
@@ -780,49 +919,49 @@ public class LearnFragment extends Fragment {
                 IPA temp = new IPA();
                 temp.character = "u";
                 temp.vowel_character = new String[]{"u", "Close", "Rounded", "Back"};
-                temp.vowel_freq = new int[]{320, 920, 2200};
+                temp.vowel_freq = new double[]{User_u_1, User_u_2};
                 result = temp;
             }
             else if ("ʊ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "ʊ";
                 temp.vowel_character = new String[]{"ʊ", "Near-close", "Rounded", "Near-back"};
-                temp.vowel_freq = new int[]{380, 940, 2300};
+                temp.vowel_freq = new double[]{User_ʊ_1, User_ʊ_2};
                 result = temp;
             }
             else if ("o".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "o";
                 temp.vowel_character = new String[]{"o", "Close-mid", "Rounded", "Back"};
-                temp.vowel_freq = new int[]{0, 0, 0};
+                temp.vowel_freq = new double[]{User_o_1, User_o_2};
                 result = temp;
             }
             else if ("ʌ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "ʌ";
                 temp.vowel_character = new String[]{"ʌ", "Open-mid", "Unrounded", "Back"};
-                temp.vowel_freq = new int[]{760, 1320, 2500};
+                temp.vowel_freq = new double[]{User_ʌ_1, User_ʌ_2};
                 result = temp;
             }
             else if ("ɔ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "ɔ";
                 temp.vowel_character = new String[]{"ɔ", "Open-mid", "Rounded", "Back"};
-                temp.vowel_freq = new int[]{480, 760, 2620};
+                temp.vowel_freq = new double[]{User_ɔ_1, User_ɔ_2};
                 result = temp;
             }
             else if ("ɒ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "ɒ";
                 temp.vowel_character = new String[]{"ɒ", "Open", "Rounded", "Back"};
-                temp.vowel_freq = new int[]{560, 920, 2560};
+                temp.vowel_freq = new double[]{User_ɒ_1, User_ɒ_2};
                 result = temp;
             }
             else if ("ɑ".equals(vowel)) {
                 IPA temp = new IPA();
                 temp.character = "ɑ";
                 temp.vowel_character = new String[]{"ɑ", "Open", "Unrounded", "Back"};
-                temp.vowel_freq = new int[]{740, 1180, 2640};
+                temp.vowel_freq = new double[]{User_ɑ_1, User_ɑ_2};
                 result = temp;
             }
 
@@ -832,45 +971,38 @@ public class LearnFragment extends Fragment {
             }
         }
         else if ( s == 'f'){
-            if(InputFreq[0] < 280*(1+ePer) && InputFreq[0] > 280*(1-ePer) &&
-                    InputFreq[1] < 2620*(1+ePer) && InputFreq[1] > 2620*(1-ePer) &&
-                    InputFreq[2] < 3380*(1+ePer) && InputFreq[2] > 3380*(1-ePer)){
+            if(InputFreq[0] < User_i_1*(1+ePer) && InputFreq[0] > User_i_1*(1-ePer) &&
+                    InputFreq[1] < User_i_2*(1+ePer) && InputFreq[1] > User_i_2*(1-ePer)) {
 
                 result =  vowel_characteristics_lookup("i",null,'v');
             }
-            else if (InputFreq[0] < 360*(1+ePer) && InputFreq[0] > 360*(1-ePer) &&
-                    InputFreq[1] < 2220*(1+ePer) && InputFreq[1] > 2220*(1-ePer) &&
-                    InputFreq[2] < 2960*(1+ePer) && InputFreq[2] > 2960*(1-ePer)) {
+            else if (InputFreq[0] < User_ɪ_1*(1+ePer) && InputFreq[0] > User_ɪ_1*(1-ePer) &&
+                    InputFreq[1] < User_ɪ_2*(1+ePer) && InputFreq[1] > User_ɪ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ɪ",null,'v');
             }
-            else if (InputFreq[0] < 600*(1+ePer) && InputFreq[0] > 600*(1-ePer) &&
-                    InputFreq[1] < 2060*(1+ePer) && InputFreq[1] > 2060*(1-ePer) &&
-                    InputFreq[2] < 2840*(1+ePer) && InputFreq[2] > 2840*(1-ePer)) {
+            else if (InputFreq[0] < User_e_1*(1+ePer) && InputFreq[0] > User_e_1*(1-ePer) &&
+                    InputFreq[1] < User_e_2*(1+ePer) && InputFreq[1] > User_e_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("e",null,'v');
             }
-            /*else if (InputFreq[0] < 0*(1+ePer) && InputFreq[0] > 0*(1-ePer) &&
-                    InputFreq[1] < 0*(1+ePer) && InputFreq[1] > 0*(1-ePer) &&
-                    InputFreq[2] < 0*(1+ePer) && InputFreq[2] > 0*(1-ePer)){
+            else if (InputFreq[0] < User_ɛ_1*(1+ePer) && InputFreq[0] > User_ɛ_1*(1-ePer) &&
+                    InputFreq[1] < User_ɛ_2*(1+ePer) && InputFreq[1] > User_ɛ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ɛ",null,'v');
-            }*/
-            else if (InputFreq[0] < 800*(1+ePer) && InputFreq[0] > 800*(1-ePer) &&
-                    InputFreq[1] < 1760*(1+ePer) && InputFreq[1] > 1760*(1-ePer) &&
-                    InputFreq[2] < 2500*(1+ePer) && InputFreq[2] > 2500*(1-ePer)){
+            }
+            else if (InputFreq[0] < User_æ_1*(1+ePer) && InputFreq[0] > User_æ_1*(1-ePer) &&
+                    InputFreq[1] < User_æ_2*(1+ePer) && InputFreq[1] > User_æ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("æ",null,'v');
             }
-            /*else if (InputFreq[0] < 0*(1+ePer) && InputFreq[0] > 0*(1-ePer) &&
-                    InputFreq[1] < 0*(1+ePer) && InputFreq[1] > 0*(1-ePer) &&
-                    InputFreq[2] < 0*(1+ePer) && InputFreq[2] > 0*(1-ePer)){
+            else if (InputFreq[0] < User_a_1*(1+ePer) && InputFreq[0] > User_a_1*(1-ePer) &&
+                    InputFreq[1] < User_a_2*(1+ePer) && InputFreq[1] > User_a_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("a",null,'v');
-            }*/
-            else if (InputFreq[0] < 500*(1+ePer) && InputFreq[0] > 500*(1-ePer) &&
-                    InputFreq[1] < 1500*(1+ePer) && InputFreq[1] > 1500*(1-ePer) &&
-                    InputFreq[2] < 3000*(1+ePer) && InputFreq[2] > 3000*(1-ePer)) {
+            }
+            else if (InputFreq[0] < User_ə_1*(1+ePer) && InputFreq[0] > User_ə_1*(1-ePer) &&
+                    InputFreq[1] < User_ə_2*(1+ePer) && InputFreq[1] > User_ə_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ə",null,'v');
             }
@@ -880,45 +1012,38 @@ public class LearnFragment extends Fragment {
 
                 result = vowel_characteristics_lookup("ɜ",null,'v');
             }
-            else if (InputFreq[0] < 320*(1+ePer) && InputFreq[0] > 320*(1-ePer) &&
-                    InputFreq[1] < 920*(1+ePer) && InputFreq[1] > 920*(1-ePer) &&
-                    InputFreq[2] < 2200*(1+ePer) && InputFreq[2] > 2200*(1-ePer)) {
+            else if (InputFreq[0] < User_ɜ_1*(1+ePer) && InputFreq[0] > User_ɜ_1*(1-ePer) &&
+                    InputFreq[1] < User_ɜ_2*(1+ePer) && InputFreq[1] > User_ɜ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("u",null,'v');
             }
-            else if (InputFreq[0] < 380*(1+ePer) && InputFreq[0] > 380*(1-ePer) &&
-                    InputFreq[1] < 940*(1+ePer) && InputFreq[1] > 940*(1-ePer) &&
-                    InputFreq[2] < 2300*(1+ePer) && InputFreq[2] > 2300*(1-ePer)) {
+            else if (InputFreq[0] < User_ʊ_1*(1+ePer) && InputFreq[0] > User_ʊ_1*(1-ePer) &&
+                    InputFreq[1] < User_ʊ_2*(1+ePer) && InputFreq[1] > User_ʊ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ʊ",null,'v');
             }
-            /*else if (InputFreq[0] < 0*(1+ePer) && InputFreq[0] > 0*(1-ePer) &&
-                    InputFreq[1] < 0*(1+ePer) && InputFreq[1] > 0*(1-ePer) &&
-                    InputFreq[2] < 0*(1+ePer) && InputFreq[2] > 0*(1-ePer)){
+            else if (InputFreq[0] < User_o_1*(1+ePer) && InputFreq[0] > User_o_1*(1-ePer) &&
+                    InputFreq[1] < User_o_2*(1+ePer) && InputFreq[1] > User_o_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("o",null,'v');
-            }*/
-            else if (InputFreq[0] < 760*(1+ePer) && InputFreq[0] > 760*(1-ePer) &&
-                    InputFreq[1] < 1320*(1+ePer) && InputFreq[1] > 1320*(1-ePer) &&
-                    InputFreq[2] < 2500*(1+ePer) && InputFreq[2] > 2500*(1-ePer)) {
+            }
+            else if (InputFreq[0] < User_ʌ_1*(1+ePer) && InputFreq[0] > User_ʌ_1*(1-ePer) &&
+                    InputFreq[1] < User_ʌ_2*(1+ePer) && InputFreq[1] > User_ʌ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ʌ",null,'v');
             }
-            else if (InputFreq[0] < 480*(1+ePer) && InputFreq[0] > 480*(1-ePer) &&
-                    InputFreq[1] < 760*(1+ePer) && InputFreq[1] > 760*(1-ePer) &&
-                    InputFreq[2] < 2620*(1+ePer) && InputFreq[2] > 2620*(1-ePer)) {
+            else if (InputFreq[0] < User_ɔ_1*(1+ePer) && InputFreq[0] > User_ɔ_1*(1-ePer) &&
+                    InputFreq[1] < User_ɔ_2*(1+ePer) && InputFreq[1] > User_ɔ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ɔ",null,'v');
             }
-            else if (InputFreq[0] < 560*(1+ePer) && InputFreq[0] > 560*(1-ePer) &&
-                    InputFreq[1] < 920*(1+ePer) && InputFreq[1] > 920*(1-ePer) &&
-                    InputFreq[2] < 2560*(1+ePer) && InputFreq[2] > 2560*(1-ePer)) {
+            else if (InputFreq[0] < User_ɒ_1*(1+ePer) && InputFreq[0] > User_ɒ_1*(1-ePer) &&
+                    InputFreq[1] < User_ɒ_2*(1+ePer) && InputFreq[1] > User_ɒ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ɒ",null,'v');
             }
-            else if (InputFreq[0] < 740*(1+ePer) && InputFreq[0] > 740*(1-ePer) &&
-                    InputFreq[1] < 1180*(1+ePer) && InputFreq[1] > 1180*(1-ePer) &&
-                    InputFreq[2] < 2640*(1+ePer) && InputFreq[2] > 2640*(1-ePer)){
+            else if (InputFreq[0] < User_ɑ_1*(1+ePer) && InputFreq[0] > User_ɑ_1*(1-ePer) &&
+                    InputFreq[1] < User_ɑ_2*(1+ePer) && InputFreq[1] > User_ɑ_2*(1-ePer)) {
 
                 result = vowel_characteristics_lookup("ɑ",null,'v');
             }
@@ -1116,15 +1241,6 @@ public class LearnFragment extends Fragment {
             }
         }
 
-        /*
-        sum1 += Input[Input.length-2][0];
-        sum2 += Input[Input.length-2][1];
-        sum3 += Input[Input.length-2][2];
-        result[resultcount][0]= (sum1/count);
-        result[resultcount][1]= (sum2/count);
-        result[resultcount][2]= (sum3/count);
-*/
-
         double [][] temp = result;
         result = new double[resultcount+1][3];
         for(int k = 0 ; k<temp.length ; k++){
@@ -1134,13 +1250,8 @@ public class LearnFragment extends Fragment {
         result[resultcount][1] = (sum2 / count);
         result[resultcount][2] = (sum3 / count);
         resultcount++;
-        //text += "result:" + (sum1 / count) + " - ";
-        count = 0;
-        sum1 = 0;
-        sum2 = 0;
-        sum3 = 0;
-
         textView.setText(text);
+
         return result;
     }
 
@@ -1230,33 +1341,19 @@ public class LearnFragment extends Fragment {
         }
     }
 
-    private void comparator2(double[][] InputFreq){
-
-    }
     // Feedback
     private void feedback(){
-        // Lookup the vowels for the voice recording
-        UsersRecordingIPA = new IPA[user_recording_freq.length];
-        int j = 0;
-        for (int i = 0; i < user_recording_freq.length ; i++){
-            IPA temp = new IPA();
-            temp = vowel_characteristics_lookup(null,user_recording_freq[i],'f');
-            if ( temp != null){
-                UsersRecordingIPA[j] = temp;
-                j++;
-            }
-        }
-    /*
+
         String user_text = "";
         String data_text = "";
         int k = 1;
         for ( int i = 0; i < LookedUp_Length ; i++){
-            if(mispronounced_vowel_index[i] == 1){
+            //if(mispronounced_vowel_index[i] == 1){
 
-                textView.setText(textView.getText() + "\n" + " You were supposed to pronounce " + LookedUp[i].character+
-                        " but you pronounced ");// + UsersRecordingIPA[i].character + " !" + "\n" + "\n");
+                textView.setText(textView.getText() + "\n" + " You were supposed to pronounce " + LookedUp[i].character);
+                       // " but you pronounced " + UsersRecordingIPA[i].character + " !" + "\n" + "\n");
 
-
+/*
                 plot.setVisibility(View.VISIBLE);
                 data_text = "Ideal phoneme " + k;
                 BubbleSeries data = new BubbleSeries(
@@ -1276,7 +1373,7 @@ public class LearnFragment extends Fragment {
                         user_text
                 );
                 BubbleFormatter format_user = new BubbleFormatter (Color.RED, Color.WHITE);
-                plot.addSeries(user,format_user);
+                plot.addSeries(user,format_user);*/
 
 
                 String char1, char2, char3;
@@ -1285,7 +1382,7 @@ public class LearnFragment extends Fragment {
                 char3 = LookedUp[i].vowel_character[3];
 
 
-                if (LookedUp[i].vowel_character[1] != UsersRecordingIPA[i].vowel_character[1]){
+                //if (LookedUp[i].vowel_character[1] != UsersRecordingIPA[i].vowel_character[1]){
                     if(char1 == "Close" ){
                         textView.setText(textView.getText() + "Try closing your mouth.");
 
@@ -1310,9 +1407,9 @@ public class LearnFragment extends Fragment {
                     } else{
                         // Something is wrong
                     }
-                }
+                //}
 
-                if (LookedUp[i].vowel_character[2] != UsersRecordingIPA[i].vowel_character[2]){
+                //if (LookedUp[i].vowel_character[2] != UsersRecordingIPA[i].vowel_character[2]){
                     if(char2 == "Rounded"){
                         textView.setText(textView.getText() + "Try making your lips rounder");
 
@@ -1321,9 +1418,9 @@ public class LearnFragment extends Fragment {
                     } else {
                         // Something is wrong
                     }
-                }
+                //}
 
-                if (LookedUp[i].vowel_character[3] != UsersRecordingIPA[i].vowel_character[3]){
+                //if (LookedUp[i].vowel_character[3] != UsersRecordingIPA[i].vowel_character[3]){
                     if(char3 == "Front"){
                         textView.setText(textView.getText() + "Try bringing your tongue to the front of your mouth");
                     } else if (char3 == "Near-front" ){
@@ -1337,9 +1434,9 @@ public class LearnFragment extends Fragment {
                     } else{
 
                     }
-                }
-            }
-        }*/
+               // }
+            //}
+        }
 
     }
 }
