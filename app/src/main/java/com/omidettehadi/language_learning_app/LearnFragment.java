@@ -346,7 +346,33 @@ public class LearnFragment extends Fragment {
 
                 text += "----------------------------------------------------------------------"+"\n";
 
-                int n = 0;
+                IPA vowels[] = new IPA[answer.length];
+                for(i = 0; i < answer.length; i++)
+                    vowels[i] = vowel_characteristics_lookup(null, answer[i], 'f');
+
+                //this little loop does as such
+                //look for the first IPA in IPAs in the vowel array
+                //once found, start looking for the second one
+                //if loop ever reaches end of vowels[], store the current phoneme as unfound, and try the next one
+                //may misread missing phonemes if there's repeats of one particular phoneme that is successful with an unsuccessful in between.
+                int x = 0;
+                int progress = 0;
+                while(x < IPAs.length) {
+                    for (i = progress; i < vowels.length; i++) {
+                        //look through IPAs array and compare vowels array
+                        if (vowels[i].character.equals(IPAs[x])) {
+                            progress = i + 1;
+                            x++;
+                        }
+                    }
+                    if(x < IPAs.length)
+                        //add x to list of unrepresented sounds
+                        ;
+                }
+
+
+
+                /*int n = 0;
                 double [][] answer2 = new double[1][3];
                 for(int j = 0; j<answer.length ;j++){
                     if(answer[j][0] > 200 && answer[j][0] <1000) {
@@ -378,7 +404,7 @@ public class LearnFragment extends Fragment {
 
                 resultcount = 0;
 
-                comparator(user_recording_freq);
+                comparator(user_recording_freq);*/
 
             }
         });
