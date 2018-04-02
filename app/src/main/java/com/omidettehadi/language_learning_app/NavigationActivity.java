@@ -20,6 +20,68 @@ import com.google.firebase.auth.FirebaseUser;
 
 import me.anwarshahriar.calligrapher.Calligrapher;
 
+import static com.omidettehadi.language_learning_app.MainActivity.User_a_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_a_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_e_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_e_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_i_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_i_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_o_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_o_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_u_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_u_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_æ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_æ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɑ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɑ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɒ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɒ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɔ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɔ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ə_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ə_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɛ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɛ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɜ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɜ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɪ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ɪ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʊ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʊ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʌ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.User_ʌ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.a_1;
+import static com.omidettehadi.language_learning_app.MainActivity.a_2;
+import static com.omidettehadi.language_learning_app.MainActivity.e_1;
+import static com.omidettehadi.language_learning_app.MainActivity.e_2;
+import static com.omidettehadi.language_learning_app.MainActivity.i_1;
+import static com.omidettehadi.language_learning_app.MainActivity.i_2;
+import static com.omidettehadi.language_learning_app.MainActivity.o_1;
+import static com.omidettehadi.language_learning_app.MainActivity.o_2;
+import static com.omidettehadi.language_learning_app.MainActivity.sampleFreq;
+import static com.omidettehadi.language_learning_app.MainActivity.u_1;
+import static com.omidettehadi.language_learning_app.MainActivity.u_2;
+import static com.omidettehadi.language_learning_app.MainActivity.æ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.æ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ɑ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ɑ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ɒ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ɒ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ɔ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ɔ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ə_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ə_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ɛ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ɛ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ɜ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ɜ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ɪ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ɪ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ʊ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ʊ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ʌ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ʌ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.i_1;
 import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.wordoftheday;
 import static com.omidettehadi.language_learning_app.MainActivity.WordHistory;
@@ -91,11 +153,11 @@ public class NavigationActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Go to Dictionary Fragment
-        setTitle("Dictionary");
-        DictionaryFragment fragment = new DictionaryFragment();
+        // Go to Set Up Fragment
+        setTitle("Set up");
+        SetUpFreqFragment fragment = new SetUpFreqFragment();
         FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
-        fragmenttransaction.replace(R.id.main,fragment,"Dictionary");
+        fragmenttransaction.replace(R.id.main,fragment,"Set Up");
         fragmenttransaction.commit();
     }
 
@@ -159,6 +221,41 @@ public class NavigationActivity extends AppCompatActivity
             FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
             fragmenttransaction.replace(R.id.main,fragment,"Set Up");
             fragmenttransaction.commit();
+            return true;
+        }
+        if (id == R.id.action_default) {
+            User_i_1 = i_1;
+            User_i_2 = i_2;
+            User_ɪ_1 = ɪ_1;
+            User_ɪ_2 = ɪ_2;
+            User_e_1 = e_1;
+            User_e_2 = e_2;
+            User_ɛ_1 = ɛ_1;
+            User_ɛ_2 = ɛ_2;
+            User_æ_1 = æ_1;
+            User_æ_2 = æ_2;
+            User_a_1 = a_1;
+            User_a_2 = a_2;
+
+            User_ə_1 = ə_1;
+            User_ə_2 = ə_2;
+            User_ɜ_1 = ɜ_1;
+            User_ɜ_2 = ɜ_2;
+
+            User_u_1 = u_1;
+            User_u_2 = u_2;
+            User_ʊ_1 = ʊ_1;
+            User_ʊ_2 = ʊ_2;
+            User_o_1 = o_1;
+            User_o_2 = o_1;
+            User_ʌ_1 = ʌ_1;
+            User_ʌ_2 = ʌ_2;
+            User_ɔ_1 = ɔ_1;
+            User_ɔ_2 = ɔ_2;
+            User_ɒ_1 = ɒ_1;
+            User_ɒ_2 = ɒ_2;
+            User_ɑ_1 = ɑ_1;
+            User_ɑ_2 = ɑ_2;
             return true;
         }
         return super.onOptionsItemSelected(item);

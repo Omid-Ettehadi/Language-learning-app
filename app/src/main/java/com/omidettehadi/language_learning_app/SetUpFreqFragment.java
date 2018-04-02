@@ -12,6 +12,7 @@ import android.media.audiofx.NoiseSuppressor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import me.anwarshahriar.calligrapher.Calligrapher;
 
 import static com.omidettehadi.language_learning_app.MainActivity.User_a_1;
 import static com.omidettehadi.language_learning_app.MainActivity.User_a_2;
@@ -106,16 +109,15 @@ public class SetUpFreqFragment extends Fragment {
 
     private TextView textView;
 
-    String text;
-    double ePer = 0.4;
+    private String text;
+    private double ePer = 0.5;
 
     // Audio Recording
     private boolean recording;
     private File file;
     private AudioRecord AudioRecorded;
-    private AudioTrack AudioRecordedTrack;
     private FFT AudioRecordedFFT;
-    private double [][] user_recording_freq;
+
 
 
     @Override
@@ -124,6 +126,11 @@ public class SetUpFreqFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_set_up_freq, container, false);
+
+        // Set default font
+        Calligrapher calligrapher = new Calligrapher(getContext());
+        calligrapher.setFont(getActivity(),"tradegothicltstdlight.otf",true);
+
 
         // Definitions
         btni = view.findViewById(R.id.btni);
@@ -178,11 +185,13 @@ public class SetUpFreqFragment extends Fragment {
         btnɑR = view.findViewById(R.id.btnɑR);
 
         textView = view.findViewById(R.id.textView);
+        textView.setMovementMethod(new ScrollingMovementMethod());
 
 
         btni.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.close_front_unrounded_vowel);
                 vowel.start();
             }
@@ -190,7 +199,7 @@ public class SetUpFreqFragment extends Fragment {
         btniR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -213,19 +222,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btni.setEnabled(false);
                                 btnɪ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                + "expected: " + i_1 + " - " + i_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + i_1 + " - " + i_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnɪ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.near_close_near_front_unrounded_vowel);
                 vowel.start();
             }
@@ -233,7 +247,7 @@ public class SetUpFreqFragment extends Fragment {
         btnɪR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -256,19 +270,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnɪ.setEnabled(false);
                                 btne.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ɪ_1 + " - " + ɪ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ɪ_1 + " - " + ɪ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.close_mid_front_unrounded_vowel);
                 vowel.start();
             }
@@ -276,7 +295,7 @@ public class SetUpFreqFragment extends Fragment {
         btneR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -299,19 +318,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btne.setEnabled(false);
                                 btnɛ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + e_1 + " - " + e_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + e_1 + " - " + e_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnɛ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.open_mid_front_unrounded_vowel);
                 vowel.start();
             }
@@ -319,7 +343,7 @@ public class SetUpFreqFragment extends Fragment {
         btnɛR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -342,19 +366,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnɛ.setEnabled(false);
                                 btnæ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ɛ_1 + " - " + ɛ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ɛ_1 + " - " + ɛ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnæ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(), R.raw.near_open_front_unrounded_vowel);
                 vowel.start();
             }
@@ -362,7 +391,7 @@ public class SetUpFreqFragment extends Fragment {
         btnæR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -385,19 +414,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnæ.setEnabled(false);
                                 btna.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + æ_1 + " - " + æ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + æ_1 + " - " + æ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btna.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(), R.raw.open_front_unrounded_vowel);
                 vowel.start();
             }
@@ -405,7 +439,7 @@ public class SetUpFreqFragment extends Fragment {
         btnaR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -428,13 +462,17 @@ public class SetUpFreqFragment extends Fragment {
                                 btna.setEnabled(false);
                                 btnə.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + a_1 + " - " + a_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + a_1 + " - " + a_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
@@ -444,6 +482,7 @@ public class SetUpFreqFragment extends Fragment {
         btnə.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.mid_central_vowel);
                 vowel.start();
             }
@@ -451,7 +490,7 @@ public class SetUpFreqFragment extends Fragment {
         btnəR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -474,19 +513,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnə.setEnabled(false);
                                 btnɜ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ə_1 + " - " + ə_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ə_1 + " - " + ə_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnɜ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.open_mid_central_unrounded_vowel);
                 vowel.start();
             }
@@ -494,7 +538,7 @@ public class SetUpFreqFragment extends Fragment {
         btnɜR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -517,13 +561,17 @@ public class SetUpFreqFragment extends Fragment {
                                 btnɜ.setEnabled(false);
                                 btnu.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ɜ_1 + " - " + ɜ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ɜ_1 + " - " + ɜ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
@@ -534,6 +582,7 @@ public class SetUpFreqFragment extends Fragment {
         btnu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.close_back_rounded_vowel);
                 vowel.start();
             }
@@ -541,7 +590,7 @@ public class SetUpFreqFragment extends Fragment {
         btnuR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -564,19 +613,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnu.setEnabled(false);
                                 btnʊ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + u_1 + " - " + u_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + u_1 + " - " + u_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnʊ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.near_close_near_back_rounded_vowel);
                 vowel.start();
             }
@@ -584,7 +638,7 @@ public class SetUpFreqFragment extends Fragment {
         btnʊR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -607,19 +661,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnʊ.setEnabled(false);
                                 btno.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ʊ_1 + " - " + ʊ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ʊ_1 + " - " + ʊ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.close_mid_back_rounded_vowel);
                 vowel.start();
             }
@@ -627,7 +686,7 @@ public class SetUpFreqFragment extends Fragment {
         btnoR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -650,19 +709,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btno.setEnabled(false);
                                 btnʌ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + o_1 + " - " + o_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + o_1 + " - " + o_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnɔ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.open_mid_back_rounded_vowel);
                 vowel.start();
             }
@@ -670,7 +734,7 @@ public class SetUpFreqFragment extends Fragment {
         btnɔR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -693,19 +757,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnʌ.setEnabled(false);
                                 btnɔ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ɔ_1 + " - " + ɔ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ɔ_1 + " - " + ɔ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnʌ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.open_mid_back_unrounded_vowel);
                 vowel.start();
             }
@@ -713,7 +782,7 @@ public class SetUpFreqFragment extends Fragment {
         btnʌR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -736,19 +805,24 @@ public class SetUpFreqFragment extends Fragment {
                                 btnɔ.setEnabled(false);
                                 btnɒ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ʌ_1 + " - " + ʌ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ʌ_1 + " - " + ʌ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
         btnɒ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView.setText("");
                 MediaPlayer vowel = MediaPlayer.create(getContext(),R.raw.open_back_rounded_vowel);
                 vowel.start();
             }
@@ -756,7 +830,7 @@ public class SetUpFreqFragment extends Fragment {
         btnɒR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -779,13 +853,17 @@ public class SetUpFreqFragment extends Fragment {
                                 btnɒ.setEnabled(false);
                                 btnɑ.setEnabled(true);
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ɒ_1 + " - " + ɒ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ɒ_1 + " - " + ɒ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
@@ -800,7 +878,7 @@ public class SetUpFreqFragment extends Fragment {
         btnɑR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text = "";
+                textView.setText("");
                 Thread recordThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -821,13 +899,17 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ɑ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1] + "\n" + "You are now done!");
                             } else{
-                                textView.setText("Try again!");
+                                textView.setText("Try again!" + "\n"
+                                        + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                        + "expected: " + ɑ_1 + " - " + ɑ_2);
                             }
                         }else{
-                            textView.setText("Try again!");
+                            textView.setText("Try again!" + "\n"
+                                    + "your freq: " + answer[0] + " - " + answer[1] + "\n"
+                                    + "expected: " + ɑ_1 + " - " + ɑ_2);
                         }
                     }
-                }, 1000);
+                }, 500);
             }
         });
 
@@ -925,7 +1007,7 @@ public class SetUpFreqFragment extends Fragment {
         double sum2 = 0;
         int count = 0;
 
-        for (int m = 0; m < answer2.length ; m++){
+        for (int m = 2; m < answer2.length-2 ; m++){
             sum1 += answer2[m][0];
             sum2 += answer2[m][1];
             count++;
