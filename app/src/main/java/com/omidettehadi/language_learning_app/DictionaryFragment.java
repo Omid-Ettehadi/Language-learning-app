@@ -77,7 +77,6 @@ public class DictionaryFragment extends Fragment {
         etInput = view.findViewById(R.id.etInput);
 
         tvWordoftheDay = view.findViewById(R.id.tvWordoftheDay);
-        tvWordoftheDay.setText(wordoftheday);
 
         btnSearch = view.findViewById(R.id.btnSearch);
         btnMic = view.findViewById(R.id.btnMic);
@@ -99,6 +98,7 @@ public class DictionaryFragment extends Fragment {
 
         // Word of teh Day Hard Coded
         wordoftheday = "Opportunity";
+        tvWordoftheDay.setText(wordoftheday);
         /*
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -257,7 +257,7 @@ public class DictionaryFragment extends Fragment {
             cameraSource =
                     new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
                             .setFacing(CameraSource.CAMERA_FACING_BACK)
-                            .setRequestedPreviewSize(800, 200)
+                            .setRequestedPreviewSize(1600, 800)
                             .setRequestedFps(2.0f)
                             .setAutoFocusEnabled(true)
                             .build();

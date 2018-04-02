@@ -153,6 +153,14 @@ public class NavigationActivity extends AppCompatActivity
             fragmenttransaction.commit();
             return true;
         }
+        if (id == R.id.action_setup) {
+            setTitle("Set up");
+            SetUpFreqFragment fragment = new SetUpFreqFragment();
+            FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
+            fragmenttransaction.replace(R.id.main,fragment,"Set Up");
+            fragmenttransaction.commit();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -3,18 +3,11 @@ package com.omidettehadi.language_learning_app;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
-import java.util.Locale;
-
-import static android.content.Context.MEDIA_PROJECTION_SERVICE;
-import static com.omidettehadi.language_learning_app.MainActivity.word;
 
 public class IPAVowelsFragment extends Fragment{
 
@@ -32,6 +25,7 @@ public class IPAVowelsFragment extends Fragment{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ipavowels, container, false);
 
+        // Definitions
         btni = view.findViewById(R.id.btni);
         btnɪ = view.findViewById(R.id.btnɪ);
         btne = view.findViewById(R.id.btne);

@@ -73,6 +73,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static com.google.android.gms.internal.zzs.TAG;
 import static com.omidettehadi.language_learning_app.MainActivity.word;
+import static com.omidettehadi.language_learning_app.MainActivity.sampleFreq;
 
 public class LearnFragment extends Fragment {
 
@@ -84,6 +85,7 @@ public class LearnFragment extends Fragment {
     private XYPlot plot;
 
     // Audio Recording
+    private boolean recording;
     private File file, noise_file;
     private AudioRecord AudioRecorded, NoiseRecorded;
     private AudioTrack AudioRecordedTrack;
@@ -97,8 +99,7 @@ public class LearnFragment extends Fragment {
     private final int RequestCameraPermissionID = 1001;
 
     // Speech to Text
-    private boolean recording, IsListening;
-    private int sampleFreq = 44100;
+    private boolean IsListening;
     private SpeechRecognizer speechrecognizer;
     private Intent speechrecognizerIntent;
 
