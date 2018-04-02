@@ -397,6 +397,10 @@ public class LearnFragment extends Fragment {
                             user_recording_freq[j] = temp[j];
                         }
                         user_recording_freq [i] = SampleFFT(datainputStream);
+                        if(user_recording_freq[i][0] == 0.0 && user_recording_freq[i][1] == 0.0) {
+                            i--; //cancel out this iteration so the next go through of the loop overwrites it.
+                            //still print the text below just as a record.
+                        }
                         text += "{" + user_recording_freq[i][0]+ " - " +user_recording_freq[i][1] + "}" +"\n";
                         i++;
                     }
@@ -1116,16 +1120,23 @@ public class LearnFragment extends Fragment {
                 powerSpectrum[i] = Math.pow(dataRec[i + outputBufferSize], 2.0) + Math.pow(zeros[i + outputBufferSize], 2.0);
             }
 
-            for(i = 0; i < 100; i++) {
-            }
-
-            //loops from
             max = 0.0;
+            double sum = 0.0;
+            for(i = 0; i < outputBufferSize; i++)
+                sum += powerSpectrum[i];
+            double average;
+            average = sum / (double)outputBufferSize;
             for(i = 1; i < outputBufferSize-1; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
                     max = powerSpectrum[i];
                     maxIndex[0] = i;
                 }
+            }
+            if(powerSpectrum[maxIndex[0]] < (average * 1.1)) {
+                maxFreq[0] = 0.0;
+                maxFreq[1] = 0.0;
+                maxFreq[2] = 0.0;
+                return maxFreq;
             }
             //Log.d("TEST", "maxIndex[0] is" + maxIndex[0]);
             max = 0.0;
