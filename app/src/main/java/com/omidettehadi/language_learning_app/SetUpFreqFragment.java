@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1076,20 +1077,27 @@ public class SetUpFreqFragment extends Fragment {
                 powerSpectrum[i] = Math.pow(dataRec[i + outputBufferSize], 2.0) + Math.pow(zeros[i + outputBufferSize], 2.0);
             }
 
-            for(i = 0; i < 100; i++) {
-            }
-
-            //loops from
             max = 0.0;
-            for(i = 1; i < outputBufferSize-1; i++) {
+            double sum = 0.0;
+            for(i = 0; i < outputBufferSize; i++)
+                sum += powerSpectrum[i];
+            double average;
+            average = sum / (double)outputBufferSize;
+            for(i = 970; i < outputBufferSize-1; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
                     max = powerSpectrum[i];
                     maxIndex[0] = i;
                 }
             }
+            if(powerSpectrum[maxIndex[0]] < (average * 1.1)) {
+                maxFreq[0] = 0.0;
+                maxFreq[1] = 0.0;
+                maxFreq[2] = 0.0;
+                return maxFreq;
+            }
             //Log.d("TEST", "maxIndex[0] is" + maxIndex[0]);
             max = 0.0;
-            for(i = 1; i < outputBufferSize-1; i++) {
+            for(i = 885; i < 1000; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
@@ -1097,13 +1105,14 @@ public class SetUpFreqFragment extends Fragment {
             }
             //Log.d("TEST", "maxIndex[1] is" + maxIndex[1]);
             max = 0.0;
-            for(i = 1; i < outputBufferSize-1; i++) {
+            for(i = 885; i < 1000; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3) && (Math.abs(i - maxIndex[1]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
                 }
             }
-            //Log.d("TEST", "maxIndex[2] is" + maxIndex[2]);
+
+            Log.d("TEST", "outputBufferSize" + outputBufferSize);
 
             maxFreq[0] = (sampleFreq/2.0) - ((((double) maxIndex[0])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
             maxFreq[1] = (sampleFreq/2.0) - ((((double) maxIndex[1])/(double)(outputBufferSize)) * (sampleFreq / 2.0));
