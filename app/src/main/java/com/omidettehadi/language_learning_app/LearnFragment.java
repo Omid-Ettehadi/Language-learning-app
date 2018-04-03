@@ -424,20 +424,20 @@ public class LearnFragment extends Fragment {
                 textView.setText(text);
 
                 int c = 1;
-                mispronounced_vowel_index = new int[c];
-                mispronounced_vowel = new IPA[c];
+                mispronounced_vowel_index = new int[0];
+                mispronounced_vowel = new IPA[0];
                 int y = 0;
-                status = true;
+                status = false;
                 while( y < LookedUp_Length){
                     for(int x = 0; x < UsersRecordingIPA.length; x++ ){
+                        Log.d(TAG, "onClick: here 1");
                         if(UsersRecordingIPA[x].character.equals(LookedUp[y].character)){
-                            if ( y != LookedUp_Length-1){
-                                y++;
-                                status = false;
-                            }
+                            y++;
+                            status = true;
+                            Log.d(TAG, "onClick: here 2");
                         }
                     }
-                    if(status != false) {
+                    if(status == false) {
                         int[] temp = mispronounced_vowel_index;
                         IPA[] temp1 = mispronounced_vowel;
                         mispronounced_vowel_index = new int[c];
@@ -446,8 +446,8 @@ public class LearnFragment extends Fragment {
                             mispronounced_vowel_index[f] = temp[f];
                             mispronounced_vowel[f] = temp1[f];
                         }
-                        mispronounced_vowel_index[c - 1] = y;
-                        mispronounced_vowel[c - 1] = LookedUp[y];
+                        mispronounced_vowel_index[c-1] = y;
+                        mispronounced_vowel[c-1] = LookedUp[y];
                         c++;
                         y++;
                     }
@@ -457,15 +457,15 @@ public class LearnFragment extends Fragment {
                 if( mispronounced_vowel.length == 0 ){
                     textView.setText("Perfect!");
                 } else {
-                    text += "false pronunciation of ";/*
+                    text += "false pronunciation of ";
                     for ( int f = 0; f <mispronounced_vowel.length; f++ ){
                         text += mispronounced_vowel[f].character + " ";
-                    }*/
-                    text += mispronounced_vowel.length;
+                    }
+                    //text += mispronounced_vowel.length;
                     textView.setText(text);
+                    feedback();
                 }
 
-                feedback();
             }
         });
         return view;

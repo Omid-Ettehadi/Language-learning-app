@@ -256,6 +256,13 @@ public class NavigationActivity extends AppCompatActivity
             User_ɒ_2 = ɒ_2;
             User_ɑ_1 = ɑ_1;
             User_ɑ_2 = ɑ_2;
+
+            setTitle("Dictionary");
+            DictionaryFragment fragment = new DictionaryFragment();
+            FragmentTransaction fragmenttransaction = getSupportFragmentManager().beginTransaction();
+            fragmenttransaction.replace(R.id.main,fragment,"Dictionary");
+            fragmenttransaction.commit();
+            
             return true;
         }
         return super.onOptionsItemSelected(item);
