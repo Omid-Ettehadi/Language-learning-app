@@ -73,6 +73,8 @@ import java.util.Arrays;
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.google.android.gms.internal.zzs.TAG;
+import static com.omidettehadi.language_learning_app.MainActivity.e_1;
+import static com.omidettehadi.language_learning_app.MainActivity.e_2;
 import static com.omidettehadi.language_learning_app.MainActivity.word;
 import static com.omidettehadi.language_learning_app.MainActivity.sampleFreq;
 import static com.omidettehadi.language_learning_app.MainActivity.User_a_1;
@@ -105,6 +107,8 @@ import static com.omidettehadi.language_learning_app.MainActivity.User_ʊ_1;
 import static com.omidettehadi.language_learning_app.MainActivity.User_ʊ_2;
 import static com.omidettehadi.language_learning_app.MainActivity.User_ʌ_1;
 import static com.omidettehadi.language_learning_app.MainActivity.User_ʌ_2;
+import static com.omidettehadi.language_learning_app.MainActivity.ɒ_1;
+import static com.omidettehadi.language_learning_app.MainActivity.ɒ_2;
 
 public class LearnFragment extends Fragment {
 
@@ -340,12 +344,26 @@ public class LearnFragment extends Fragment {
                 LookedUp = new IPA[IPAs.length];
                 status = true;
 
+                for (int i = 0; i < IPAs.length; i++){
+                    text += IPAs[i].toString();
+                }
+                text += "\n" + "\n";
+
                 // Retrieve data for the vowels in the searched word
                 LookedUp_Length = 0;
                 for ( int k = 0; k<IPAs.length; k++) {
                     LookedUp[LookedUp_Length] = vowel_characteristics_lookup(IPAs[k], null, 'v');
                     if (LookedUp[LookedUp_Length] != null){
                         LookedUp_Length++;
+                    }
+                }
+
+                text += "Vowels you need to pronounce:" + "\n";
+                for (int i = 0; i<LookedUp_Length ; i++){
+                    if(i == LookedUp_Length-1){
+                        text += LookedUp[i].character + "\n";
+                    } else {
+                        text += LookedUp[i].character + " - ";
                     }
                 }
 
@@ -372,7 +390,6 @@ public class LearnFragment extends Fragment {
                             i--; //cancel out this iteration so the next go through of the loop overwrites it.
                             //still print the text below just as a record.
                         } else {
-                            text += "{" + user_recording_freq[i][0] + " - " + user_recording_freq[i][1] + "}" + "\n";
                             i++;
                         }
                     }
@@ -380,7 +397,9 @@ public class LearnFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                text += "--------------------------------------------------------------------"+"\n";
+                /*for (int j = 0; j < user_recording_freq.length ; j++){
+                    text += "{" + user_recording_freq[j][0] + " - " + user_recording_freq[j][1] + "}" + "\n";
+                } textView.setText(text);
 
                 // Filtering anything above 1000 and below 175
                 int n = 0;
@@ -396,7 +415,7 @@ public class LearnFragment extends Fragment {
                         n++;
                     }
                 }
-                user_recording_freq = answer;
+                user_recording_freq = answer;*/
 
                 // Find vowels from User recordings
                 i = 0;
@@ -406,24 +425,23 @@ public class LearnFragment extends Fragment {
                     if(temp != null){
                         IPA [] recover = UsersRecordingIPA;
                         UsersRecordingIPA = new IPA[i+1];
-                        for ( int j = 0; j<i; j++){
+                        for ( int j = 0; j < recover.length; j++){
                             UsersRecordingIPA[j] = recover[j];
                         }
                         UsersRecordingIPA[i] = temp;
+                        i++;
                     }
                 }
                 if ( UsersRecordingIPA.length == 0){
                     text += " We were not able to identify any vowels!";
                 }
 
-                for (int m = 0; m<UsersRecordingIPA.length ; m++){
-                    text += UsersRecordingIPA[m].character + " - ";
-                }
-                text += "\n" +"\n";
+                /*for (int j = 0; j<UsersRecordingIPA.length ; j++){
+                    text += UsersRecordingIPA[j].character + " - ";
+                } textView.setText(text);*/
 
-                textView.setText(text);
 
-                int c = 1;
+                i = 1;
                 mispronounced_vowel_index = new int[0];
                 mispronounced_vowel = new IPA[0];
                 int y = 0;
@@ -440,15 +458,15 @@ public class LearnFragment extends Fragment {
                     if(status == false) {
                         int[] temp = mispronounced_vowel_index;
                         IPA[] temp1 = mispronounced_vowel;
-                        mispronounced_vowel_index = new int[c];
-                        mispronounced_vowel = new IPA[c];
+                        mispronounced_vowel_index = new int[i];
+                        mispronounced_vowel = new IPA[i];
                         for (int f = 0; f < temp.length; f++) {
                             mispronounced_vowel_index[f] = temp[f];
                             mispronounced_vowel[f] = temp1[f];
                         }
-                        mispronounced_vowel_index[c-1] = y;
-                        mispronounced_vowel[c-1] = LookedUp[y];
-                        c++;
+                        mispronounced_vowel_index[i-1] = y;
+                        mispronounced_vowel[i-1] = LookedUp[y];
+                        i++;
                         y++;
                     }
                     y++;
@@ -459,9 +477,13 @@ public class LearnFragment extends Fragment {
                 } else {
                     text += "false pronunciation of ";
                     for ( int f = 0; f <mispronounced_vowel.length; f++ ){
-                        text += mispronounced_vowel[f].character + " ";
+                        if( f == mispronounced_vowel.length-1){
+                            text += mispronounced_vowel[f].character + "\n";
+                        } else {
+                            text += mispronounced_vowel[f].character + " & ";
+                        }
                     }
-                    //text += mispronounced_vowel.length;
+
                     textView.setText(text);
                     feedback();
                 }
@@ -1043,13 +1065,13 @@ public class LearnFragment extends Fragment {
                 sum += powerSpectrum[i];
             double average;
             average = sum / (double)outputBufferSize;
-            for(i = 970; i < outputBufferSize-1; i++) {
+            for(i = 980; i < 1010; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1])) {
                     max = powerSpectrum[i];
                     maxIndex[0] = i;
                 }
             }
-            if(powerSpectrum[maxIndex[0]] < (average * 1.1)) {
+            if(powerSpectrum[maxIndex[0]] < (average * 1.3)) {
                 maxFreq[0] = 0.0;
                 maxFreq[1] = 0.0;
                 maxFreq[2] = 0.0;
@@ -1057,7 +1079,7 @@ public class LearnFragment extends Fragment {
             }
             //Log.d("TEST", "maxIndex[0] is" + maxIndex[0]);
             max = 0.0;
-            for(i = 885; i < 1000; i++) {
+            for(i = 885; i < 977; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
@@ -1065,7 +1087,7 @@ public class LearnFragment extends Fragment {
             }
             //Log.d("TEST", "maxIndex[1] is" + maxIndex[1]);
             max = 0.0;
-            for(i = 885; i < 1000; i++) {
+            for(i = 885; i < 977; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3) && (Math.abs(i - maxIndex[1]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
@@ -1116,7 +1138,6 @@ public class LearnFragment extends Fragment {
         BubbleSeries data;
 
         for ( int i = 0; i <mispronounced_vowel.length  ; i++){
-            //if(mispronounced_vowel_index[i] == 1){
 
             textView.setText(textView.getText() + "\n" + "\n" + "You were supposed to pronounce " + LookedUp[i].character + "\n");
             // " but you pronounced " + UsersRecordingIPA[i].character + " !" + "\n" + "\n");
@@ -1126,7 +1147,7 @@ public class LearnFragment extends Fragment {
             plot.setRangeBoundaries(1000/1000,3000/1000,BoundaryMode.FIXED);
             plot.setDomainLabel("F1");
             plot.setRangeLabel("F2");
-            data_text = "Ideal " + (i+1);
+            data_text = "Ideal " + LookedUp[i].character.toString();
             data = new BubbleSeries(
                     Arrays.asList(new Number[]{(LookedUp[i].vowel_freq[0])/1000}),
                     Arrays.asList(new Number[]{(LookedUp[i].vowel_freq[1])/1000}),
@@ -1134,19 +1155,6 @@ public class LearnFragment extends Fragment {
                     data_text
             );
             plot.addSeries(data,new BubbleFormatter (Color.WHITE, Color.WHITE));
-            //plot.getRenderer(BubbleRenderer.class).setBubbleScaleMode(BubbleRenderer.BubbleScaleMode.LINEAR);
-
-
-                /*user_text = "User's phoneme " + k;
-                BubbleSeries user = new BubbleSeries(
-                        Arrays.asList(new Number[]{UsersRecordingIPA[i].vowel_freq[0]}),
-                        Arrays.asList(new Number[]{UsersRecordingIPA[i].vowel_freq[1]}),
-                        Arrays.asList(new Number[]{50}),
-                        user_text
-                );
-                BubbleFormatter format_user = new BubbleFormatter (Color.RED, Color.WHITE);
-                plot.addSeries(user,format_user);
-            */
 
             String char1, char2, char3;
             char1 = LookedUp[i].vowel_character[1];
@@ -1154,7 +1162,6 @@ public class LearnFragment extends Fragment {
             char3 = LookedUp[i].vowel_character[3];
 
 
-            //if (LookedUp[i].vowel_character[1] != UsersRecordingIPA[i].vowel_character[1]){
             if(char1 == "Close" ){
                 textView.setText(textView.getText() + "Try closing your mouth." + "\n");
 
@@ -1179,9 +1186,7 @@ public class LearnFragment extends Fragment {
             } else{
                 // Something is wrong
             }
-            //}
 
-            //if (LookedUp[i].vowel_character[2] != UsersRecordingIPA[i].vowel_character[2]){
             if(char2 == "Rounded"){
                 textView.setText(textView.getText() + "Try making your lips rounder" + "\n");
 
@@ -1190,9 +1195,7 @@ public class LearnFragment extends Fragment {
             } else {
                 // Something is wrong
             }
-            //}
 
-            //if (LookedUp[i].vowel_character[3] != UsersRecordingIPA[i].vowel_character[3]){
             if(char3 == "Front"){
                 textView.setText(textView.getText() + "Try bringing your tongue to the front of your mouth" + "\n");
             } else if (char3 == "Near-front" ){
@@ -1204,21 +1207,34 @@ public class LearnFragment extends Fragment {
             } else if (char3 == "Back" ){
                 textView.setText(textView.getText() + "Try bringing your tongue to the back of your mouth" + "\n");
             } else{
-
+                // Something is wrong
             }
-            // }
-            //}
         }
+
+        /*
+        Arrays.asList(new Number[]{(UsersRecordingIPA[i].vowel_freq[0])/1000}),
+                Arrays.asList(new Number[]{(UsersRecordingIPA[i].vowel_freq[1])/1000}),
+                Arrays.asList(new Number[]{1}),
+                user_text
+         */
+        ArrayList<Number> f1 = new ArrayList<Number>();
+        ArrayList<Number> f2 = new ArrayList<Number>();
+        ArrayList<Number> r = new ArrayList<Number>();
+
         for (int i = 0; i<UsersRecordingIPA.length ; i++ ){
-            user_text = "User's " + (i+1);
-            data = new BubbleSeries(
-                    Arrays.asList(new Number[]{(UsersRecordingIPA[i].vowel_freq[0])/1000}),
-                    Arrays.asList(new Number[]{(UsersRecordingIPA[i].vowel_freq[1])/1000}),
-                    Arrays.asList(new Number[]{1}),
-                    user_text
-            );
-            plot.addSeries(data,new BubbleFormatter (Color.GREEN, Color.GREEN));
+
+            f1.add(UsersRecordingIPA[i].vowel_freq[0]/1000);
+            f2.add(UsersRecordingIPA[i].vowel_freq[1]/1000);
+            r.add(0.5);
         }
+        user_text = "Users";
+        data = new BubbleSeries(
+                f1,
+                f2,
+                r,
+                user_text
+        );
+        plot.addSeries(data,new BubbleFormatter (Color.RED, Color.RED));
 
     }
 

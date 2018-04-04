@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public static double ʊ_1 = 380;
     public static double ʊ_2 = 940;
     public static double o_1 = 300;
-    public static double o_2 = 640;
+    public static double o_2 = 1000;
     public static double ʌ_1 = 600;
     public static double ʌ_2 = 1200;
     public static double ɔ_1 = 500;

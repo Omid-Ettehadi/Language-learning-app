@@ -257,7 +257,7 @@ public class DictionaryFragment extends Fragment {
             cameraSource =
                     new CameraSource.Builder(getActivity().getApplicationContext(), textRecognizer)
                             .setFacing(CameraSource.CAMERA_FACING_BACK)
-                            .setRequestedPreviewSize(1600, 800)
+                            .setRequestedPreviewSize(400, 200)
                             .setRequestedFps(2.0f)
                             .setAutoFocusEnabled(true)
                             .build();

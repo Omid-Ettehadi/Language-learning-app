@@ -1,6 +1,9 @@
 package com.omidettehadi.language_learning_app;
 
 
+import android.graphics.Color;
+import android.graphics.Picture;
+import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
@@ -135,37 +138,37 @@ public class SetUpFreqFragment extends Fragment {
 
         // Definitions
         btni = view.findViewById(R.id.btni);
-        btni.setEnabled(true);
+        //btni.setEnabled(true);
         btnɪ = view.findViewById(R.id.btnɪ);
-        btnɪ.setEnabled(false);
+        //btnɪ.setEnabled(false);
         btne = view.findViewById(R.id.btne);
-        btne.setEnabled(false);
+        //btne.setEnabled(false);
         btnɛ = view.findViewById(R.id.btnɛ);
-        btnɛ.setEnabled(false);
+        //btnɛ.setEnabled(false);
         btnæ = view.findViewById(R.id.btnæ);
-        btnæ.setEnabled(false);
+        //btnæ.setEnabled(false);
         btna = view.findViewById(R.id.btna);
-        btna.setEnabled(false);
+        //btna.setEnabled(false);
 
         btnə = view.findViewById(R.id.btnə);
-        btnə.setEnabled(false);
+        //btnə.setEnabled(false);
         btnɜ = view.findViewById(R.id.btnɜ);
-        btnɜ.setEnabled(false);
+        //btnɜ.setEnabled(false);
 
         btnu = view.findViewById(R.id.btnu);
-        btnu.setEnabled(false);
+        //btnu.setEnabled(false);
         btnʊ = view.findViewById(R.id.btnʊ);
-        btnʊ.setEnabled(false);
+        //btnʊ.setEnabled(false);
         btno = view.findViewById(R.id.btno);
-        btno.setEnabled(false);
+        //btno.setEnabled(false);
         btnʌ = view.findViewById(R.id.btnʌ);
-        btnʌ.setEnabled(false);
+        //btnʌ.setEnabled(false);
         btnɔ = view.findViewById(R.id.btnɔ);
-        btnɔ.setEnabled(false);
+        //btnɔ.setEnabled(false);
         btnɒ = view.findViewById(R.id.btnɒ);
-        btnɒ.setEnabled(false);
+        //btnɒ.setEnabled(false);
         btnɑ = view.findViewById(R.id.btnɑ);
-        btnɑ.setEnabled(false);
+        //btnɑ.setEnabled(false);
 
         btniR = view.findViewById(R.id.btniR);
         btnɪR = view.findViewById(R.id.btnɪR);
@@ -220,8 +223,8 @@ public class SetUpFreqFragment extends Fragment {
                                 User_i_1 = answer[0];
                                 User_i_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btni.setEnabled(false);
-                                btnɪ.setEnabled(true);
+                                btniR.setBackgroundResource(R.mipmap.presence_audio_online);
+
                             } else{
                                 textView.setText("Try again!" + "\n"
                                 + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -268,8 +271,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ɪ_1 = answer[0];
                                 User_ɪ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnɪ.setEnabled(false);
-                                btne.setEnabled(true);
+                                btnɪR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -316,8 +318,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_e_1 = answer[0];
                                 User_e_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btne.setEnabled(false);
-                                btnɛ.setEnabled(true);
+                                btneR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -364,8 +365,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ɛ_1 = answer[0];
                                 User_ɛ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnɛ.setEnabled(false);
-                                btnæ.setEnabled(true);
+                                btnɛR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -412,8 +412,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_æ_1 = answer[0];
                                 User_æ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnæ.setEnabled(false);
-                                btna.setEnabled(true);
+                                btnæR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -460,8 +459,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_a_1 = answer[0];
                                 User_a_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btna.setEnabled(false);
-                                btnə.setEnabled(true);
+                                btnaR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -511,9 +509,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ə_1 = answer[0];
                                 User_ə_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnə.setEnabled(false);
-                                btnɜ.setEnabled(true);
-                            } else{
+                                btnəR.setBackgroundResource(R.mipmap.presence_audio_online);
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
                                         + "expected: " + ə_1 + " - " + ə_2);
@@ -559,8 +555,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ɜ_1 = answer[0];
                                 User_ɜ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnɜ.setEnabled(false);
-                                btnu.setEnabled(true);
+                                btnɜR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -611,8 +606,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_u_1 = answer[0];
                                 User_u_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnu.setEnabled(false);
-                                btnʊ.setEnabled(true);
+                                btnuR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -659,8 +653,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ʊ_1 = answer[0];
                                 User_ʊ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnʊ.setEnabled(false);
-                                btno.setEnabled(true);
+                                btnʊR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -707,8 +700,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_o_1 = answer[0];
                                 User_o_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btno.setEnabled(false);
-                                btnʌ.setEnabled(true);
+                                btnoR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -755,8 +747,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ɔ_1 = answer[0];
                                 User_ɔ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnʌ.setEnabled(false);
-                                btnɔ.setEnabled(true);
+                                btnɔR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -803,8 +794,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ʌ_1 = answer[0];
                                 User_ʌ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnɔ.setEnabled(false);
-                                btnɒ.setEnabled(true);
+                                btnʌR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -851,8 +841,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ɒ_1 = answer[0];
                                 User_ɒ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1]);
-                                btnɒ.setEnabled(false);
-                                btnɑ.setEnabled(true);
+                                btnɒR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -899,6 +888,7 @@ public class SetUpFreqFragment extends Fragment {
                                 User_ɑ_1 = answer[0];
                                 User_ɑ_2 = answer[1];
                                 textView.setText("The values are set at " + answer[0] + " & " + answer[1] + "\n" + "You are now done!");
+                                btnɑR.setBackgroundResource(R.mipmap.presence_audio_online);
                             } else{
                                 textView.setText("Try again!" + "\n"
                                         + "your freq: " + answer[0] + " - " + answer[1] + "\n"
@@ -1089,7 +1079,7 @@ public class SetUpFreqFragment extends Fragment {
                     maxIndex[0] = i;
                 }
             }
-            if(powerSpectrum[maxIndex[0]] < (average * 1.1)) {
+            if(powerSpectrum[maxIndex[0]] < (average * 1.3)) {
                 maxFreq[0] = 0.0;
                 maxFreq[1] = 0.0;
                 maxFreq[2] = 0.0;
@@ -1097,7 +1087,7 @@ public class SetUpFreqFragment extends Fragment {
             }
             //Log.d("TEST", "maxIndex[0] is" + maxIndex[0]);
             max = 0.0;
-            for(i = 885; i < 1000; i++) {
+            for(i = 885; i < 977; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[1] = i;
@@ -1105,7 +1095,7 @@ public class SetUpFreqFragment extends Fragment {
             }
             //Log.d("TEST", "maxIndex[1] is" + maxIndex[1]);
             max = 0.0;
-            for(i = 885; i < 1000; i++) {
+            for(i = 885; i < 977; i++) {
                 if((powerSpectrum[i] > max) && (powerSpectrum[i] > powerSpectrum[i-1]) && (powerSpectrum[i] > powerSpectrum[i+1]) && (Math.abs(i - maxIndex[0]) > 3) && (Math.abs(i - maxIndex[1]) > 3)) {
                     max = powerSpectrum[i];
                     maxIndex[2] = i;
